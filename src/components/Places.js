@@ -1,38 +1,38 @@
 import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, NavLink } from "react-bootstrap";
 
+import { Link } from 'react-router-dom'
 
 
-
-const Admin = (props) => {
-
-
-    // const [data, setData] = useState([])
-
-    // useEffect(() => {
+const Places = (props) => {
 
 
-    //     // Mockup API
-    //     let MockupAPI = {
-    //         "status": 1,
-    //         "message": "",
-    //         "Item": [
-    //             {
-    //                 "id": 1,
-    //                 "name": "mai"
-    //             },
-    //             {
-    //                 "id": 2,
-    //                 "name": "my"
-    //             }
-    //         ]
-    //     };
+    const [data, setData] = useState([])
 
-    //     setData(MockupAPI.Item); //lấy dữ liệu mockup
+    useEffect(() => {
+
+        let MockupAPI = {
+            "status": 1,
+            "message": "",
+            "Item": [
+                {
+                    "id": 1,
+                    "name": "mai"
+                },
+                {
+                    "id": 2,
+                    "name": "my"
+                }
+            ]
+        };
+        console.log(MockupAPI.Item)
+        setData(MockupAPI.Item); //lấy dữ liệu mockup
 
 
-    // }, [])
-
+    }, [])
+    const getPlacesById = async (placesId) => {
+        return data.find((p) => p.id === placesId);
+      }
 
 
     return (
@@ -344,117 +344,71 @@ const Admin = (props) => {
 
                             <div class="row ">
                                 {/* lặp */}
-                                <div class="col-sm col-md-6 col-lg-4 ftco-animate">
+                                {/* danh sach */}
+                                {data.map((d, i) => (
 
 
 
-                                    {/* <div class="destination" style={{ border: '5px solid #EDF2F7', borderRadius: '15px' }}>
-                                        <div>
+                                    <div class="col-sm col-md-6 col-lg-4 ftco-animate">
 
-                                            <a href="PlacesSingle" class="img img-2 d-flex justify-content-center align-items-center" style={{ backgroundImage: `url('./image1/home/hoChiMinh.jpg')` }}>
-                                                <div class="icon d-flex justify-content-center align-items-center">
-                                                    <span class="icon-link"></span>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <div class="text p-3">
-                                            <div class="d-flex">
-                                                <div class="one">
-                                                    <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
 
-                                                </div>
-                                                <div class="two">
-                                                    <p class="rate">
-                                                        <i class="icon-star"></i>
-                                                        <i class="icon-star"></i>
-                                                        <i class="icon-star"></i>
-                                                        <i class="icon-star"></i>
-                                                        <i class="icon-star-o"></i>
+
+
+
+
+
+                                        <div class="destination" style={{
+                                            boxShadow: '0px 2px 10px  #d9d9d9'
+
+                                        }}>
+                                            <div class="card" >
+                                            <Link to={`/placesSingle/${d.id}`} > <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." /></Link>
+                                                <div class="card-body">
+                                                    <div class="d-flex">
+                                                        <div class="one">
+                                                        <Link to={`/placesSingle/${d.id}`} >{d.id}</Link>
+                                                            <h3><a href="">{d.name}</a></h3>
+                                                            <p class="rate">
+                                                                <i class="icon-star"></i>
+                                                                <i class="icon-star"></i>
+                                                                <i class="icon-star"></i>
+                                                                <i class="icon-star"></i>
+                                                                <i class="icon-star-o"></i>
+                                                            </p>
+                                                        </div>
+                                                        <div class="two">
+
+                                                        </div>
+
+                                                    </div>
+                                                    <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
+                                                    <hr />
+                                                    <p class="bottom-area d-flex">
+
+
+
+                                                        <a href="/Like" class="like" title="Like" data-toggle="tooltip">
+                                                            <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
+                                                        </a>
+
+                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                            <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
+                                                            <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
+                                                        </DropdownButton>
+
+
                                                     </p>
                                                 </div>
-
-                                            </div>
-                                            <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng
-                                                sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-                                            <hr />
-                                            <p class="bottom-area d-flex">
-
-                                                <a href="" class="like" title="Like" data-toggle="tooltip">      <i class="bi bi-heart"></i></a>
-
-
-                                                <a href="/ItinerarieEdit" class="like" title="Like" data-toggle="tooltip">
-                                                    <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
-                                                </a>
-                                                <a href="/ItinerarieEdit" class="like" title="Like" data-toggle="tooltip"><i class="material-icons">  favorite</i></a>
-
-                                                <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
-                                                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                                </DropdownButton>
-
-
-                                            </p>
-
-
-
-                                        </div>
-
-                                    </div> */}
-
-
-
-                                    <div class="destination" style={{
-                                        boxShadow: '0px 2px 10px  #d9d9d9'
-
-                                    }}>
-                                        <div class="card" >
-                                            <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." />
-                                            <div class="card-body">
-                                                <div class="d-flex">
-                                                    <div class="one">
-                                                        <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-                                                        <p class="rate">
-                                                            <i class="icon-star"></i>
-                                                            <i class="icon-star"></i>
-                                                            <i class="icon-star"></i>
-                                                            <i class="icon-star"></i>
-                                                            <i class="icon-star-o"></i>
-                                                        </p>
-                                                    </div>
-                                                    <div class="two">
-
-                                                    </div>
-
-                                                </div>
-                                                <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-                                                <hr />
-                                                <p class="bottom-area d-flex">
-
-
-
-                                                    <a href="/Like" class="like" title="Like" data-toggle="tooltip">
-                                                        <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
-                                                    </a>
-
-                                                    <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
-                                                        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                                        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                                        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                                    </DropdownButton>
-
-
-                                                </p>
                                             </div>
                                         </div>
+
+
+
+
                                     </div>
 
-
-
-
-                                </div>
-
-
+                                ))
+                                }
 
 
                             </div>
@@ -506,4 +460,4 @@ const Admin = (props) => {
     )
 }
 
-export default Admin;
+export default Places;

@@ -1,6 +1,6 @@
 
 
-const Admin = (props) => {
+const PlacesSingle = (props) => {
     return (
         <div>
             <div class="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -468,4 +468,4 @@ const Admin = (props) => {
     )
 }
 
-export default Admin;
+export default PlacesSingle;

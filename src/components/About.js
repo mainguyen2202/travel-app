@@ -1,6 +1,6 @@
 
 
-const Admin = (props) => {
+const About = (props) => {
     return (
         <div>
 
@@ -269,4 +269,4 @@ const Admin = (props) => {
     )
 }
 
-export default Admin;
+export default About;

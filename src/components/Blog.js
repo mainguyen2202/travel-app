@@ -1,7 +1,7 @@
 import { NavLink } from "react-bootstrap";
 
 
-const Admin = (props) => {
+const Blog = (props) => {
   return (
     <div>
 
@@ -84,4 +84,4 @@ const Admin = (props) => {
   )
 }
 
-export default Admin;
+export default Blog;

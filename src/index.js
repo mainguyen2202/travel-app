@@ -36,7 +36,9 @@ root.render(
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="places" element={<Places />} />
-          <Route path="placesSingle" element={<PlacesSingle />} />
+        
+          <Route path="/places/:placeId" element={<PlacesSingle/>} />
+          {/* // route param */}
 
           <Route path="itinerarie" element={<Itinerarie />} />
           <Route path="itinerarieView" element={<ItinerarieView />} />

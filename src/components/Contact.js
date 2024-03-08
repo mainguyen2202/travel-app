@@ -1,6 +1,6 @@
 
 
-const Admin = (props) => {
+const Contact = (props) => {
     return (
         <div>
          <div className="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -92,4 +92,4 @@ const Admin = (props) => {
     )
 }
 
-export default Admin;
+export default Contact;
