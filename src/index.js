@@ -38,6 +38,8 @@ root.render(
           <Route path="places" element={<Places />} />
         
           <Route path="/places/:placeId" element={<PlacesSingle/>} />
+          <Route path="placesSingle" element={<PlacesSingle/>} />
+
           {/* // route param */}
 
           <Route path="itinerarie" element={<Itinerarie />} />
@@ -54,8 +56,8 @@ root.render(
           <Route path="login" element={<Login />} />
           <Route path="registration" element={<Registration />} />
           <Route path="password" element={<Password />} />
-          <Route path="Profile" element={<Profile />} />
-          <Route path="ChangePassword" element={<ChangePassword />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="changePassword" element={<ChangePassword />} />
 
 
           <Route path="Map" element={<MyMapComponent />} />

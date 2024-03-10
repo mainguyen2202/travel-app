@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 const Places = (props) => {
 
 
-    const [data, setData] = useState([])
+    const [places, setPlaces] = useState([])
 
     useEffect(() => {
 
@@ -26,13 +26,14 @@ const Places = (props) => {
             ]
         };
         console.log(MockupAPI.Item)
-        setData(MockupAPI.Item); //lấy dữ liệu mockup
+        setPlaces(MockupAPI.Item); //lấy dữ liệu mockup
 
 
     }, [])
     const getPlacesById = async (placesId) => {
-        return data.find((p) => p.id === placesId);
+        return places.find((p) => p.id === placesId);
       }
+      
 
 
     return (
@@ -345,7 +346,7 @@ const Places = (props) => {
                             <div class="row ">
                                 {/* lặp */}
                                 {/* danh sach */}
-                                {data.map((d, i) => (
+                                {places.map((places, i) => (
 
 
 
@@ -362,12 +363,12 @@ const Places = (props) => {
 
                                         }}>
                                             <div class="card" >
-                                            <Link to={`/placesSingle/${d.id}`} > <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." /></Link>
+                                            <Link to={`/places/${places.id}`} > <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." /></Link>
                                                 <div class="card-body">
                                                     <div class="d-flex">
                                                         <div class="one">
-                                                        <Link to={`/placesSingle/${d.id}`} >{d.id}</Link>
-                                                            <h3><a href="">{d.name}</a></h3>
+                                                        <Link to={`/places/${places.id}`} >{places.id}</Link>
+                                                            <h3><a href="">{places.name}</a></h3>
                                                             <p class="rate">
                                                                 <i class="icon-star"></i>
                                                                 <i class="icon-star"></i>
@@ -434,28 +435,7 @@ const Places = (props) => {
                 </div >
             </section >
 
-            <section class="ftco-section-parallax">
-                <div class="parallax-img d-flex align-items-center">
-                    <div class="container">
-                        <div class="row d-flex justify-content-center">
-                            <div class="col-md-7 text-center heading-section heading-section-white ftco-animate">
-                                <h2>Subcribe to our Newsletter</h2>
-                                <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
-                                <div class="row d-flex justify-content-center mt-5">
-                                    <div class="col-md-8">
-                                        <form action="#" class="subscribe-form">
-                                            <div class="form-group d-flex">
-                                                <input type="text" class="form-control" placeholder="Enter email address" />
-                                                <input type="submit" value="Subscribe" class="submit px-3" />
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+
         </div >
     )
 }
