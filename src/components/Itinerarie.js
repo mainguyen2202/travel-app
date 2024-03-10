@@ -28,7 +28,7 @@ const Itinerarie = (props) => {
 
                                 <div class="row">
                                     <div class="col-sm-1">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Create</button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
 
                                         {/* modal */}
                                         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -92,12 +92,13 @@ const Itinerarie = (props) => {
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="search-box" >
-                                            <input type="text" class="form-control" placeholder="Search&hellip;" />
+                                            <input type="text" class="form-control" placeholder="Tìm kiếm" />
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
+                            
 
                             <table class="table table-striped table-hover table-bordered">
                                 <thead>
@@ -108,7 +109,7 @@ const Itinerarie = (props) => {
                                         <th>Ngày kết thúc <i class="fa fa-sort"></i></th>
                                         <th>Số lượng người</th>
                                         <th>Ngân sách</th>
-                                        <th>Actions</th>
+                                        <th>Hành động</th>
                                     </tr>
                                 </thead>
                                 <tbody>
