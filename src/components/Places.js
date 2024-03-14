@@ -71,7 +71,7 @@ const Places = (props) => {
       const [topics, setTopics] = useState([]);
       const [topics1, setTopics1] = useState([]);
       const [showNatureSelect, setShowNatureSelect] = useState(false);
-      
+                  
       useEffect(() => {
         console.log(MockupAPITopics.Item);
       
@@ -83,18 +83,22 @@ const Places = (props) => {
       
       // Xử lý khi chọn chủ đề
       const handleSelectChange = (event) => {
-        const selectedTopicId = parseInt(event.target.value);
-      
+                const selectedTopicId = parseInt(event.target.value);
+              
         // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
         const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);
       
         if (filteredTopics.length > 0) {
           setShowNatureSelect(true);
           setTopics1(filteredTopics);
-        } else {
+                  } else {
           setShowNatureSelect(false);
         }
       };
+     
+      
+
+
 
 
     return (
@@ -161,29 +165,46 @@ const Places = (props) => {
               <option value={topic.id} key={i}>
                 {topic.title}
               </option>
+              
+            ))}
+          </select>
+      
+        </div>
+      </div>
+    </div>
+  </form>
+ 
+
+  {showNatureSelect && (
+  <div>
+    
+  {/* <h3 className="heading mb-4">{topics.length > 0 ? topics[0].title : ""}</h3> */}
+    <form action="#" className="card1">
+    <div className="fields">
+      <div className="form-group">
+        <div className="select-wrap one-third">
+          <div className="icon">
+            <span className="ion-ios-arrow-down"></span>
+          </div>
+          <select
+            name="topics"
+            id=""
+            className="form-control"
+            placeholder="Keyword search"
+            onChange={handleSelectChange}
+          >
+            {topics1.map((topic, i) => (
+                
+              <option value={topic.id} key={i}>
+                {topic.title}
+              </option>
             ))}
           </select>
         </div>
       </div>
     </div>
   </form>
-
-  {showNatureSelect && (
-    <form>
-      {/* Thêm select cho chủ đề thiên nhiên */}
-      <div className="form-group">
-        <select id="natureSelect" name="natureSelect">
-          {/* Thêm các tùy chọn cho select */}
-          {topics1
-            // .filter(topic => topic.subTopicsId === 1)
-            .map((topic, i) => (
-              <option value={topic.id} key={i}>
-                {topic.title}
-              </option>
-            ))}
-        </select>
-      </div>
-    </form>
+  </div>
   )}
 </div>
 
