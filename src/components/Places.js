@@ -58,6 +58,12 @@ const Places = (props) => {
             "id": 4,
             "title": "Núi",
             "subTopicsId": 1
+          },
+          ,
+          {
+            "id": 5,
+            "title": "hát",
+            "subTopicsId": 2
           }
         ]
       };
@@ -80,8 +86,9 @@ const Places = (props) => {
         const selectedTopicId = parseInt(event.target.value);
       
         // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
-        if (selectedTopicId === 1) {
-          const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === 1);
+        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);
+      
+        if (filteredTopics.length > 0) {
           setShowNatureSelect(true);
           setTopics1(filteredTopics);
         } else {
