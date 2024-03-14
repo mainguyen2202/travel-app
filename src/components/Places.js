@@ -32,243 +32,172 @@ const Places = (props) => {
     }, [])
     const getPlacesById = async (placesId) => {
         return places.find((p) => p.id === placesId);
-      }
-      
+    }
+
+
+
+    
+    const [topics, setTopics] = useState([]);
+
+    useEffect(() => {
+        let MockupAPI = {
+            "status": 1,
+            "message": "",
+            "Item": [
+                {
+                    "id": 1,
+                    "title": "Thiên nhiên",
+                    "subTopicsId": 0
+                },
+                {
+                    "id": 2,
+                    "title": "Truyền thống",
+                    "subTopicsId": 0
+                },
+                {
+                    "id": 3,
+                    "title": "Biển",
+                    "subTopicsId": 1
+                }
+            ]
+        };
+
+
+        // Filter items with subTopicsId equal to 0
+        const filteredTopics = MockupAPI.Item.filter(item => item.subTopicsId === 0);
+
+        setTopics(filteredTopics);
+    }, []);
+
+    // Xử lý khi chọn chủ đề
+    const handleSelectChange = (event) => {
+        const selectedTopic = event.target.value;
+        // Xử lý logic khi chọn chủ đề
+
+        // Nếu chọn chủ đề "Thiên nhiên", cập nhật lại danh sách chủ đề
+        if (selectedTopic === "Thiên nhiên") {
+            let MockupAPI = {
+                "status": 1,
+                "message": "",
+                "Item": [
+                    {
+                        "id": 1,
+                        "title": "Biển",
+                        "subTopicsId": 1
+                    }
+                ]
+            };
+
+            const filteredTopics = MockupAPI.Item.filter(
+                item => item.subTopicsId === 1
+            );
+            setTopics(filteredTopics);
+        }
+    };
+
+
 
 
     return (
         <div>
-            <div class="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-                <div class="overlay"></div>
-                <div class="container">
-                    <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+                <div className="overlay"></div>
+                <div className="container">
+                    <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
                         style={{ height: '465px' }}
                     >
-                        <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Places</span></p>
-                            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Destinations</h1>
+                        <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Places</span></p>
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Destinations</h1>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <section class="ftco-section">
-                <div class="container">
-                    <div class="row">
+            <section className="ftco-section">
+                <div className="container">
+                    <div className="row">
 
 
-                        <div class="col-lg-3 sidebar order-md-first ftco-animate ">
-                            <div class="sidebar-wrap ftco-animate">
-                                <h3 class="heading mb-4">Điểm đến</h3>
-                                <form action="#" className="card1">
-                                    <div class="fields">
-                                        {/* <div class="form-group">
-                                            <input type="text" class="form-control" placeholder="Destination, City" />
+                        <div className="col-lg-3 sidebar order-md-first ftco-animate ">
+                            <div className="sidebar-wrap ftco-animate">
+                                <h3 className="heading mb-4">Điểm đến</h3>
+                                <form action="#" classNameName="card1">
+                                    <div className="fields">
+                                        {/* <div className="form-group">
+                                            <input type="text" className="form-control" placeholder="Destination, City" />
                                         </div> */}
-                                        <div class="form-group">
-                                            <div class="select-wrap one-third">
-                                                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                <select name="" id="" class="form-control" placeholder="Keyword search">
+                                        <div className="form-group">
+                                            <div className="select-wrap one-third">
+                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                <select name="" id="" className="form-control" placeholder="Keyword search">
                                                     <option value="">Hồ Chí Minh</option>
                                                     <option value="">Hà Nội</option>
                                                     <option value="">Hội An</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        {/* <div class="form-group">
-                                            <input type="text" id="checkin_date" class="form-control checkin_date" placeholder="Date from" />
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" id="checkout_date" class="form-control checkout_date" placeholder="Date to" />
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="range-slider">
-                                                <span>
-                                                    <input type="number" value="25000" min="0" max="120000" />	-
-                                                    <input type="number" value="50000" min="0" max="120000" />
-                                                </span>
-                                                <input value="1000" min="0" max="120000" step="500" type="range" />
-                                                <input value="50000" min="0" max="120000" step="500" type="range" />
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="submit" value="Search" class="btn btn-primary py-3 px-5" />
-                                        </div> */}
+
                                     </div>
                                 </form>
 
-                                <h3 class="heading mb-4">Trải nghiệm</h3>
-                                <form action="#" className="card1">
-                                    <div class="fields">
-
-                                        <div class="form-group">
-                                            <div class="select-wrap one-third">
-                                                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                <select name="Thiên nhiên" id="" class="form-control" placeholder="Keyword search">
-                                                    <option value="">Thiên nhiên</option>
-                                                    <option value="">Truyền thống</option>
-                                                    <option value="">Nghệ thuật & văn hóa</option>
-                                                    <option value="">Đồ ăn & thức uống </option>
-                                                    <option value="">Thư giãn</option>
-                                                    <option value="">Mua sắm</option>
-                                                    <option value="">Khu vui chơi</option>
+                                <h3 className="heading mb-4">Trải nghiệm</h3>
+                                <form action="#" classNameName="card1">
+                                    <div className="fields">
+                                        <div className="form-group">
+                                            <div className="select-wrap one-third">
+                                                <div className="icon">
+                                                    <span className="ion-ios-arrow-down"></span>
+                                                </div>
+                                                <select
+                                                    name="topics"
+                                                    id=""
+                                                    className="form-control"
+                                                    placeholder="Keyword search"
+                                                    onChange={handleSelectChange}
+                                                >
+                                                    {topics.map((topic, i) => (
+                                                        <option value={topic.title} key={i}>
+                                                            {topic.title}
+                                                            
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
                                         </div>
-
                                     </div>
                                 </form>
+
+
                                 <div >
-                                    <h3 class="heading mb-4">Thiên nhiên</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
+                                    <h3 className="heading mb-4">Thiên nhiên</h3>
+                                    <form action="#" classNameName="card1">
+                                        <div className="fields">
 
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
+                                            <div className="form-group">
+                                                <div className="select-wrap one-third">
+                                                    <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                    <select name="" id="" className="form-control" placeholder="Keyword search">
                                                         <option value="">Biển</option>
-                                                        <option value="">Núi</option>
-                                                        <option value="">Đảo</option>
-                                                        <option value="">Suối</option>
-                                                        <option value="">Hô</option>
-                                                        <option value="">Hang động</option>
-                                                        <option value="">Đồng cỏ </option>
-                                                        <option value="">Rừng nhiệt đới</option>
-                                                        <option value="">Công viên</option>
+                                                       
                                                     </select>
                                                 </div>
                                             </div>
 
                                         </div>
                                     </form>
-                                    <h3 class="heading mb-4">Truyền thống</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Làng cổ</option>
-                                                        <option value="">Làng nghề truyền thống</option>
-                                                        <option value="">Di tích lịch sử</option>
-                                                        <option value="">Lễ hội truyền thống</option>
-                                                        <option value="">Nghệ thuật dân gian</option>
-                                                        <option value="">Nghệ thuật địa phương</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                    <h3 class="heading mb-4">Nghệ thuật & văn hóa</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Nhà hát</option>
-                                                        <option value="">Bảo tàng</option>
-                                                        <option value="">Thủ công & mỹ nghệ</option>
-                                                        <option value="">Nghệ thuật biểu diễn</option>
-                                                        <option value="">Triển lãm nghệ thuật</option>
-                                                        <option value="">Di tích văn hóa</option>
-                                                        <option value="">Lễ hội truyền thống</option>
-                                                        <option value="">Nghệ nhân địa phương</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                    <h3 class="heading mb-4">Đồ ăn thức uống</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Nghệ thuật ăn uống</option>
-                                                        <option value="">Ẩm thực địa phương</option>
-                                                        <option value="">Ẩm thực đường phố</option>
-                                                        <option value="">Món ăn đặc sản</option>
-                                                        <option value="">Nhà hàng truyền thống</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                    <h3 class="heading mb-4">Thư giãn</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Khu nghỉ dưỡng</option>
-                                                        <option value="">Spa và xông hơi</option>
-                                                        <option value="">Yoga và thiền</option>
-                                                        <option value="">Khu vườn hoa</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                    <h3 class="heading mb-4">Mua sắm</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Chợ truyền thống</option>
-                                                        <option value="">Trung tâm thương mại</option>
-                                                        <option value="">Cửa hàng đặc sản</option>
-                                                        <option value="">Khu phố mua sắm</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
-                                    <h3 class="heading mb-4">Khu vui chơi</h3>
-                                    <form action="#" className="card1">
-                                        <div class="fields">
-
-                                            <div class="form-group">
-                                                <div class="select-wrap one-third">
-                                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" class="form-control" placeholder="Keyword search">
-                                                        <option value="">Công viên giải trí</option>
-                                                        <option value="">Khu vui chơi gia đình</option>
-                                                        <option value="">Công viên nước </option>
-                                                        <option value="">Khu trò chơi trong nhà,</option>
-                                                        <option value="">Khu vui chơi ngoài trời</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </form>
+                                   
                                 </div>
 
 
-                                <h3 class="heading mb-4">Lựa chọn</h3>
-                                <form action="#" className="card1">
-                                    <div class="fields">
+                                <h3 className="heading mb-4">Lựa chọn</h3>
+                                <form action="#" classNameName="card1">
+                                    <div className="fields">
 
-                                        <div class="form-group">
-                                            <div class="select-wrap one-third">
-                                                <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                                                <select name="" id="" class="form-control" placeholder="Keyword search">
+                                        <div className="form-group">
+                                            <div className="select-wrap one-third">
+                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                <select name="" id="" className="form-control" placeholder="Keyword search">
                                                     <option value="">Nổi bật</option>
                                                     <option value="">Yêu thích</option>
                                                     <option value="">Mới nhất đến cũ nhất</option>
@@ -280,37 +209,37 @@ const Places = (props) => {
                                 </form>
 
                             </div>
-                            <div class="sidebar-wrap ftco-animate">
-                                <h3 class="heading mb-4">Gợi ý</h3>
-                                <form method="post" class="star-rating">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                                        <label class="form-check-label" for="exampleCheck1">
-                                            <p class="rate"><span><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></span></p>
+                            <div className="sidebar-wrap ftco-animate">
+                                <h3 className="heading mb-4">Gợi ý</h3>
+                                <form method="post" className="star-rating">
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <label className="form-check-label" for="exampleCheck1">
+                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i></span></p>
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                                        <label class="form-check-label" for="exampleCheck1">
-                                            <p class="rate"><span><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i></span></p>
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <label className="form-check-label" for="exampleCheck1">
+                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i></span></p>
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                                        <label class="form-check-label" for="exampleCheck1">
-                                            <p class="rate"><span><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i><i class="icon-star-o"></i></span></p>
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <label className="form-check-label" for="exampleCheck1">
+                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                                        <label class="form-check-label" for="exampleCheck1">
-                                            <p class="rate"><span><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star-o"></i><i class="icon-star-o"></i><i class="icon-star-o"></i></span></p>
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <label className="form-check-label" for="exampleCheck1">
+                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
                                         </label>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-                                        <label class="form-check-label" for="exampleCheck1">
-                                            <p class="rate"><span><i class="icon-star"></i><i class="icon-star-o"></i><i class="icon-star-o"></i><i class="icon-star-o"></i><i class="icon-star-o"></i></span></p>
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <label className="form-check-label" for="exampleCheck1">
+                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
                                         </label>
                                     </div>
                                 </form>
@@ -318,12 +247,12 @@ const Places = (props) => {
                             </div>
                         </div>
 
-                        <div class="col-lg-9" >
+                        <div className="col-lg-9" >
 
-                            <div class="reservation-form" >
-                                {/* <div class="container"> */}
-                                <div class="row">
-                                    {/* <div class="col-lg-12"> */}
+                            <div className="reservation-form" >
+                                {/* <div className="container"> */}
+                                <div className="row">
+                                    {/* <div className="col-lg-12"> */}
 
                                     <div id="map">
                                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameborder="0"
@@ -343,14 +272,14 @@ const Places = (props) => {
 
 
 
-                            <div class="row ">
+                            <div className="row ">
                                 {/* lặp */}
                                 {/* danh sach */}
                                 {places.map((places, i) => (
 
 
 
-                                    <div class="col-sm col-md-6 col-lg-4 ftco-animate">
+                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate">
 
 
 
@@ -358,41 +287,41 @@ const Places = (props) => {
 
 
 
-                                        <div class="destination" style={{
+                                        <div className="destination" style={{
                                             boxShadow: '0px 2px 10px  #d9d9d9'
 
                                         }}>
-                                            <div class="card" >
-                                            <Link to={`/places/${places.id}`} > <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." /></Link>
-                                                <div class="card-body">
-                                                    <div class="d-flex">
-                                                        <div class="one">
-                                                        <Link to={`/places/${places.id}`} >{places.id}</Link>
+                                            <div className="card" >
+                                                <Link to={`/places/${places.id}`} > <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
+                                                <div className="card-body">
+                                                    <div className="d-flex">
+                                                        <div className="one">
+                                                            <Link to={`/places/${places.id}`} >{places.id}</Link>
                                                             <h3><a href="">{places.name}</a></h3>
-                                                            <p class="rate">
-                                                                <i class="icon-star"></i>
-                                                                <i class="icon-star"></i>
-                                                                <i class="icon-star"></i>
-                                                                <i class="icon-star"></i>
-                                                                <i class="icon-star-o"></i>
+                                                            <p className="rate">
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star-o"></i>
                                                             </p>
                                                         </div>
-                                                        <div class="two">
+                                                        <div className="two">
 
                                                         </div>
 
                                                     </div>
                                                     <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
                                                     <hr />
-                                                    <p class="bottom-area d-flex">
+                                                    <p className="bottom-area d-flex">
 
 
 
-                                                        <a href="/Like" class="like" title="Like" data-toggle="tooltip">
-                                                            <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
+                                                        <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                            <span className="s18_s" onclick="saveMultiWishlist(175);return false;">  <i className="material-icons">  favorite_border</i></span>
                                                         </a>
 
-                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                        <DropdownButton id="dropdown-basic-button" classNameName="ml-auto" title="Kế hoạch">
                                                             <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
                                                             <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
                                                         </DropdownButton>
@@ -415,12 +344,12 @@ const Places = (props) => {
                             </div>
 
 
-                            <div class="row mt-5">
-                                <div class="col text-center">
-                                    <div class="block-27">
+                            <div className="row mt-5">
+                                <div className="col text-center">
+                                    <div className="block-27">
                                         <ul>
                                             <li><a href="#">&lt;</a></li>
-                                            <li class="active"><span>1</span></li>
+                                            <li className="active"><span>1</span></li>
                                             <li><a href="#">2</a></li>
                                             <li><a href="#">3</a></li>
                                             <li><a href="#">4</a></li>
