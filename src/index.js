@@ -37,8 +37,8 @@ root.render(
           <Route path="about" element={<About />} />
           <Route path="places" element={<Places />} />
         
-          <Route path="/places/:placeId" element={<PlacesSingle/>} />
-          <Route path="placesSingle" element={<PlacesSingle/>} />
+        {/*  path - endpoint có tham số route param */}
+          <Route path="/detail/:placeId" element={<PlacesSingle/>} />  
 
           {/* // route param */}
 

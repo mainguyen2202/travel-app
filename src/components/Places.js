@@ -7,96 +7,135 @@ import { Link } from 'react-router-dom'
 const Places = (props) => {
 
 
-    const [places, setPlaces] = useState([])
 
-    useEffect(() => {
-
-        let MockupAPI = {
-            "status": 1,
-            "message": "",
-            "Item": [
-                {
-                    "id": 1,
-                    "name": "mai"
-                },
-                {
-                    "id": 2,
-                    "name": "my"
-                }
-            ]
-        };
-        console.log(MockupAPI.Item)
-        setPlaces(MockupAPI.Item); //lấy dữ liệu mockup
-
-
-    }, [])
-    const getPlacesById = async (placesId) => {
-        return places.find((p) => p.id === placesId);
-    }
 
 
     let MockupAPITopics = {
         "status": 1,
         "message": "",
         "Item": [
-          {
-            "id": 1,
-            "title": "Thiên nhiên",
-            "subTopicsId": 0
-          },
-          {
-            "id": 2,
-            "title": "Truyền thống",
-            "subTopicsId": 0
-          },
-          {
-            "id": 3,
-            "title": "Biển",
-            "subTopicsId": 1
-          },
-          {
-            "id": 4,
-            "title": "Núi",
-            "subTopicsId": 1
-          },
-          ,
-          {
-            "id": 5,
-            "title": "hát",
-            "subTopicsId": 2
-          }
+            {
+                "id": 1,
+                "title": "Thiên nhiên",
+                "subTopicsId": 0
+            },
+            {
+                "id": 2,
+                "title": "Truyền thống",
+                "subTopicsId": 0
+            },
+            {
+                "id": 3,
+                "title": "Biển",
+                "subTopicsId": 1
+            },
+            {
+                "id": 4,
+                "title": "Núi",
+                "subTopicsId": 1
+            },
+            ,
+            {
+                "id": 5,
+                "title": "hát",
+                "subTopicsId": 2
+            },
+            {
+                "id": 6,
+                "title": "múa",
+                "subTopicsId": 2
+            }
         ]
-      };
-      
-      const [topics, setTopics] = useState([]);
-      const [topics1, setTopics1] = useState([]);
-      const [showNatureSelect, setShowNatureSelect] = useState(false);
-                  
-      useEffect(() => {
+    };
+
+    const [topics, setTopics] = useState([]);
+    const [subTopics, setSubTopics] = useState([]);
+    const [showNatureSelect, setShowNatureSelect] = useState(false);
+
+    // khởi tạo ban đầu khi vào từng trang
+    useEffect(() => {
         console.log(MockupAPITopics.Item);
-      
+
+        let selectedDefaultTopicId = 0;
         // Filter items with subTopicsId equal to 0
-        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === 0);
-      
+        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedDefaultTopicId);// khởi tạo ban đầu của menu cha
         setTopics(filteredTopics);
-      }, []);
-      
-      // Xử lý khi chọn chủ đề
-      const handleSelectChange = (event) => {
-                const selectedTopicId = parseInt(event.target.value);
-              
-        // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
-        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);
-      
+
+        console.log(filteredTopics);
         if (filteredTopics.length > 0) {
-          setShowNatureSelect(true);
-          setTopics1(filteredTopics);
-                  } else {
-          setShowNatureSelect(false);
+
+            let selectedTopicId = filteredTopics[0].id;
+
+            // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
+            const filteredSubTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);// khỏi tạo menu con tho bộlọc dữ liệu theo cấp cha
+
+            if (filteredSubTopics.length > 0) {
+                setShowNatureSelect(true);
+                setSubTopics(filteredSubTopics);
+
+                let selectedSubTopicId = filteredSubTopics[0].id;
+
+                // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
+                const filteredPlaces = MockupAPI.Item.filter(
+                    (item) => item.idTopic === selectedSubTopicId
+                );
+
+                // Cập nhật danh sách sản phẩm và chủ đề được chọn
+                setPlaces(filteredPlaces);
+
+            } else {
+                setShowNatureSelect(false);
+            }
         }
-      };
-     
-      
+
+    }, []);
+
+    // Xử lý khi chọn chủ đề
+    const handleSelectChange = (event) => {
+        const selectedTopicId = parseInt(event.target.value);
+        console.log(selectedTopicId);// thiên nhiên hoặc truyền thống
+
+        // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
+        const filteredSubTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);// khỏi tạo menu con tho bộlọc dữ liệu theo cấp cha
+
+        if (filteredSubTopics.length > 0) {
+            setShowNatureSelect(true);
+            setSubTopics(filteredSubTopics);
+        } else {
+            setShowNatureSelect(false);
+        }
+    };
+
+
+    const [places, setPlaces] = useState([]);
+
+    let MockupAPI = {
+        "status": 1,
+        "message": "",
+        "Item": [
+            {
+                "id": 1,
+                "name": "mai",
+                "idTopic": 3
+            },
+            {
+                "id": 2,
+                "name": "my",
+                "idTopic": 5
+            }
+        ]
+    };
+    const handleSelectChangeBien = (event) => {
+        const selectedTopicId = parseInt(event.target.value);
+
+        // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
+        const filteredPlaces = MockupAPI.Item.filter(
+            (item) => item.idTopic === selectedTopicId
+        );
+
+        // Cập nhật danh sách sản phẩm và chủ đề được chọn
+        setPlaces(filteredPlaces);
+    };
 
 
 
@@ -125,7 +164,7 @@ const Places = (props) => {
                         <div className="col-lg-3 sidebar order-md-first ftco-animate ">
                             <div className="sidebar-wrap ftco-animate">
                                 <h3 className="heading mb-4">Điểm đến</h3>
-                                <form action="#" classNameName="card1">
+                                <form action="#" className="card1">
                                     <div className="fields">
                                         {/* <div className="form-group">
                                             <input type="text" className="form-control" placeholder="Destination, City" />
@@ -144,94 +183,76 @@ const Places = (props) => {
                                     </div>
                                 </form>
 
-                              
+
                                 <div>
-  <h3 className="heading mb-4">Trải nghiệm</h3>
-  <form action="#" className="card1">
-    <div className="fields">
-      <div className="form-group">
-        <div className="select-wrap one-third">
-          <div className="icon">
-            <span className="ion-ios-arrow-down"></span>
-          </div>
-          <select
-            name="topics"
-            id=""
-            className="form-control"
-            placeholder="Keyword search"
-            onChange={handleSelectChange}
-          >
-            {topics.map((topic, i) => (
-              <option value={topic.id} key={i}>
-                {topic.title}
-              </option>
-              
-            ))}
-          </select>
-      
-        </div>
-      </div>
-    </div>
-  </form>
- 
-
-  {showNatureSelect && (
-  <div>
-    
-  {/* <h3 className="heading mb-4">{topics.length > 0 ? topics[0].title : ""}</h3> */}
-    <form action="#" className="card1">
-    <div className="fields">
-      <div className="form-group">
-        <div className="select-wrap one-third">
-          <div className="icon">
-            <span className="ion-ios-arrow-down"></span>
-          </div>
-          <select
-            name="topics"
-            id=""
-            className="form-control"
-            placeholder="Keyword search"
-            onChange={handleSelectChange}
-          >
-            {topics1.map((topic, i) => (
-                
-              <option value={topic.id} key={i}>
-                {topic.title}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-    </div>
-  </form>
-  </div>
-  )}
-</div>
-
-
-                                {/* <div >
-                                    <h3 className="heading mb-4">Thiên nhiên</h3>
-                                    <form action="#" classNameName="card1">
+                                    <h3 className="heading mb-4">Trải nghiệm</h3>
+                                    <form action="#" className="card1">
                                         <div className="fields">
-
                                             <div className="form-group">
                                                 <div className="select-wrap one-third">
-                                                    <div className="icon"><span className="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" className="form-control" placeholder="Keyword search">
-                                                        <option value="">Biển</option>
-                                                       
+                                                    <div className="icon">
+                                                        <span className="ion-ios-arrow-down"></span>
+                                                    </div>
+                                                    <select
+                                                        name="topics"
+                                                        id=""
+                                                        className="form-control"
+                                                        placeholder="Keyword search"
+                                                        onChange={handleSelectChange}
+                                                    >
+                                                        {topics.map((topic, i) => (
+                                                            <option value={topic.id} key={i}>
+                                                                {topic.title}
+                                                            </option>
+
+                                                        ))}
                                                     </select>
+
                                                 </div>
                                             </div>
-
                                         </div>
                                     </form>
-                                   
-                                </div> */}
+
+
+                                    {showNatureSelect && (
+                                        <div>
+
+                                            {/* <h3 className="heading mb-4">{topics.length > 0 ? topics[0].title : ""}</h3> */}
+                                            <form action="#" className="card1">
+                                                <div className="fields">
+                                                    <div className="form-group">
+                                                        <div className="select-wrap one-third">
+                                                            <div className="icon">
+                                                                <span className="ion-ios-arrow-down"></span>
+                                                            </div>
+                                                            <select
+                                                                name="topics"
+                                                                id=""
+                                                                className="form-control"
+                                                                placeholder="Keyword search"
+                                                                onChange={handleSelectChangeBien}
+                                                            >
+                                                                {subTopics.map((topic, i) => (
+
+                                                                    <option value={topic.id} key={i}>
+                                                                        {topic.title}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    )}
+                                </div>
+
+
+
 
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
-                                <form action="#" classNameName="card1">
+                                <form action="#" className="card1">
                                     <div className="fields">
 
                                         <div className="form-group">
@@ -249,42 +270,8 @@ const Places = (props) => {
                                 </form>
 
                             </div>
-                            <div className="sidebar-wrap ftco-animate">
-                                <h3 className="heading mb-4">Gợi ý</h3>
-                                <form method="post" className="star-rating">
-                                    <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                        <label className="form-check-label" for="exampleCheck1">
-                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i></span></p>
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                        <label className="form-check-label" for="exampleCheck1">
-                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i></span></p>
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                        <label className="form-check-label" for="exampleCheck1">
-                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                        <label className="form-check-label" for="exampleCheck1">
-                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
-                                        </label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                        <label className="form-check-label" for="exampleCheck1">
-                                            <p className="rate"><span><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i></span></p>
-                                        </label>
-                                    </div>
-                                </form>
 
-                            </div>
+                            
                         </div>
 
                         <div className="col-lg-9" >
@@ -295,8 +282,8 @@ const Places = (props) => {
                                     {/* <div className="col-lg-12"> */}
 
                                     <div id="map">
-                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameborder="0"
-                                            allowfullscreen=""
+                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
+                                            allowFullScreen=""
                                         //  style ={{border:0}}
                                         >
                                         </iframe>
@@ -307,80 +294,65 @@ const Places = (props) => {
                                 {/* </div> */}
                             </div>
 
+                            <div className="row">
+                                    {places.map((place, i) => (
+                                        <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
+
+                                            <div className="destination" style={{
+                                                boxShadow: '0px 2px 10px  #d9d9d9'
+
+                                            }}>
+                                                <div className="card" >
+                                                    <Link to={`/places/${place.id}`}> <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
+                                                    <div className="card-body">
+                                                        <div className="d-flex">
+                                                            <div className="one">
+                                                                <Link to={`/detail/${place.id}`} >{place.id}</Link>
 
 
+                                                                <Link to='/detail/1'>Post 1</Link>
+                                                                <Link to='/detail/2'>Post 2</Link>
+                                                                <Link to='/detail/3'>Post 3</Link>
 
 
+                                                                <h3><a href="">{place.name}</a></h3>
+                                                                <p className="rate">
+                                                                    <i className="icon-star"></i>
+                                                                    <i className="icon-star"></i>
+                                                                    <i className="icon-star"></i>
+                                                                    <i className="icon-star"></i>
+                                                                    <i className="icon-star-o"></i>
+                                                                </p>
+                                                            </div>
+                                                            <div className="two">
 
-                            <div className="row ">
-                                {/* lặp */}
-                                {/* danh sach */}
-                                {places.map((places, i) => (
-
-
-
-                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate">
-
-
-
-
-
-
-
-                                        <div className="destination" style={{
-                                            boxShadow: '0px 2px 10px  #d9d9d9'
-
-                                        }}>
-                                            <div className="card" >
-                                                <Link to={`/places/${places.id}`} > <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
-                                                <div className="card-body">
-                                                    <div className="d-flex">
-                                                        <div className="one">
-                                                            <Link to={`/places/${places.id}`} >{places.id}</Link>
-                                                            <h3><a href="">{places.name}</a></h3>
-                                                            <p className="rate">
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star-o"></i>
-                                                            </p>
-                                                        </div>
-                                                        <div className="two">
+                                                            </div>
 
                                                         </div>
+                                                        <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
+                                                        <hr />
+                                                        <div className="bottom-area d-flex">
 
+                                                            <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                                <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
+                                                            </a>
+
+                                                            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                                <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
+                                                                <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
+                                                            </DropdownButton>
+
+
+                                                        </div>
                                                     </div>
-                                                    <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-                                                    <hr />
-                                                    <p className="bottom-area d-flex">
-
-
-
-                                                        <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                            <span className="s18_s" onclick="saveMultiWishlist(175);return false;">  <i className="material-icons">  favorite_border</i></span>
-                                                        </a>
-
-                                                        <DropdownButton id="dropdown-basic-button" classNameName="ml-auto" title="Kế hoạch">
-                                                            <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
-                                                            <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
-                                                        </DropdownButton>
-
-
-                                                    </p>
                                                 </div>
                                             </div>
+
+
+
+
                                         </div>
-
-
-
-
-                                    </div>
-
-                                ))
-                                }
-
-
+                                    ))}
                             </div>
 
 
@@ -403,7 +375,6 @@ const Places = (props) => {
                     </div>
                 </div >
             </section >
-
 
         </div >
     )

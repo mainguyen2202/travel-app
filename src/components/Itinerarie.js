@@ -3,78 +3,78 @@ import { Dropdown, DropdownButton, Form } from "react-bootstrap";
 const Itinerarie = (props) => {
     return (
         <div>
-            <div class="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-                <div class="overlay"></div>
-                <div class="container">
-                    <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+                <div className="overlay"></div>
+                <div className="container">
+                    <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
                         style={{ height: '465px' }}
                     >
-                        <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Itinerarie</span></p>
-                            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Itinerarie</h1>
+                        <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Itinerarie</span></p>
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Itinerarie</h1>
                         </div>
                     </div>
                 </div>
             </div>
-            <section class="ftco-section">
+            <section className="ftco-section">
 
-                <div class="container">
-                    {/* <div class="col-sm-12 hotel-single ftco-animate mb-5 mt-4"> */}
-                    <h2 class="mb-5">Lập kế hoạch</h2>
+                <div className="container">
+                    {/* <div className="col-sm-12 hotel-single ftco-animate mb-5 mt-4"> */}
+                    <h2 className="mb-5">Lập kế hoạch</h2>
                     {/* </div> */}
-                    <div class="table-responsive">
-                        <div class="table-wrapper">
-                            <div class="table-title">
+                    <div className="table-responsive">
+                        <div className="table-wrapper">
+                            <div className="table-title">
 
-                                <div class="row">
-                                    <div class="col-sm-1">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
+                                <div className="row">
+                                    <div className="col-sm-1">
+                                        <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
 
                                         {/* modal */}
-                                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLongTitle">Lập kế hoạch</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                            <div className="modal-dialog modal-dialog-centered" role="document">
+                                                <div className="modal-content">
+                                                    <div className="modal-header">
+                                                        <h5 className="modal-title" id="exampleModalLongTitle">Lập kế hoạch</h5>
+                                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
 
                                                     <form>
-                                                        <div class="modal-body">
-                                                            <div class="mb-3 mt-4">
-                                                                <label for="exampleInputEmail1" class="form-label">Tên kế hoạch</label>
+                                                        <div className="modal-body">
+                                                            <div className="mb-3 mt-4">
+                                                                <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
 
-                                                                <input type="text" name="Name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
+                                                                <input type="text" name="Name" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
                                                             </div>
-                                                            <div class="mb-3">
-                                                                <label for="Number" class="form-label">Ngày bắt đầu:   </label>
-                                                                <input type="date" name="date" class="date"  required />
+                                                            <div className="mb-3">
+                                                                <label htmlFor="Number" className="form-label">Ngày bắt đầu:   </label>
+                                                                <input type="date" name="date" className="date"  required />
                                                             </div>
-                                                            <div class="mb-3 mt-4">
-                                                                <label for="Number" class="form-label">Ngày kết thúc:   </label>
-                                                                <input type="date" name="date" class="date"  required />
+                                                            <div className="mb-3 mt-4">
+                                                                <label htmlFor="Number" className="form-label">Ngày kết thúc:   </label>
+                                                                <input type="date" name="date" className="date"  required />
                                                             </div>
-                                                            <div class="mb-3">
-                                                                <label for="exampleInputEmail1" class="form-label">Số lượng người</label>
-                                                                <input type="text" name="Name" class="form-control" placeholder="Target" required autocomplete="on" />
-
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="exampleInputEmail1" class="form-label">Ngân sách</label>
-                                                                <input type="text" name="Name"  class="form-control" placeholder="Target" required autocomplete="on" />
+                                                            <div className="mb-3">
+                                                                <label htmlFor="exampleInputEmail1" className="form-label">Số lượng người</label>
+                                                                <input type="text" name="Name" className="form-control" placeholder="Target" required autocomplete="on" />
 
                                                             </div>
+                                                            <div className="mb-3">
+                                                                <label htmlFor="exampleInputEmail1" className="form-label">Ngân sách</label>
+                                                                <input type="text" name="Name"  className="form-control" placeholder="Target" required autocomplete="on" />
 
-                                                            <div class="mb-3">
-                                                                <label for="exampleFormControlTextarea1"class="form-label">Ghi chú</label>
-                                                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                            </div>
+
+                                                            <div className="mb-3">
+                                                                <label htmlFor="exampleFormControlTextarea1"className="form-label">Ghi chú</label>
+                                                                <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                                                             </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            <button type="button" class="btn btn-primary">Save </button>
+                                                        <div className="modal-footer">
+                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button type="button" className="btn btn-primary">Save </button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -84,15 +84,15 @@ const Itinerarie = (props) => {
 
 
                                     </div>
-                                    <div class="col-sm-1">
+                                    <div className="col-sm-1">
                                         <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Sắp xếp">
                                             <Dropdown.Item href="#/action-1">Mới tới cũ</Dropdown.Item>
                                             <Dropdown.Item href="#/action-2">Cũ tới mới</Dropdown.Item>
                                         </DropdownButton>
                                     </div>
-                                    <div class="col-sm-10">
-                                        <div class="search-box" >
-                                            <input type="text" class="form-control" placeholder="Tìm kiếm" />
+                                    <div className="col-sm-10">
+                                        <div className="search-box" >
+                                            <input type="text" className="form-control" placeholder="Tìm kiếm" />
                                         </div>
                                     </div>
                                 </div>
@@ -100,13 +100,13 @@ const Itinerarie = (props) => {
                             </div>
                             
 
-                            <table class="table table-striped table-hover table-bordered">
+                            <table className="table table-striped table-hover table-bordered">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Tên kế hoạch <i class="fa fa-sort"></i></th>
+                                        <th>Tên kế hoạch <i className="fa fa-sort"></i></th>
                                         <th>Ngày bắt đầu</th>
-                                        <th>Ngày kết thúc <i class="fa fa-sort"></i></th>
+                                        <th>Ngày kết thúc <i className="fa fa-sort"></i></th>
                                         <th>Số lượng người</th>
                                         <th>Ngân sách</th>
                                         <th>Hành động</th>
@@ -121,26 +121,26 @@ const Itinerarie = (props) => {
                                         <td>2</td>
                                         <td>2000000</td>
                                         <td>
-                                            <a href="/ItinerarieView" class="view" title="View" data-toggle="tooltip"><i class="material-icons">&#xE417;</i></a>
-                                            <a href="#" class="edit" title="Edit" data-toggle="modal" data-target="#exampleModal"><i class="material-icons">&#xE254;</i></a>
+                                            <a href="/ItinerarieView" className="view" title="View" data-toggle="tooltip"><i className="material-icons">&#xE417;</i></a>
+                                            <a href="#" className="edit" title="Edit" data-toggle="modal" data-target="#exampleModal"><i className="material-icons">&#xE254;</i></a>
 
 
-                                            <a href="/ItinerarieEdit" class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                                            <a href="/ItinerarieEdit" className="delete" title="Delete" data-toggle="tooltip"><i className="material-icons">&#xE872;</i></a>
                                         </td>
                                     </tr>
 
                                 </tbody>
                             </table>
-                            <div class="clearfix">
-                                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                                <ul class="pagination">
-                                    <li class="page-item disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
-                                    <li class="page-item"><a href="#" class="page-link">1</a></li>
-                                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                                    <li class="page-item"><a href="#" class="page-link"><i class="fa fa-angle-double-right"></i></a></li>
+                            <div className="clearfix">
+                                <div className="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
+                                <ul className="pagination">
+                                    <li className="page-item disabled"><a href="#"><i className="fa fa-angle-double-left"></i></a></li>
+                                    <li className="page-item"><a href="#" className="page-link">1</a></li>
+                                    <li className="page-item"><a href="#" className="page-link">2</a></li>
+                                    <li className="page-item active"><a href="#" className="page-link">3</a></li>
+                                    <li className="page-item"><a href="#" className="page-link">4</a></li>
+                                    <li className="page-item"><a href="#" className="page-link">5</a></li>
+                                    <li className="page-item"><a href="#" className="page-link"><i className="fa fa-angle-double-right"></i></a></li>
                                 </ul>
                             </div>
                         </div>

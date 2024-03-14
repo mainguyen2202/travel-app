@@ -6,36 +6,36 @@ const Like = (props) => {
 
     return (
         <div>
-                    <div class="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+                    <div className="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+      <div className="overlay"></div>
+      <div className="container">
+        <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
          style={{ height: '465px' }}
         >
-          <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>Like</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Like</h1>
+          <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Like</span></p>
+            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Like</h1>
           </div>
         </div>
       </div>
     </div>
 
-    <section class="ftco-section">
-                <div class="container">
-                    <div class="row">
+    <section className="ftco-section">
+                <div className="container">
+                    <div className="row">
 
 
                         
-                        <div class="col-lg-12">
+                        <div className="col-lg-12">
                           
-                            <div class="reservation-form" >
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-lg-12">
+                            <div className="reservation-form" >
+                                <div className="container">
+                                    <div className="row">
+                                        <div className="col-lg-12">
 
                                             <div id="map">
-                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameborder="0"
-                                                    allowfullscreen=""
+                                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
+                                                    allowFullScreen=""
                                                 //  style ={{border:0}}
                                                 >
                                                 </iframe>
@@ -51,34 +51,34 @@ const Like = (props) => {
 
 
                         
-                            <div class="row ">
+                            <div className="row">
 
-                            <div class="col-sm col-md-6 col-lg-4 ftco-animate">
+                            <div className="col-sm col-md-6 col-lg-4 ftco-animate">
 
 
 
-{/* <div class="destination" style={{ border: '5px solid #EDF2F7', borderRadius: '15px' }}>
+{/* <div className="destination" style={{ border: '5px solid #EDF2F7', borderRadius: '15px' }}>
     <div>
 
-        <a href="PlacesSingle" class="img img-2 d-flex justify-content-center align-items-center" style={{ backgroundImage: `url('./image1/home/hoChiMinh.jpg')` }}>
-            <div class="icon d-flex justify-content-center align-items-center">
-                <span class="icon-link"></span>
+        <a href="PlacesSingle" className="img img-2 d-flex justify-content-center align-items-center" style={{ backgroundImage: `url('./image1/home/hoChiMinh.jpg')` }}>
+            <div className="icon d-flex justify-content-center align-items-center">
+                <span className="icon-link"></span>
             </div>
         </a>
     </div>
-    <div class="text p-3">
-        <div class="d-flex">
-            <div class="one">
+    <div className="text p-3">
+        <div className="d-flex">
+            <div className="one">
                 <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
 
             </div>
-            <div class="two">
-                <p class="rate">
-                    <i class="icon-star"></i>
-                    <i class="icon-star"></i>
-                    <i class="icon-star"></i>
-                    <i class="icon-star"></i>
-                    <i class="icon-star-o"></i>
+            <div className="two">
+                <p className="rate">
+                    <i className="icon-star"></i>
+                    <i className="icon-star"></i>
+                    <i className="icon-star"></i>
+                    <i className="icon-star"></i>
+                    <i className="icon-star-o"></i>
                 </p>
             </div>
 
@@ -86,15 +86,15 @@ const Like = (props) => {
         <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng
             sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
         <hr />
-        <p class="bottom-area d-flex">
+        <p className="bottom-area d-flex">
 
-            <a href="" class="like" title="Like" data-toggle="tooltip">      <i class="bi bi-heart"></i></a>
+            <a href="" className="like" title="Like" data-toggle="tooltip">      <i className="bi bi-heart"></i></a>
 
 
-            <a href="/ItinerarieEdit" class="like" title="Like" data-toggle="tooltip">
-                <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
+            <a href="/ItinerarieEdit" className="like" title="Like" data-toggle="tooltip">
+                <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
             </a>
-            <a href="/ItinerarieEdit" class="like" title="Like" data-toggle="tooltip"><i class="material-icons">  favorite</i></a>
+            <a href="/ItinerarieEdit" className="like" title="Like" data-toggle="tooltip"><i className="material-icons">  favorite</i></a>
 
             <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
                 <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
@@ -113,37 +113,37 @@ const Like = (props) => {
 
 
 
-<div class="destination" style={{
+<div className="destination" style={{
     boxShadow: '0px 2px 10px  #d9d9d9'
 
 }}>
-    <div class="card" >
-        <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." />
-        <div class="card-body">
-            <div class="d-flex">
-                <div class="one">
+    <div className="card" >
+        <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
+        <div className="card-body">
+            <div className="d-flex">
+                <div className="one">
                     <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-                    <p class="rate">
-                        <i class="icon-star"></i>
-                        <i class="icon-star"></i>
-                        <i class="icon-star"></i>
-                        <i class="icon-star"></i>
-                        <i class="icon-star-o"></i>
+                    <p className="rate">
+                        <i className="icon-star"></i>
+                        <i className="icon-star"></i>
+                        <i className="icon-star"></i>
+                        <i className="icon-star"></i>
+                        <i className="icon-star-o"></i>
                     </p>
                 </div>
-                <div class="two">
+                <div className="two">
 
                 </div>
 
             </div>
             <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
             <hr />
-            <p class="bottom-area d-flex">
+            <p className="bottom-area d-flex">
 
 
 
-                <a href="/Like" class="like" title="Like" data-toggle="tooltip">
-                    <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
+                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                    <span className="s18_s">  <i className="material-icons">  favorite_border</i></span>
                 </a>
 
                 <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
@@ -167,12 +167,12 @@ const Like = (props) => {
                             </div>
 
 
-                            <div class="row mt-5">
-                                <div class="col text-center">
-                                    <div class="block-27">
+                            <div className="row mt-5">
+                                <div className="col text-center">
+                                    <div className="block-27">
                                         <ul>
                                             <li><a href="#">&lt;</a></li>
-                                            <li class="active"><span>1</span></li>
+                                            <li className="active"><span>1</span></li>
                                             <li><a href="#">2</a></li>
                                             <li><a href="#">3</a></li>
                                             <li><a href="#">4</a></li>

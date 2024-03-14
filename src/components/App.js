@@ -57,7 +57,7 @@ function App() {
               		<div className="row">
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">From</label>
+              					<label htmlFor="#">From</label>
 	              				<div className="form-field">
 	              					<div className="icon"><span className="icon-my_location"></span></div>
 					                <input type="text" className="form-control" placeholder="From"/>
@@ -66,7 +66,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Where</label>
+              					<label htmlFor="#">Where</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control" placeholder="Where"/>
@@ -75,7 +75,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check In</label>
+              					<label htmlFor="#">Check In</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkin_date" placeholder="Check In"/>
@@ -84,7 +84,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check Out</label>
+              					<label htmlFor="#">Check Out</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkout_date" placeholder="From"/>
@@ -93,7 +93,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Travelers</label>
+              					<label htmlFor="#">Travelers</label>
               					<div className="form-field">
 	              					<div className="select-wrap">
 			                      <div className="icon"><span className="ion-ios-arrow-down"></span></div>
@@ -124,7 +124,7 @@ function App() {
               		<div className="row">
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check In</label>
+              					<label htmlFor="#">Check In</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkin_date" placeholder="Check In"/>
@@ -133,7 +133,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check Out</label>
+              					<label htmlFor="#">Check Out</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkout_date" placeholder="From"/>
@@ -142,7 +142,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Guest</label>
+              					<label htmlFor="#">Guest</label>
               					<div className="form-field">
 	              					<div className="select-wrap">
 			                      <div className="icon"><span className="ion-ios-arrow-down"></span></div>
@@ -173,7 +173,7 @@ function App() {
               		<div className="row">
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Where</label>
+              					<label htmlFor="#">Where</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control" placeholder="Where"/>
@@ -182,7 +182,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check In</label>
+              					<label htmlFor="#">Check In</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkin_date" placeholder="Check In"/>
@@ -191,7 +191,7 @@ function App() {
               			</div>
               			<div className="col-md align-items-end">
               				<div className="form-group">
-              					<label for="#">Check Out</label>
+              					<label htmlFor="#">Check Out</label>
               					<div className="form-field">
 	              					<div className="icon"><span className="icon-map-marker"></span></div>
 					                <input type="text" className="form-control checkout_date" placeholder="From"/>

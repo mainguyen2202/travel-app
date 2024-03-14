@@ -4,15 +4,15 @@ const About = (props) => {
     return (
         <div>
 
-<div class="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+<div className="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+      <div className="overlay"></div>
+      <div className="container">
+        <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
          style={{ height: '465px' }}
         >
-          <div class="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.html">Home</a></span> <span>About</span></p>
-            <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">About Us</h1>
+          <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>About</span></p>
+            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">About Us</h1>
           </div>
         </div>
       </div>
@@ -33,23 +33,23 @@ const About = (props) => {
 
 
 
-            <section class="ftco-section">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="intro">
+            <section className="ftco-section">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-4">
+                            <div className="intro">
                                 <h3><span>01</span> Travel</h3>
                                 <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="intro">
+                        <div className="col-md-4">
+                            <div className="intro">
                                 <h3><span>02</span> Experience</h3>
                                 <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="intro">
+                        <div className="col-md-4">
+                            <div className="intro">
                                 <h3><span>03</span> Relax</h3>
                                 <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
                             </div>
@@ -58,39 +58,39 @@ const About = (props) => {
                 </div>
             </section>
 
-            <section class="ftco-section ftco-counter img" id="section-counter" style={{ backgroundImage: `url('./images/bg_1jpg')` }} data-stellar-background-ratio="0.5">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-md-10">
-                            <div class="row">
-                                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div class="block-18 text-center">
-                                        <div class="text">
-                                            <strong class="number" data-number="100000">0</strong>
+            <section className="ftco-section ftco-counter img" id="section-counter" style={{ backgroundImage: `url('./images/bg_1jpg')` }} data-stellar-background-ratio="0.5">
+                <div className="container">
+                    <div className="row justify-content-center">
+                        <div className="col-md-10">
+                            <div className="row">
+                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+                                    <div className="block-18 text-center">
+                                        <div className="text">
+                                            <strong className="number" data-number="100000">0</strong>
                                             <span>Happy Customers</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div class="block-18 text-center">
-                                        <div class="text">
-                                            <strong class="number" data-number="40000">0</strong>
+                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+                                    <div className="block-18 text-center">
+                                        <div className="text">
+                                            <strong className="number" data-number="40000">0</strong>
                                             <span>Destination Places</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div class="block-18 text-center">
-                                        <div class="text">
-                                            <strong class="number" data-number="87000">0</strong>
+                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+                                    <div className="block-18 text-center">
+                                        <div className="text">
+                                            <strong className="number" data-number="87000">0</strong>
                                             <span>Hotels</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div class="block-18 text-center">
-                                        <div class="text">
-                                            <strong class="number" data-number="56400">0</strong>
+                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
+                                    <div className="block-18 text-center">
+                                        <div className="text">
+                                            <strong className="number" data-number="56400">0</strong>
                                             <span>Restaurant</span>
                                         </div>
                                     </div>

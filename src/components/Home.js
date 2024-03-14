@@ -14,12 +14,12 @@ const Home = (props) => {
 
 
 
-                    <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true"
+                    <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-start" data-scrollax-parent="true"
                         style={{ height: '919px' }}
 
-                    ><div class="col-md-9 ftco-animate mb-5 pb-5 text-center text-md-left" data-scrollax=" properties: { translateY: '70%' }"
+                    ><div className="col-md-9 ftco-animate mb-5 pb-5 text-center text-md-left" data-scrollax=" properties: { translateY: '70%' }"
                     // style={{ transform: 'translateZ(0px) , translateY(0%)' }}
-                    ><h1 class="mb-4"
+                    ><h1 className="mb-4"
                         data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"
 
                     // style={{ opacity: 1, transform: 'translateZ(0px) , translateY(0%)' }}
@@ -155,41 +155,41 @@ const Home = (props) => {
                         </div>
                     </div>
                 </div>
-                <div class="container">
+                <div className="container">
                     <div className="row">
-                        <div class="col-sm col-md-6 col-lg-4 ftco-animate">
+                        <div className="col-sm col-md-6 col-lg-4 ftco-animate">
 
-                            <div class="destination"style={{
+                            <div className="destination"style={{
                                         boxShadow: '0px 2px 10px  #d9d9d9'
 
                                     }}>
-                                <div class="card "  >
-                                    <img src="./image1/home/hoChiMinh.jpg" class="card-img-top" alt="..." />
-                                    <div class="card-body">
-                                        <div class="d-flex">
-                                            <div class="one">
+                                <div className="card "  >
+                                    <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
+                                    <div className="card-body">
+                                        <div className="d-flex">
+                                            <div className="one">
                                                 <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-                                                <p class="rate">
-                                                    <i class="icon-star"></i>
-                                                    <i class="icon-star"></i>
-                                                    <i class="icon-star"></i>
-                                                    <i class="icon-star"></i>
-                                                    <i class="icon-star-o"></i>
+                                                <p className="rate">
+                                                    <i className="icon-star"></i>
+                                                    <i className="icon-star"></i>
+                                                    <i className="icon-star"></i>
+                                                    <i className="icon-star"></i>
+                                                    <i className="icon-star-o"></i>
                                                 </p>
                                             </div>
-                                            <div class="two">
+                                            <div className="two">
 
                                             </div>
 
                                         </div>
                                         <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
                                         <hr />
-                                        <p class="bottom-area d-flex">
+                                        <p className="bottom-area d-flex">
 
 
 
-                                            <a href="/Like" class="like" title="Like" data-toggle="tooltip">
-                                                <span class="s18_s" onclick="saveMultiWishlist(175);return false;">  <i class="material-icons">  favorite_border</i></span>
+                                            <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                <span className="s18_s">  <i className="material-icons">  favorite_border</i></span>
                                             </a>
 
                                             <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
