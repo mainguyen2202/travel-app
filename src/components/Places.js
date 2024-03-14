@@ -35,67 +35,59 @@ const Places = (props) => {
     }
 
 
-
-    
-    const [topics, setTopics] = useState([]);
-
-    useEffect(() => {
-        let MockupAPI = {
-            "status": 1,
-            "message": "",
-            "Item": [
-                {
-                    "id": 1,
-                    "title": "Thiên nhiên",
-                    "subTopicsId": 0
-                },
-                {
-                    "id": 2,
-                    "title": "Truyền thống",
-                    "subTopicsId": 0
-                },
-                {
-                    "id": 3,
-                    "title": "Biển",
-                    "subTopicsId": 1
-                }
-            ]
-        };
-
-
+    let MockupAPITopics = {
+        "status": 1,
+        "message": "",
+        "Item": [
+          {
+            "id": 1,
+            "title": "Thiên nhiên",
+            "subTopicsId": 0
+          },
+          {
+            "id": 2,
+            "title": "Truyền thống",
+            "subTopicsId": 0
+          },
+          {
+            "id": 3,
+            "title": "Biển",
+            "subTopicsId": 1
+          },
+          {
+            "id": 4,
+            "title": "Núi",
+            "subTopicsId": 1
+          }
+        ]
+      };
+      
+      const [topics, setTopics] = useState([]);
+      const [topics1, setTopics1] = useState([]);
+      const [showNatureSelect, setShowNatureSelect] = useState(false);
+      
+      useEffect(() => {
+        console.log(MockupAPITopics.Item);
+      
         // Filter items with subTopicsId equal to 0
-        const filteredTopics = MockupAPI.Item.filter(item => item.subTopicsId === 0);
-
+        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === 0);
+      
         setTopics(filteredTopics);
-    }, []);
-
-    // Xử lý khi chọn chủ đề
-    const handleSelectChange = (event) => {
-        const selectedTopic = event.target.value;
-        // Xử lý logic khi chọn chủ đề
-
-        // Nếu chọn chủ đề "Thiên nhiên", cập nhật lại danh sách chủ đề
-        if (selectedTopic === "Thiên nhiên") {
-            let MockupAPI = {
-                "status": 1,
-                "message": "",
-                "Item": [
-                    {
-                        "id": 1,
-                        "title": "Biển",
-                        "subTopicsId": 1
-                    }
-                ]
-            };
-
-            const filteredTopics = MockupAPI.Item.filter(
-                item => item.subTopicsId === 1
-            );
-            setTopics(filteredTopics);
+      }, []);
+      
+      // Xử lý khi chọn chủ đề
+      const handleSelectChange = (event) => {
+        const selectedTopicId = parseInt(event.target.value);
+      
+        // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
+        if (selectedTopicId === 1) {
+          const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === 1);
+          setShowNatureSelect(true);
+          setTopics1(filteredTopics);
+        } else {
+          setShowNatureSelect(false);
         }
-    };
-
-
+      };
 
 
     return (
@@ -141,35 +133,55 @@ const Places = (props) => {
                                     </div>
                                 </form>
 
-                                <h3 className="heading mb-4">Trải nghiệm</h3>
-                                <form action="#" classNameName="card1">
-                                    <div className="fields">
-                                        <div className="form-group">
-                                            <div className="select-wrap one-third">
-                                                <div className="icon">
-                                                    <span className="ion-ios-arrow-down"></span>
-                                                </div>
-                                                <select
-                                                    name="topics"
-                                                    id=""
-                                                    className="form-control"
-                                                    placeholder="Keyword search"
-                                                    onChange={handleSelectChange}
-                                                >
-                                                    {topics.map((topic, i) => (
-                                                        <option value={topic.title} key={i}>
-                                                            {topic.title}
-                                                            
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                              
+                                <div>
+  <h3 className="heading mb-4">Trải nghiệm</h3>
+  <form action="#" className="card1">
+    <div className="fields">
+      <div className="form-group">
+        <div className="select-wrap one-third">
+          <div className="icon">
+            <span className="ion-ios-arrow-down"></span>
+          </div>
+          <select
+            name="topics"
+            id=""
+            className="form-control"
+            placeholder="Keyword search"
+            onChange={handleSelectChange}
+          >
+            {topics.map((topic, i) => (
+              <option value={topic.id} key={i}>
+                {topic.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  {showNatureSelect && (
+    <form>
+      {/* Thêm select cho chủ đề thiên nhiên */}
+      <div className="form-group">
+        <select id="natureSelect" name="natureSelect">
+          {/* Thêm các tùy chọn cho select */}
+          {topics1
+            // .filter(topic => topic.subTopicsId === 1)
+            .map((topic, i) => (
+              <option value={topic.id} key={i}>
+                {topic.title}
+              </option>
+            ))}
+        </select>
+      </div>
+    </form>
+  )}
+</div>
 
 
-                                <div >
+                                {/* <div >
                                     <h3 className="heading mb-4">Thiên nhiên</h3>
                                     <form action="#" classNameName="card1">
                                         <div className="fields">
@@ -187,7 +199,7 @@ const Places = (props) => {
                                         </div>
                                     </form>
                                    
-                                </div>
+                                </div> */}
 
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
