@@ -1,144 +1,111 @@
-import { useEffect, useState } from "react";
-import { Dropdown, DropdownButton, NavLink } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
-import { Link } from 'react-router-dom'
-
-
-const Places = (props) => {
-
-
-
-
-
-    let MockupAPITopics = {
-        "status": 1,
-        "message": "",
-        "Item": [
-            {
-                "id": 1,
-                "title": "Thiên nhiên",
-                "subTopicsId": 0
-            },
-            {
-                "id": 2,
-                "title": "Truyền thống",
-                "subTopicsId": 0
-            },
-            {
-                "id": 3,
-                "title": "Biển",
-                "subTopicsId": 1
-            },
-            {
-                "id": 4,
-                "title": "Núi",
-                "subTopicsId": 1
-            },
-            ,
-            {
-                "id": 5,
-                "title": "hát",
-                "subTopicsId": 2
-            },
-            {
-                "id": 6,
-                "title": "múa",
-                "subTopicsId": 2
-            }
-        ]
-    };
-
+const Places = () => {
     const [topics, setTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
     const [showNatureSelect, setShowNatureSelect] = useState(false);
 
-    // khởi tạo ban đầu khi vào từng trang
+    const [places, setPlaces] = useState([]);
     useEffect(() => {
-        console.log(MockupAPITopics.Item);
+        fetch('http://localhost:8080/places/list')
+            .then(response => response.json())
+            .then(data => {
 
-        let selectedDefaultTopicId = 0;
-        // Filter items with subTopicsId equal to 0
-        const filteredTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedDefaultTopicId);// khởi tạo ban đầu của menu cha
-        setTopics(filteredTopics);
+                setPlaces(data);
 
-        console.log(filteredTopics);
-        if (filteredTopics.length > 0) {
-
-            let selectedTopicId = filteredTopics[0].id;
-
-            // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
-            const filteredSubTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);// khỏi tạo menu con tho bộlọc dữ liệu theo cấp cha
-
-            if (filteredSubTopics.length > 0) {
-                setShowNatureSelect(true);
-                setSubTopics(filteredSubTopics);
-
-                let selectedSubTopicId = filteredSubTopics[0].id;
-
-                // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
-                const filteredPlaces = MockupAPI.Item.filter(
-                    (item) => item.idTopic === selectedSubTopicId
-                );
-
-                // Cập nhật danh sách sản phẩm và chủ đề được chọn
-                setPlaces(filteredPlaces);
-
-            } else {
-                setShowNatureSelect(false);
-            }
-        }
-
+            })
+            .catch(e => {
+                console.error(e);
+            });
     }, []);
 
-    // Xử lý khi chọn chủ đề
+    useEffect(() => {
+        fetch('http://localhost:8080/topics/list')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                let selectedDefaultTopicId = 0;
+                const filteredTopics = data.filter(item => item.subTopicsId === selectedDefaultTopicId);
+                setTopics(filteredTopics);
+
+                console.log(filteredTopics);
+                if (filteredTopics.length > 0) {
+                    let selectedTopicId = filteredTopics[0].id;
+
+                    const filteredSubTopics = data.filter(item => item.subTopicsId === selectedTopicId);
+                    if (filteredSubTopics.length > 0) {
+                        setShowNatureSelect(true);
+                        setSubTopics(filteredSubTopics);
+
+                        // let selectedSubTopicId = filteredSubTopics[0].id;
+
+                        // // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
+                        // const filteredPlaces = data.filter(
+                        //     (item) => item.places === selectedSubTopicId
+                        // );
+
+                        // // Cập nhật danh sách sản phẩm và chủ đề được chọn
+                        // setPlaces(filteredPlaces);
+
+                    } else {
+                        setShowNatureSelect(false);
+                    }
+                }
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }, []);
+
+
+
     const handleSelectChange = (event) => {
         const selectedTopicId = parseInt(event.target.value);
-        console.log(selectedTopicId);// thiên nhiên hoặc truyền thống
+        console.log(selectedTopicId);
 
-        // Filter items with subTopicsId equal to selectedTopicId (for nature topics)
-        const filteredSubTopics = MockupAPITopics.Item.filter(item => item.subTopicsId === selectedTopicId);// khỏi tạo menu con tho bộlọc dữ liệu theo cấp cha
-
-        if (filteredSubTopics.length > 0) {
-            setShowNatureSelect(true);
-            setSubTopics(filteredSubTopics);
-        } else {
-            setShowNatureSelect(false);
-        }
+        fetch(`http://localhost:8080/topics/list/${selectedTopicId}`)
+            .then(response => response.json())
+            .then(data => {
+                const filteredSubTopics = data.filter(item => item.subTopicsId === selectedTopicId);
+                if (filteredSubTopics.length > 0) {
+                    setShowNatureSelect(true);
+                    setSubTopics(filteredSubTopics);
+                } else {
+                    setShowNatureSelect(false);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
-
-    const [places, setPlaces] = useState([]);
-
-    let MockupAPI = {
-        "status": 1,
-        "message": "",
-        "Item": [
-            {
-                "id": 1,
-                "name": "mai",
-                "idTopic": 3
-            },
-            {
-                "id": 2,
-                "name": "my",
-                "idTopic": 5
-            }
-        ]
-    };
-    const handleSelectChangeBien = (event) => {
+    const handleSelectChangeTopics = (event) => {
         const selectedTopicId = parseInt(event.target.value);
 
-        // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
-        const filteredPlaces = MockupAPI.Item.filter(
-            (item) => item.idTopic === selectedTopicId
-        );
-
-        // Cập nhật danh sách sản phẩm và chủ đề được chọn
-        setPlaces(filteredPlaces);
+        fetch(`http://localhost:8080/ảt/list/${selectedTopicId}`)
+            .then(response => response.json())
+            .then(data => {
+                setPlaces(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
+    const handleSelectChangePlaces = (event) => {
+        const selectedTopicId = parseInt(event.target.value);
 
-
-
+        fetch(`http://localhost:8080/artitlac/list/${selectedTopicId}`)
+            .then(response => response.json())
+            .then(data => {
+                setPlaces(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
 
     return (
         <div>
@@ -172,10 +139,18 @@ const Places = (props) => {
                                         <div className="form-group">
                                             <div className="select-wrap one-third">
                                                 <div className="icon"><span className="ion-ios-arrow-down"></span></div>
-                                                <select name="" id="" className="form-control" placeholder="Keyword search">
-                                                    <option value="">Hồ Chí Minh</option>
-                                                    <option value="">Hà Nội</option>
-                                                    <option value="">Hội An</option>
+                                                <select
+                                                    name="topics"
+                                                    id=""
+                                                    className="form-control"
+                                                    placeholder="Keyword search"
+                                                    onChange={handleSelectChangePlaces}
+                                                >
+                                                    {places.map((place, i) => (
+                                                        <option value={place.id} key={i}>
+                                                            {place.name}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
                                         </div>
@@ -204,10 +179,8 @@ const Places = (props) => {
                                                             <option value={topic.id} key={i}>
                                                                 {topic.title}
                                                             </option>
-
                                                         ))}
                                                     </select>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -216,8 +189,6 @@ const Places = (props) => {
 
                                     {showNatureSelect && (
                                         <div>
-
-                                            {/* <h3 className="heading mb-4">{topics.length > 0 ? topics[0].title : ""}</h3> */}
                                             <form action="#" className="card1">
                                                 <div className="fields">
                                                     <div className="form-group">
@@ -230,10 +201,9 @@ const Places = (props) => {
                                                                 id=""
                                                                 className="form-control"
                                                                 placeholder="Keyword search"
-                                                                onChange={handleSelectChangeBien}
+                                                                onChange={handleSelectChangeTopics}
                                                             >
                                                                 {subTopics.map((topic, i) => (
-
                                                                     <option value={topic.id} key={i}>
                                                                         {topic.title}
                                                                     </option>
@@ -271,7 +241,7 @@ const Places = (props) => {
 
                             </div>
 
-                            
+
                         </div>
 
                         <div className="col-lg-9" >
@@ -295,58 +265,58 @@ const Places = (props) => {
                             </div>
 
                             <div className="row">
-                                    {places.map((place, i) => (
-                                        <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
+                                {places.map((place, i) => (
+                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
 
-                                            <div className="destination" style={{
-                                                boxShadow: '0px 2px 10px  #d9d9d9'
+                                        <div className="destination" style={{
+                                            boxShadow: '0px 2px 10px  #d9d9d9'
 
-                                            }}>
-                                                <div className="card" >
-                                                    <Link to={`/places/${place.id}`}> <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
-                                                    <div className="card-body">
-                                                        <div className="d-flex">
-                                                            <div className="one">
-                                                                <Link to={`/detail?place_id=${place.id}`} >{place.id}</Link>
+                                        }}>
+                                            <div className="card" >
+                                                <Link to={`/ places / ${place.id}`}> <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
+                                                <div className="card-body">
+                                                    <div className="d-flex">
+                                                        <div className="one">
+                                                            <Link to={`/detail?place_id=${place.id}`} >{place.id}</Link>
 
-                                                                <h3><a href="">{place.name}</a></h3>
-                                                                <p className="rate">
-                                                                    <i className="icon-star"></i>
-                                                                    <i className="icon-star"></i>
-                                                                    <i className="icon-star"></i>
-                                                                    <i className="icon-star"></i>
-                                                                    <i className="icon-star-o"></i>
-                                                                </p>
-                                                            </div>
-                                                            <div className="two">
-
-                                                            </div>
+                                                            <h3><a href="">{place.name}</a></h3>
+                                                            <p className="rate">
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star-o"></i>
+                                                            </p>
+                                                        </div>
+                                                        <div className="two">
 
                                                         </div>
-                                                        <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-                                                        <hr />
-                                                        <div className="bottom-area d-flex">
 
-                                                            <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                                <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
-                                                            </a>
+                                                    </div>
+                                                    <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
+                                                    <hr />
+                                                    <div className="bottom-area d-flex">
 
-                                                            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
-                                                                <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
-                                                            </DropdownButton>
+                                                        <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                            <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
+                                                        </a>
+
+                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                            <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
+                                                            <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
+                                                        </DropdownButton>
 
 
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-
-
-
-
                                         </div>
-                                    ))}
+
+
+
+
+                                    </div>
+                                ))}
                             </div>
 
 
@@ -366,7 +336,7 @@ const Places = (props) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div >
                 </div >
             </section >
 
