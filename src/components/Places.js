@@ -307,13 +307,7 @@ const Places = (props) => {
                                                     <div className="card-body">
                                                         <div className="d-flex">
                                                             <div className="one">
-                                                                <Link to={`/detail/${place.id}`} >{place.id}</Link>
-
-
-                                                                <Link to='/detail/1'>Post 1</Link>
-                                                                <Link to='/detail/2'>Post 2</Link>
-                                                                <Link to='/detail/3'>Post 3</Link>
-
+                                                                <Link to={`/detail?place_id=${place.id}`} >{place.id}</Link>
 
                                                                 <h3><a href="">{place.name}</a></h3>
                                                                 <p className="rate">

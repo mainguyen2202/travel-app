@@ -4,19 +4,23 @@
 // import "../TieuLuan/travel-app/public/css/style.css";
 
 import React, { useState, useEffect } from 'react'
-import { Link, NavLink, useNavigate, useParams } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
 
 const PlacesSingle = (props) => {
-    const {placeId } = useParams();// route param /:productId
+    // const {placeId } = useParams();// route param /:id
+    const [searchParams, setSearchParams] = useSearchParams();
+    // Get a specific query parameter
+    const placeId = searchParams.get('place_id');
+
     const [data, setData] = useState([]);
 
 
     useEffect(() => {
-      
+
         console.log(placeId);
 
-               // Mockup API
+        // Mockup API
         let MockupAPI = {
             "status": 1,
             "message": "",
@@ -28,11 +32,11 @@ const PlacesSingle = (props) => {
         console.log(MockupAPI.Item);
         setData(MockupAPI.Item); //lấy dữ liệu mockup
     }, []);
-    
+
     return (
-       <div>
-    
-         <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+        <div>
+
+            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
                 <div className="overlay"></div>
                 <div className="container">
                     <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
@@ -54,7 +58,7 @@ const PlacesSingle = (props) => {
                                 <h1>{data.id}</h1>
                                 <form action="#">
                                     <div className="fields">
-                                       
+
                                         <div className="form-group">
                                             <div className="select-wrap one-third">
                                                 <div className="icon"><span className="ion-ios-arrow-down"></span></div>
@@ -67,11 +71,11 @@ const PlacesSingle = (props) => {
                                                 </select>
                                             </div>
                                         </div>
-                                    
+
                                     </div>
                                 </form>
                             </div>
-                           
+
                         </div>
                         <div className="col-lg-9">
                             <div className="row">
@@ -89,20 +93,20 @@ const PlacesSingle = (props) => {
                                     </div>
                                 </div>
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
-                                {/* <div className="reservation-form" > */}
-                                <div className="row">
+                                    {/* <div className="reservation-form" > */}
+                                    <div className="row">
 
-                                    <div id="map">
-                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
-                                            allowFullScreen=""
-                                        >
-                                        </iframe>
+                                        <div id="map">
+                                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
+                                                allowFullScreen=""
+                                            >
+                                            </iframe>
+                                        </div>
+
                                     </div>
-
+                                    {/* </div> */}
                                 </div>
-                            {/* </div> */}
-                            </div>
-                             
+
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
                                     <span>Our Best hotels &amp; Rooms</span>
                                     <h2>Luxury Hotel in Paris</h2>
@@ -142,8 +146,8 @@ const PlacesSingle = (props) => {
                                         </figure>
                                     </div>
                                 </div>
-                              
-                              
+
+
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
                                     <h4 className="mb-4">Review &amp; Ratings</h4>
                                     <div className="row">
@@ -184,74 +188,49 @@ const PlacesSingle = (props) => {
                                     </div>
                                 </div>
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
-                                  
-                                  
-              
-                    <div className="row">
-                        <div className="col-md-12 ftco-animate">
-                        <div className="tag-widget post-tag-container mb-5 mt-5">
-                                <div className="tagcloud">
-                                    <a href="#" className="tag-cloud-link">Life</a>
-                                    <a href="#" className="tag-cloud-link">Sport</a>
-                                    <a href="#" className="tag-cloud-link">Tech</a>
-                                    <a href="#" className="tag-cloud-link">Travel</a>
-                                </div>
-                            </div>
-
-                            <div className="about-author d-flex p-4 bg-light">
-                                <div className="bio mr-5">
-                                    <img src="images/person_1.jpg" alt="Image placeholder" className="img-fluid mb-4" />
-                                </div>
-                                <div className="desc">
-                                    <h3>George Washington</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente consectetur similique, inventore eos fugit cupiditate numquam!</p>
-                                </div>
-                            </div>
 
 
-                            <div className="pt-5 mt-5">
-                                <h3 className="mb-5">6 Comments</h3>
-                                <ul className="comment-list">
-                                    <li className="comment">
-                                        <div className="vcard bio">
-                                            <img src="images/person_1.jpg" alt="Image placeholder" />
-                                        </div>
-                                        <div className="comment-body">
-                                            <h3>John Doe</h3>
-                                            <div className="meta">October 03, 2018 at 2:21pm</div>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                            <p><a href="#" className="reply">Reply</a></p>
-                                        </div>
-                                    </li>
 
-                                    <li className="comment">
-                                        <div className="vcard bio">
-                                            <img src="images/person_1.jpg" alt="Image placeholder" />
-                                        </div>
-                                        <div className="comment-body">
-                                            <h3>John Doe</h3>
-                                            <div className="meta">October 03, 2018 at 2:21pm</div>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                            <p><a href="#" className="reply">Reply</a></p>
-                                        </div>
-
-                                        <ul className="children">
-                                            <li className="comment">
-                                                <div className="vcard bio">
-                                                    <img src="images / person_1.jpg" alt="Image placeholder" />
+                                    <div className="row">
+                                        <div className="col-md-12 ftco-animate">
+                                            <div className="tag-widget post-tag-container mb-5 mt-5">
+                                                <div className="tagcloud">
+                                                    <a href="#" className="tag-cloud-link">Life</a>
+                                                    <a href="#" className="tag-cloud-link">Sport</a>
+                                                    <a href="#" className="tag-cloud-link">Tech</a>
+                                                    <a href="#" className="tag-cloud-link">Travel</a>
                                                 </div>
-                                                <div className="comment-body">
-                                                    <h3>John Doe</h3>
-                                                    <div className="meta">October 03, 2018 at 2:21pm</div>
-                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                                    <p><a href="#" className="reply">Reply</a></p>
+                                            </div>
+
+                                            <div className="about-author d-flex p-4 bg-light">
+                                                <div className="bio mr-5">
+                                                    <img src="images/person_1.jpg" alt="Image placeholder" className="img-fluid mb-4" />
                                                 </div>
+                                                <div className="desc">
+                                                    <h3>George Washington</h3>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus itaque, autem necessitatibus voluptate quod mollitia delectus aut, sunt placeat nam vero culpa sapiente consectetur similique, inventore eos fugit cupiditate numquam!</p>
+                                                </div>
+                                            </div>
 
 
-                                                <ul className="children">
+                                            <div className="pt-5 mt-5">
+                                                <h3 className="mb-5">6 Comments</h3>
+                                                <ul className="comment-list">
                                                     <li className="comment">
                                                         <div className="vcard bio">
-                                                            <img src="images / person_1.jpg" alt="Image placeholder" />
+                                                            <img src="images/person_1.jpg" alt="Image placeholder" />
+                                                        </div>
+                                                        <div className="comment-body">
+                                                            <h3>John Doe</h3>
+                                                            <div className="meta">October 03, 2018 at 2:21pm</div>
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
+                                                            <p><a href="#" className="reply">Reply</a></p>
+                                                        </div>
+                                                    </li>
+
+                                                    <li className="comment">
+                                                        <div className="vcard bio">
+                                                            <img src="images/person_1.jpg" alt="Image placeholder" />
                                                         </div>
                                                         <div className="comment-body">
                                                             <h3>John Doe</h3>
@@ -271,63 +250,88 @@ const PlacesSingle = (props) => {
                                                                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
                                                                     <p><a href="#" className="reply">Reply</a></p>
                                                                 </div>
+
+
+                                                                <ul className="children">
+                                                                    <li className="comment">
+                                                                        <div className="vcard bio">
+                                                                            <img src="images / person_1.jpg" alt="Image placeholder" />
+                                                                        </div>
+                                                                        <div className="comment-body">
+                                                                            <h3>John Doe</h3>
+                                                                            <div className="meta">October 03, 2018 at 2:21pm</div>
+                                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
+                                                                            <p><a href="#" className="reply">Reply</a></p>
+                                                                        </div>
+
+                                                                        <ul className="children">
+                                                                            <li className="comment">
+                                                                                <div className="vcard bio">
+                                                                                    <img src="images / person_1.jpg" alt="Image placeholder" />
+                                                                                </div>
+                                                                                <div className="comment-body">
+                                                                                    <h3>John Doe</h3>
+                                                                                    <div className="meta">October 03, 2018 at 2:21pm</div>
+                                                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
+                                                                                    <p><a href="#" className="reply">Reply</a></p>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
                                                             </li>
                                                         </ul>
                                                     </li>
+
+                                                    <li className="comment">
+                                                        <div className="vcard bio">
+                                                            <img src="images / person_1.jpg" alt="Image placeholder" />
+                                                        </div>
+                                                        <div className="comment-body">
+                                                            <h3>John Doe</h3>
+                                                            <div className="meta">October 03, 2018 at 2:21pm</div>
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
+                                                            <p><a href="#" className="reply">Reply</a></p>
+                                                        </div>
+                                                    </li>
                                                 </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <li className="comment">
-                                        <div className="vcard bio">
-                                            <img src="images / person_1.jpg" alt="Image placeholder" />
-                                        </div>
-                                        <div className="comment-body">
-                                            <h3>John Doe</h3>
-                                            <div className="meta">October 03, 2018 at 2:21pm</div>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                            <p><a href="#" className="reply">Reply</a></p>
-                                        </div>
-                                    </li>
-                                </ul>
 
 
-                                <div className="comment-form-wrap pt-5">
-                                    <h3 className="mb-5">Leave a comment</h3>
-                                    <form action="#" className="p-5 bg-light">
-                                        <div className="form-group">
-                                            <label htmlFor="name">Name *</label>
-                                            <input type="text" className="form-control" id="name" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label htmlFor="email">Email *</label>
-                                            <input type="email" className="form-control" id="email" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label htmlFor="website">Website</label>
-                                            <input type="url" className="form-control" id="website" />
+                                                <div className="comment-form-wrap pt-5">
+                                                    <h3 className="mb-5">Leave a comment</h3>
+                                                    <form action="#" className="p-5 bg-light">
+                                                        <div className="form-group">
+                                                            <label htmlFor="name">Name *</label>
+                                                            <input type="text" className="form-control" id="name" />
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label htmlFor="email">Email *</label>
+                                                            <input type="email" className="form-control" id="email" />
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <label htmlFor="website">Website</label>
+                                                            <input type="url" className="form-control" id="website" />
+                                                        </div>
+
+                                                        <div className="form-group">
+                                                            <label htmlFor="message">Message</label>
+                                                            <textarea name="" id="message" cols="30" rows="10" className="form-control"></textarea>
+                                                        </div>
+                                                        <div className="form-group">
+                                                            <input type="submit" value="Post Comment" className="btn py-3 px-4 btn-primary" />
+                                                        </div>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+
                                         </div>
 
-                                        <div className="form-group">
-                                            <label htmlFor="message">Message</label>
-                                            <textarea name="" id="message" cols="30" rows="10" className="form-control"></textarea>
-                                        </div>
-                                        <div className="form-group">
-                                            <input type="submit" value="Post Comment" className="btn py-3 px-4 btn-primary" />
-                                        </div>
 
-                                    </form>
-                                </div>
-                            </div>
+                                    </div>
 
-                        </div>
-                      
 
-                    </div>
-             
-        
-                                      
+
                                 </div>
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-5">
                                     <h4 className="mb-4">Related Hotels</h4>
@@ -428,8 +432,8 @@ const PlacesSingle = (props) => {
                 </div>
             </section>
 
-           
-       </div>
+
+        </div>
     )
 }
 

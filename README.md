@@ -42,7 +42,7 @@ icon
 npm i react-bootstrap-icons
 npm i bootstrap-icons
 
-
+npm install axios
 Map
 npm i @react-google-maps/api
 

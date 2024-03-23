@@ -1,5 +1,5 @@
   ```
-    <option value="">Thiên nhiên</option>
+                                                       <option value="">Thiên nhiên</option>
                                                         <option value="">Truyền thống</option>
                                                         <option value="">Nghệ thuật & văn hóa</option>
                                                         <option value="">Đồ ăn & thức uống </option>
@@ -25,8 +25,8 @@
                                                         <option value="">Lễ hội truyền thống</option>
                                                         <option value="">Nghệ thuật dân gian</option>
                                                         <option value="">Nghệ thuật địa phương</option>
-                                                                                                  Nghệ thuật & văn hóa
-                                                                                                   <option value="">Nhà hát</option>
+ Nghệ thuật & văn hóa
+                                                         <option value="">Nhà hát</option>
                                                         <option value="">Bảo tàng</option>
                                                         <option value="">Thủ công & mỹ nghệ</option>
                                                         <option value="">Nghệ thuật biểu diễn</option>
@@ -43,7 +43,7 @@
                                                         <option value="">Nhà hàng truyền thống</option>
                                                    
     Thư giãn
-        <option value="">Khu nghỉ dưỡng</option>
+                                                       <option value="">Khu nghỉ dưỡng</option>
                                                         <option value="">Spa và xông hơi</option>
                                                         <option value="">Yoga và thiền</option>
                                                         <option value="">Khu vườn hoa</option>
@@ -55,7 +55,7 @@
 
         Khu vui chơi          
 
-          <option value="">Công viên giải trí</option>
+                                                        <option value="">Công viên giải trí</option>
                                                         <option value="">Khu vui chơi gia đình</option>
                                                         <option value="">Công viên nước </option>
                                                         <option value="">Khu trò chơi trong nhà,</option>

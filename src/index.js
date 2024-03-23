@@ -31,14 +31,15 @@ root.render(
 
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} >
+          <Route path="/" element={<App />} >
           {/* index route để nó mặc định trang đầu */}
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="places" element={<Places />} />
         
-        {/*  path - endpoint có tham số route param */}
-          <Route path="/detail/:placeId" element={<PlacesSingle/>} />  
+          {/*  path - endpoint có tham số route param */}
+          {/* <Route path="detail/:placeId" element={<PlacesSingle/>} />   */}
+          <Route path="detail" element={<PlacesSingle/>} />  
 
           {/* // route param */}
 
