@@ -65,6 +65,10 @@ npm i @react-google-maps/api
 + Danh sách 5 Địa điểm khác - Places -> Nhấn vào sẽ có thông tin info , có thông tin text và button -> nhấn vào button -> hiện thị màn hình chi tiết 
 + Đường đi từ địa điểm a đến b - direction
 
++ Google Map Marker - hiển thị vị trí địa điểm
+
+markers google api in reactjs https://stackoverflow.com/questions/44552917/how-to-add-markers-in-react-google-maps
+
 + Hiển thị Danh sách địa điểm - lấy từ thông tin api (kinh độ, vĩ độ, id, hình ảnh)-> Nhấn vào thì hiển thị được màn hình chi tiết có truyền được id
 + Chọn bộ lọc -> truyền query param   trainghiem=thiennhien&catalogies=hangdong -> Xử lí api -> Trong api in từng giá trị sysout print => trả về danh sách tất cả địa điểm
 + Nhấn lưu thông tin kế hoạch -> Gọi api cập nhật kế hoạch

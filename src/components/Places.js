@@ -5,23 +5,35 @@ import { DropdownButton, Dropdown } from 'react-bootstrap';
 const Places = () => {
     const [topics, setTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
-    const [showNatureSelect, setShowNatureSelect] = useState(false);
+    const [showNatureSelect, setShowNatureSelect] = useState(false);// giá trị mặc đinh là true hoặc false
 
     const [places, setPlaces] = useState([]);
+    const [articles, setArticles] = useState([]);
+
+    const [placesId, setPlacesId] = useState(0); // giá trị mặc định
+    const [topicsId, setTopicsId] = useState(0); // giá trị mặc định
+    const [subTopicsId, setSubTopicsId] = useState(0); // giá trị mặc định
+
+    // hàm khởi tạo ban đầu
     useEffect(() => {
         fetch('http://localhost:8080/places/list')
             .then(response => response.json())
             .then(data => {
+                console.log(data);
+                if (data.length > 0) {
+                    let placeId = data[0].id;// giá trị mặc định của Placeid
+                    setPlacesId(placeId);
 
+                    let selectedSubTopicId = 0;
+                    getArticlesBySearch(placeId, selectedSubTopicId); // gọi api
+                }
                 setPlaces(data);
 
             })
             .catch(e => {
                 console.error(e);
             });
-    }, []);
 
-    useEffect(() => {
         fetch('http://localhost:8080/topics/list')
             .then(response => response.json())
             .then(data => {
@@ -34,6 +46,7 @@ const Places = () => {
                 console.log(filteredTopics);
                 if (filteredTopics.length > 0) {
                     let selectedTopicId = filteredTopics[0].id;
+                    setTopicsId(selectedTopicId);// giá trị mặc định của TopicId
 
                     const filteredSubTopics = data.filter(item => item.subTopicsId === selectedTopicId);
                     if (filteredSubTopics.length > 0) {
@@ -61,10 +74,20 @@ const Places = () => {
     }, []);
 
 
+    const handleSelectChangePlaces = (event) => {
+        const selectedPlacesId = parseInt(event.target.value);
+        setPlacesId(selectedPlacesId);
+        console.log("click place", selectedPlacesId);// giá trị placesId vẫn sai khi thoát func thì mới đúng
 
-    const handleSelectChange = (event) => {
+        let selectedSubTopicId = 0;
+        getArticlesBySearch(selectedPlacesId, selectedSubTopicId); // gọi api
+    };
+
+    const handleSelectChangeTopics = (event) => {
+        console.log("placeid = when click topic", placesId);
+
         const selectedTopicId = parseInt(event.target.value);
-        console.log(selectedTopicId);
+        console.log("click topic", selectedTopicId);
 
         fetch(`http://localhost:8080/topics/list/${selectedTopicId}`)
             .then(response => response.json())
@@ -82,30 +105,29 @@ const Places = () => {
             });
     };
 
-    const handleSelectChangeTopics = (event) => {
-        const selectedTopicId = parseInt(event.target.value);
+    const handleSelectChangeSubTopics = (event) => {
+        console.log("placeid = when click subtopic", placesId);
+        const selectedSubTopicId = parseInt(event.target.value);
+        setSubTopicsId(selectedSubTopicId);// giá trị mặc định của SubTopicId
 
-        fetch(`http://localhost:8080/ảt/list/${selectedTopicId}`)
+        console.log("click subtopic", selectedSubTopicId);
+
+        getArticlesBySearch(placesId, selectedSubTopicId); // gọi api
+    };
+
+    // phương thức bất động bồ , await gọi để sử dụng đồng bộ
+    async function getArticlesBySearch(placeId, topicId) {
+        await fetch(`http://localhost:8080/articles/list?places_id=${placeId}&topics_id=${topicId}`)
             .then(response => response.json())
             .then(data => {
-                setPlaces(data);
+                setArticles(data);// làm việc 
             })
             .catch(error => {
                 console.error(error);
+                return [];
             });
     };
-    const handleSelectChangePlaces = (event) => {
-        const selectedTopicId = parseInt(event.target.value);
 
-        fetch(`http://localhost:8080/artitlac/list/${selectedTopicId}`)
-            .then(response => response.json())
-            .then(data => {
-                setPlaces(data);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    };
 
     return (
         <div>
@@ -140,7 +162,7 @@ const Places = () => {
                                             <div className="select-wrap one-third">
                                                 <div className="icon"><span className="ion-ios-arrow-down"></span></div>
                                                 <select
-                                                    name="topics"
+                                                    name="places"
                                                     id=""
                                                     className="form-control"
                                                     placeholder="Keyword search"
@@ -173,7 +195,7 @@ const Places = () => {
                                                         id=""
                                                         className="form-control"
                                                         placeholder="Keyword search"
-                                                        onChange={handleSelectChange}
+                                                        onChange={handleSelectChangeTopics}
                                                     >
                                                         {topics.map((topic, i) => (
                                                             <option value={topic.id} key={i}>
@@ -201,7 +223,7 @@ const Places = () => {
                                                                 id=""
                                                                 className="form-control"
                                                                 placeholder="Keyword search"
-                                                                onChange={handleSelectChangeTopics}
+                                                                onChange={handleSelectChangeSubTopics}
                                                             >
                                                                 {subTopics.map((topic, i) => (
                                                                     <option value={topic.id} key={i}>
@@ -265,7 +287,7 @@ const Places = () => {
                             </div>
 
                             <div className="row">
-                                {places.map((place, i) => (
+                                {articles.map((place, i) => (
                                     <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
 
                                         <div className="destination" style={{
