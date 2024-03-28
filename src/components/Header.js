@@ -1,12 +1,24 @@
-
-import { Button, Col, Form, Row } from 'react-bootstrap';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
-import { Link, NavLink } from "react-router-dom";
-
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Header = (props) => {
+	const navigate = useNavigate();
+	const [userName, setUserName] = useState("");
+
+	useEffect(() => {
+		let temp = sessionStorage.getItem('username');
+		if (temp && temp !== userName) {
+		  setUserName(temp);
+		}
+	  }, [userName]);
+
+	function logout() {
+		sessionStorage.clear();
+		navigate('/login')
+	}
+
+
+
 	return (
 		<div>
 			<header className="header">
@@ -28,21 +40,31 @@ const Header = (props) => {
 									</ul>
 								</div>
 								<div className="user_box ml-auto">
-									<div className="user_box_login user_box_link"><a href="/login">Đăng nhập</a></div>
-									<div className="user_box_register user_box_link"><a href="/registration">Đăng ký</a></div>
-									<div className="user_box_register user_box_link dropdown"  data-toggle="dropdown">
-										<a href="/registration"><i className="bi bi-person-circle"></i></a>
-									<div className="dropdown-menu" aria-labelledby="navbarDropdown">
-											<a className="dropdown-item" href="/login">Đăng nhập</a>
-											<a className="dropdown-item" href="/registration">Đăng ký</a>
-											<a className="dropdown-item" href="/profile">Tài khoản</a>
-											<a className="dropdown-item" href="/changePassword">Thay đổi mật khẩu</a>
-											<div className="dropdown-divider"></div>
-											<a className="dropdown-item" href="/logout">Đăng xuất</a>
+
+									{/* <div className="user_box_register user_box_link dropdown" data-toggle="dropdown">
+										<a href="/registration"><i className="bi bi-person-circle"></i></a></div> */}
+
+									{sessionStorage.getItem('username') ? (
+										<div>
+											<div className="user_box_login user_box_link">
+												<a href="/profile">{userName}</a>
+											</div>
+											
+											<div className="user_box_logout user_box_link" style={{ color: 'white' }} onClick={logout}>
+												Đăng xuất
+											</div>
 										</div>
-									</div>
-							
-									
+									) : (
+										<div>
+											<div className="user_box_login user_box_link">
+												<a href="/login">Đăng nhập</a>
+											</div>
+											<div className="user_box_register user_box_link">
+												<a href="/registration">Đăng ký</a>
+											</div>
+										</div>
+									)}
+
 								</div>
 							</div>
 						</div>
@@ -66,7 +88,7 @@ const Header = (props) => {
 										<li className="main_nav_item"><a href="/like">Yêu Thích</a></li>
 										<li className="main_nav_item"><a href="/blog">Tin tức</a></li>
 										<li className="main_nav_item"><a href="/contact">Liên Hệ</a></li>
-										
+
 										<li className="main_nav_item"><a href="/map">Map</a></li>
 									</ul>
 
@@ -108,7 +130,7 @@ const Header = (props) => {
 					</div>
 				</nav>
 
-			</header>
+			</header >
 			<div className="menu trans_500">
 				<div className="menu_content d-flex flex-column align-items-center justify-content-center text-center">
 					<div className="menu_close_container"><div className="menu_close"></div></div>
@@ -122,7 +144,7 @@ const Header = (props) => {
 					</ul>
 				</div>
 			</div>
-		</div>
+		</div >
 
 
 

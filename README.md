@@ -90,3 +90,9 @@ https://www.educative.io/answers/how-to-use-geolocation-call-in-reactjs
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Vite + React | Google Map Markers
+
+https://www.youtube.com/watch?v=Uq-0tA0f_X8
+
+https://github.com/Developer-Nijat/React-Google-Map-Markers/blob/main/src/App.jsx

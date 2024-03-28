@@ -24,10 +24,9 @@ const Home = (props) => {
 
                     // style={{ opacity: 1, transform: 'translateZ(0px) , translateY(0%)' }}
                     >Discover <br />A new Place</h1>
-                            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"
-
-                            // style={{ opacity: 1, transform: 'translateZ(0px) , translateY(0%)' }}
-                            >Find great places to stay, eat, shop, or visit from local experts</p></div></div>
+                            <p data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Find great places to stay, eat, shop, or visit from local experts</p>
+                            </div>
+                            </div>
 
 
 
@@ -136,9 +135,9 @@ const Home = (props) => {
                     <div className="heading-section ftco-animate ">
                         <h2 className="mb-4">Công ty Du lịch Tốt Nhất</h2>
                     </div>
-                    <div>
-                        <p>Ưeb du lịch Việt Nam mang đến cho du khách trải nghiệm du lịch tuyệt vời với dịch vụ chuyên nghiệp, lựa chọn đa dạng về điểm đến và hướng dẫn riêng biệt, đồng hành cùng họ khám phá những vẻ đẹp độc đáo của Việt Nam. Với sự chăm sóc và quan tâm tận tâm, chúng tôi cam kết đem đến cho du khách những kỷ niệm vô giá trị và trọn vẹn trong mỗi chuyến đi.</p>
-                    </div>
+                 
+                        <p>Web du lịch Việt Nam mang đến cho du khách trải nghiệm du lịch tuyệt vời với dịch vụ chuyên nghiệp, lựa chọn đa dạng về điểm đến và hướng dẫn riêng biệt, đồng hành cùng họ khám phá những vẻ đẹp độc đáo của Việt Nam. Với sự chăm sóc và quan tâm tận tâm, chúng tôi cam kết đem đến cho du khách những kỷ niệm vô giá trị và trọn vẹn trong mỗi chuyến đi.</p>
+                
                 </div>
             </section>
 
@@ -159,10 +158,10 @@ const Home = (props) => {
                     <div className="row">
                         <div className="col-sm col-md-6 col-lg-4 ftco-animate">
 
-                            <div className="destination"style={{
-                                        boxShadow: '0px 2px 10px  #d9d9d9'
+                            <div className="destination" style={{
+                                boxShadow: '0px 2px 10px  #d9d9d9'
 
-                                    }}>
+                            }}>
                                 <div className="card "  >
                                     <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
                                     <div className="card-body">
@@ -184,7 +183,7 @@ const Home = (props) => {
                                         </div>
                                         <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
                                         <hr />
-                                        <p className="bottom-area d-flex">
+                                        <div className="bottom-area d-flex">
 
 
 
@@ -199,7 +198,7 @@ const Home = (props) => {
                                             </DropdownButton>
 
 
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

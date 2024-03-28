@@ -1,6 +1,6 @@
 
 
-const Password = (props) => {
+const ForgotPassword = (props) => {
     return (
         <div >
             <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -77,4 +77,4 @@ const Password = (props) => {
     )
 }
 
-export default Password;
+export default ForgotPassword;

@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 
+import { Fragment } from "react";
+import {
+    GoogleMap,
+    InfoWindowF,
+    MarkerF,
+    useJsApiLoader,
+} from "@react-google-maps/api";
+
 const Places = () => {
     const [topics, setTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
@@ -13,6 +21,32 @@ const Places = () => {
     const [placesId, setPlacesId] = useState(0); // giá trị mặc định
     const [topicsId, setTopicsId] = useState(0); // giá trị mặc định
     const [subTopicsId, setSubTopicsId] = useState(0); // giá trị mặc định
+
+
+    const [itinerariesIdUser, setItinerariesIdUser] = useState(0); // giá trị mặc định
+
+    const [idUser, setidUser] = useState("");
+
+    // START: googlemap
+    const [markers, setMarkers] = useState([]);// mảng dữ liệu
+    const myLocaction = {
+        lat: 10.744890604860146,
+        lng: 106.72973747516444
+    };
+    const { isLoaded } = useJsApiLoader({
+        // googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+        libraries: ['places'],
+    });
+    const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
+
+    const handleActiveMarker = (idMarker) => {
+        console.log("id", idMarker, idActiveMarker);
+        if (idMarker === idActiveMarker) {
+            return;
+        }
+        setIdActiveMarker(idMarker);
+    };
+    // END: googlemap
 
     // hàm khởi tạo ban đầu
     useEffect(() => {
@@ -71,6 +105,22 @@ const Places = () => {
             .catch(e => {
                 console.error(e);
             });
+
+        fetch('http://localhost:8080/itineraries/list?users_id=${userId}')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.length > 0) {
+                    let UsersId = data[0].id;// giá trị mặc định của Placeid
+                    setItinerariesIdUser(UsersId);
+
+                }
+                setItinerariesIdUser(data);
+
+            })
+            .catch(e => {
+                console.error(e);
+            });
     }, []);
 
 
@@ -117,10 +167,23 @@ const Places = () => {
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ
     async function getArticlesBySearch(placeId, topicId) {
+        placeId = 0;// TODO mainguyen debug
+        // topicId = 0;// TODO mainguyen debug
         await fetch(`http://localhost:8080/articles/list?places_id=${placeId}&topics_id=${topicId}`)
             .then(response => response.json())
             .then(data => {
                 setArticles(data);// làm việc 
+                console.log("Articles", data, articles);
+                let ltsMarkers = data.map(item => ({
+                    id: item.id,
+                    name: item.places.name,
+                    position: {
+                        lat: parseFloat(item.places.coordinates.latitude),
+                        lng: parseFloat(item.places.coordinates.longitude)
+                    }
+                }));
+                setMarkers(ltsMarkers);
+                console.log("Markers", ltsMarkers, markers);
             })
             .catch(error => {
                 console.error(error);
@@ -128,6 +191,36 @@ const Places = () => {
             });
     };
 
+
+    useEffect(() => {
+        let temp = sessionStorage.getItem('idUser');
+        if (temp && temp !== idUser) {
+            setidUser(temp);
+        }
+    }, [idUser]);
+
+    // async function getItinerariesBySearch(userId) {
+    //     placeId = 0;// TODO mainguyen debug
+    //     // topicId = 0;// TODO mainguyen debug
+    //     await fetch(`http://localhost:8080/itineraries/list?users_id${userId}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             setItinerariesIdUser(data);// làm việc 
+
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //             return [];
+    //         });
+    // };
+    // const handleSelectChangeItinerariesByIdUser = (event) => {
+    //     const selectedItinerariesByIdUser = parseInt(event.target.value);
+    //     setSubTopicsId(selectedItinerariesByIdUser);// giá trị mặc định của SubTopicId
+
+    //     console.log("click subtopic", selectedItinerariesByIdUser);
+
+    //     // getItinerariesBySearch( selectedItinerariesByIdUser); // gọi api
+    // };
 
     return (
         <div>
@@ -274,11 +367,52 @@ const Places = () => {
                                     {/* <div className="col-lg-12"> */}
 
                                     <div id="map">
-                                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
-                                            allowFullScreen=""
-                                        //  style ={{border:0}}
-                                        >
-                                        </iframe>
+
+
+                                        <Fragment>
+                                            <div className="container">
+                                                <div style={{ height: "90vh", width: "100%" }}>
+                                                    {/* {isLoaded ? (
+                                                        <GoogleMap
+                                                            center={myLocaction}
+                                                            zoom={15}
+                                                            onClick={() => setIdActiveMarker(null)}
+                                                            mapContainerStyle={{ width: "100%", height: "90vh" }}
+                                                        >
+                                                            {markers.map((item) => (
+                                                                <MarkerF
+                                                                    key={item.id}
+                                                                    position={item.position}
+                                                                    onClick={() => handleActiveMarker(item.id)}
+                                                                // icon={{
+                                                                //   url:"https://t4.ftcdn.net/jpg/02/85/33/21/360_F_285332150_qyJdRevcRDaqVluZrUp8ee4H2KezU9CA.jpg",
+                                                                //   scaledSize: { width: 50, height: 50 }
+                                                                // }}
+                                                                >
+                                                                    {
+                                                                        idActiveMarker === item.id ? (
+                                                                            <InfoWindowF
+                                                                                onCloseClick={() => setIdActiveMarker(null)}
+                                                                            >
+                                                                                <div>
+                                                                                    <p>{item.name}</p>
+                                                                                </div>
+                                                                            </InfoWindowF>
+                                                                        ) : null
+                                                                    }
+
+                                                                </MarkerF>
+                                                            ))}
+                                                        </GoogleMap>
+                                                    ) : null} */}
+                                                </div>
+                                            </div>
+                                        </Fragment>
+
+
+
+
+
                                     </div>
                                     {/* </div> */}
 
@@ -317,19 +451,42 @@ const Places = () => {
                                                     </div>
                                                     <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
                                                     <hr />
-                                                    <div className="bottom-area d-flex">
-
-                                                        <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                            <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
-                                                        </a>
-
-                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                            <Dropdown.Item href="#/action-1">Biển</Dropdown.Item>
-                                                            <Dropdown.Item href="#/action-2">Hè</Dropdown.Item>
-                                                        </DropdownButton>
 
 
-                                                    </div>
+
+                                                    {sessionStorage.getItem('idUser') ? (
+                                                        <div>
+                                                            <div className="bottom-area d-flex">
+
+                                                                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                                    <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
+                                                                </a>
+
+                                                                <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                                    {itinerariesIdUser.map((itineraries, i) => (
+
+                                                                        <Dropdown.Item href="#/action-1" value={itineraries.id} key={i}>{itineraries.name}</Dropdown.Item>
+                                                                    ))}
+
+
+                                                                </DropdownButton>
+
+
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <div className="bottom-area d-flex">
+
+                                                                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                                    <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
+                                                                </a>
+
+
+
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

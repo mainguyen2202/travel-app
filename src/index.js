@@ -17,12 +17,13 @@ import BlogSingle from './components/BlogSingle';
 import ItinerarieView from './components/ItinerarieView';
 import ItinerarieEdit from './components/ItinerarieEdit';
 import PhanTrang from './PhanTrang/PhanTrang';
-import Login from './components/Login';
-import Registration from './components/Registration';
-import Password from './components/Password';
-import Profile from './components/Profile';
-import ChangePassword from './components/ChangePassword';
+import Login from './components/Profile/Login';
+import Registration from './components/Profile/Registration';
+import ForgotPassword from './components/Profile/ForgotPassword';
+import Profile from './components/Profile/Profile';
+import ChangePassword from './components/Profile/ChangePassword';
 import MyMapComponent from './components/MyMap';
+import MyGoogleMap from './components/MyGoogleMap';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -50,18 +51,24 @@ root.render(
 
           <Route path="blog" element={<Blog />} />
           <Route path="blogSingle" element={<BlogSingle />} />
-
-
           <Route path="contact" element={<Contact />} />
+
+
+
 
           <Route path="login" element={<Login />} />
           <Route path="registration" element={<Registration />} />
-          <Route path="password" element={<Password />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="changePassword" element={<ChangePassword />} />
+
+          <Route path="profile/:userId" element={<Profile />} />
+          <Route path="changePassword/:userId" element={<ChangePassword />} />
+          <Route path="forgotPassword" element={<ForgotPassword />} />
+          <Route path="resetPassword/:userId/:token" element={<ResetPassword />} />
+         
 
 
-          <Route path="Map" element={<MyMapComponent />} />
+
+          {/* <Route path="Map" element={<MyMapComponent />} /> */}
+          <Route path="Map" element={<MyGoogleMap />} />
 
           {/* <Route path="PhanTrang" element={<PhanTrang />} /> */}
 
