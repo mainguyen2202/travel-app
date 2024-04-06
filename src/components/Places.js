@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
+import { toast, ToastContainer, Zoom } from 'react-toastify';
 
 import { Fragment } from "react";
 import {
@@ -164,7 +165,7 @@ const Places = () => {
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ
     async function getArticlesBySearch(placeId, topicId) {
-        placeId = 0;// TODO mainguyen debug
+        // placeId = 0;// TODO mainguyen debug
         // topicId = 0;// TODO mainguyen debug
         await fetch(`http://localhost:8080/articles/list?places_id=${placeId}&topics_id=${topicId}`)
             .then(response => response.json())
@@ -186,6 +187,48 @@ const Places = () => {
                 console.error(error);
                 return [];
             });
+    };
+
+    const handleCreate = async (e, idArticles, idItineraries) => {
+        e.preventDefault();
+
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles
+                },
+                itineraries: {
+                    id: idItineraries
+                },
+                status: 1
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status === 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status === 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status === 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
     };
 
 
@@ -422,20 +465,24 @@ const Places = () => {
                                                             {sessionStorage.getItem('username') ? (
                                                                 <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
                                                                     {itinerariesOfUser.map((itinerary, ii) => (
-                                                                        <Dropdown.Item href="#/action-1" value={itinerary.id} key={ii}>
+                                                                        <Dropdown.Item
+
+                                                                            value={itinerary.id}
+                                                                            key={ii}
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                handleCreate(e, article.id, itinerary.id);
+                                                                            }}
+                                                                        >
                                                                             {itinerary.name}
                                                                         </Dropdown.Item>
                                                                     ))}
                                                                 </DropdownButton>
-                                                            ) :
-
-
-                                                                (
-                                                                    <div>
-                                                                        <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
-                                                                    </div>
-
-                                                                )}
+                                                            ) : (
+                                                                <div>
+                                                                    <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

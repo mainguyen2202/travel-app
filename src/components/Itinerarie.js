@@ -5,6 +5,7 @@ import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
 const Itinerarie = (props) => {
+    const [itinerarieId, setItinerarieId] = useState(-1);
     const [name, setName] = useState('');
     const [content, setContent] = useState('');
     const [dateStart, setDateStart] = useState('');
@@ -13,8 +14,7 @@ const Itinerarie = (props) => {
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]);
     const [userId, setUserId] = useState(0);
 
-    const [itinerarie, setItinerarie] = useState([]);
-    const condition = true;
+    const [detailItinerarie, setDetailItinerarie] = useState([]);
 
     useEffect(() => {
 
@@ -162,12 +162,14 @@ const Itinerarie = (props) => {
     };
 
 
-    const fetchData = async (e, itineraryId) => {
+    const getDetailByItineraryId = async (e, itineraryId) => {
         try {
             const response = await fetch(`http://127.0.0.1:8080/itineraries/detail/${itineraryId}`);
             if (response.ok) {
                 const itinerarieData = await response.json();
-                setItinerarie(itinerarieData);
+                setDetailItinerarie(itinerarieData);
+                
+                setItinerarieId(itinerarieData.id);
                 setName(itinerarieData.name); // Assign the value to name state variable
                 setContent(itinerarieData.content); // Assign the value to content state variable
                 setDateStart(itinerarieData.dateStart); // Assign the value to dateStart state variable
@@ -180,34 +182,42 @@ const Itinerarie = (props) => {
         }
     };
 
-    fetchData();
 
     const handleEdit = async (e, itineraryId) => {
         e.preventDefault();
-        
+
         try {
-          const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: name, // Tên kế hoạch mới
-              dateStart: dateStart, // Ngày bắt đầu mới
-              dateEnd: dateEnd, // Ngày kết thúc mới
-              content: content // Ghi chú mới
-            })
-          });
-    
-          if (response.ok) {
-            console.log('Update successful');
-          } else {
-            console.log('Update failed');
-          }
+            const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name, // Tên kế hoạch mới
+                    dateStart: dateStart, // Ngày bắt đầu mới
+                    dateEnd: dateEnd, // Ngày kết thúc mới
+                    content: content // Ghi chú mới
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status === 1) {
+                    toast.success(data.message);
+
+                    return;
+                } else {
+                    toast.error(data.message);
+                }
+            } else {
+                console.log('Update failed');
+            }
         } catch (error) {
-          console.log('Error:', error);
+            console.log('Error:', error);
         }
-      };
+    };
 
     return (
         <div>
@@ -249,7 +259,7 @@ const Itinerarie = (props) => {
                                                         </button>
                                                     </div>
                                                     <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
-                                                        <form className="container" onSubmit={condition ? handleCreate : handleEdit}>
+                                                        <form className="container">
                                                             <div className="mb-3 mt-4">
                                                                 <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
                                                                 <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
@@ -268,7 +278,7 @@ const Itinerarie = (props) => {
                                                             </div>
                                                             <div className="modal-footer">
                                                                 <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                                <button type="submit" className="btn btn-primary">Lưu</button>
+                                                                <button type="submit" className="btn btn-primary" onClick={(e) => { handleCreate(e); }}>Lưu</button>
                                                             </div>
                                                         </form>
                                                         <ToastContainer
@@ -332,26 +342,67 @@ const Itinerarie = (props) => {
                                                 <td> {itinerary.dateStart}</td>
                                                 <td>{itinerary.dateEnd}</td>
                                                 <td>{itinerary.content}</td>
-
                                                 <td>
-
-
                                                     <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip"><i className="material-icons">&#xE417;</i></Link>
                                                     <a
                                                         className="edit"
                                                         title="Edit"
                                                         data-toggle="modal"
-                                                        data-target="#exampleModal"
+                                                        data-target="#exampleModalEdit"
                                                         onClick={(e) => {
                                                             e.preventDefault();
-                                                            fetchData(e, itinerary.id);
-                                                            handleEdit(e, itinerary.id);
+                                                            getDetailByItineraryId(e, itinerary.id);
                                                         }}
                                                     >
                                                         <i className="material-icons">&#xE254;</i>
                                                     </a>
-
-                                               
+                                                    {/* modal */}
+                                                    <div className="modal fade" id="exampleModalEdit" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                        <div className="modal-dialog modal-dialog-centered" role="document">
+                                                            <div className="modal-content">
+                                                                <div className="modal-header">
+                                                                    <h5 className="modal-title" id="exampleModalLongTitle">Cập nhật kế hoạch</h5>
+                                                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closePopup}>
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
+                                                                    <form className="container">
+                                                                        <div className="mb-3 mt-4">
+                                                                            <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
+                                                                            <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
+                                                                        </div>
+                                                                        <div className="mb-3">
+                                                                            <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
+                                                                            <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required />
+                                                                        </div>
+                                                                        <div className="mb-3 mt-4">
+                                                                            <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
+                                                                            <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required />
+                                                                        </div>
+                                                                        <div className="mb-3">
+                                                                            <label htmlFor="exampleFormControlTextarea1" className="form-label">Ghi chú</label>
+                                                                            <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
+                                                                        </div>
+                                                                        <div className="modal-footer">
+                                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
+                                                                            <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Save</button>
+                                                                        </div>
+                                                                    </form>
+                                                                    <ToastContainer
+                                                                        className="toast-container"
+                                                                        toastClassName="toast"
+                                                                        bodyClassName="toast-body"
+                                                                        progressClassName="toast-progress"
+                                                                        theme='colored'
+                                                                        transition={Zoom}
+                                                                        autoClose={5}
+                                                                        hideProgressBar={true}
+                                                                    ></ToastContainer>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
                                                     <a
                                                         className="delete"
@@ -361,7 +412,7 @@ const Itinerarie = (props) => {
                                                     >
                                                         <i className="material-icons">&#xE872;</i>
                                                     </a>
-                                                   
+
                                                 </td>
                                             </tr>
                                         ))}
