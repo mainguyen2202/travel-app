@@ -96,3 +96,5 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 https://www.youtube.com/watch?v=Uq-0tA0f_X8
 
 https://github.com/Developer-Nijat/React-Google-Map-Markers/blob/main/src/App.jsx
+
+https://javascript.plainenglish.io/how-to-store-json-data-in-local-storage-js-react-angular-cba97508fbc5

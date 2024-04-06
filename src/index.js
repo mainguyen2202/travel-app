@@ -22,6 +22,7 @@ import Registration from './components/Profile/Registration';
 import ForgotPassword from './components/Profile/ForgotPassword';
 import Profile from './components/Profile/Profile';
 import ChangePassword from './components/Profile/ChangePassword';
+import ResetPassword from './components/Profile/ResetPassword';
 import MyMapComponent from './components/MyMap';
 import MyGoogleMap from './components/MyGoogleMap';
 

@@ -1,37 +1,37 @@
 
 
 
-// import "../TieuLuan/travel-app/public/css/style.css";
-
 import React, { useState, useEffect } from 'react'
-import { Link, NavLink, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 
 
 const PlacesSingle = (props) => {
     // const {placeId } = useParams();// route param /:id
     const [searchParams, setSearchParams] = useSearchParams();
     // Get a specific query parameter
-    const placeId = searchParams.get('place_id');
+    const articleId = searchParams.get('article_id');
 
     const [data, setData] = useState([]);
 
 
+
+
     useEffect(() => {
+        const fetchData = async () => {
 
-        console.log(placeId);
+            console.log(articleId)
+            const response = await fetch(`http://127.0.0.1:8080/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
+            if (response.ok) {
+                const resp = await response.json();
 
-        // Mockup API
-        let MockupAPI = {
-            "status": 1,
-            "message": "",
-            "Item": {
-                "id": 1,
-                "name": "mai"
+                setData(resp);
+
             }
-        }
-        console.log(MockupAPI.Item);
-        setData(MockupAPI.Item); //lấy dữ liệu mockup
-    }, []);
+
+        };
+
+        fetchData();
+    }, [articleId]);
 
     return (
         <div>
@@ -55,7 +55,10 @@ const PlacesSingle = (props) => {
                         <div className="col-lg-3 sidebar">
                             <div className="sidebar-wrap ftco-animate">
                                 <h3 className="heading mb-4">Kế hoạch</h3>
-                                <h1>{data.id}</h1>
+                                <div>
+                                    <h1>{data.name}</h1>
+                                </div>
+                             
                                 <form action="#">
                                     <div className="fields">
 

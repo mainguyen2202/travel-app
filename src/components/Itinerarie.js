@@ -1,6 +1,214 @@
 import { Dropdown, DropdownButton, Form } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const Itinerarie = (props) => {
+    const [name, setName] = useState('');
+    const [content, setContent] = useState('');
+    const [dateStart, setDateStart] = useState('');
+    const [dateEnd, setDateEnd] = useState('');
+    const [popupIsOpen, setPopupIsOpen] = useState(true);
+    const [itinerariesOfUser, setItinerariesOfUser] = useState([]);
+    const [userId, setUserId] = useState(0);
+
+    const [itinerarie, setItinerarie] = useState([]);
+    const condition = true;
+
+    useEffect(() => {
+
+        fetchInitData();// sử dụng hàm lấy danh sách mới nhất
+
+    }, []);
+
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitData = async () => {
+
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            if (itinerariesResponse.ok) {
+                const itinerariesData = await itinerariesResponse.json();
+                console.log(itinerariesData);
+                if (itinerariesData.length > 0) {
+                    setItinerariesOfUser(itinerariesData);
+                }
+            } else {
+                console.error('Error:', itinerariesResponse.status);
+            }
+        }
+
+    };
+
+    const closePopup = () => {
+        setPopupIsOpen(false);
+    };
+
+    const handleCreate = async (e) => {
+        e.preventDefault();
+
+        if (!isInputValid()) {
+            return;
+        }
+
+
+        try {
+            // Lấy thông tin người dùng từ sessionStorage
+            const userInfoString = sessionStorage.getItem("userInfo");
+            const userInfoConvertObject = JSON.parse(userInfoString);
+            if (userInfoConvertObject !== null) {
+                const idUser = userInfoConvertObject.id;
+                setUserId(idUser);
+
+                const regObj = {
+                    name: name,
+                    content: content,
+                    dateStart: dateStart,
+                    dateEnd: dateEnd,
+                    usersId: idUser
+                };
+                const response = await fetch("http://127.0.0.1:8080/itineraries/create", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(regObj)
+                });
+
+                // console.log(response);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+
+                    if (data.status === 1) {
+                        toast.success(data.message);
+
+                        setPopupIsOpen(false);
+
+                        return;
+                    } else {
+                        toast.error(data.message);
+                    }
+                } else if (response.status === 400) {
+                    // Xử lý khi có lỗi 400 (Bad Request)
+                } else if (response.status === 401) {
+                    // Xử lý khi có lỗi 401 (Unauthorized)
+                } else {
+                    // Xử lý khi có lỗi khác
+                }
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    };
+
+    const isInputValid = () => {
+        if (!name) {
+            toast.warning('Please enter name');
+            return false;
+        }
+        return true;
+    };
+
+    const handleRemove = async (e, itineraryId) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`http://127.0.0.1:8080/itineraries/remove/${itineraryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status === 1) {
+                    toast.success(data.message);
+
+                    // fetchInitData();// sử dụng hàm lấy danh sách mới nhất
+
+                    /*
+                    let newArrayItinerariesOfUser = [];
+                    for(let i = 0; i < itinerariesOfUser.length(); i++){
+                        let item = itinerariesOfUser.getItem(i);
+                        if (item.id !== itineraryId ){
+                            newArrayItinerariesOfUser.push(item);//
+                        }
+                    }
+                    setItinerariesOfUser(newArrayItinerariesOfUser);
+                    */
+
+                    const newArray = itinerariesOfUser.filter((item, i) => item.id !== itineraryId);// lọc danh sách không chứa id đã xóa
+                    setItinerariesOfUser(newArray);
+
+                } else {
+                    toast.error(data.message);
+                }
+            } else {
+                console.log('Deletion failed');
+            }
+        } catch (error) {
+            console.log('Error:', error);
+        }
+    };
+
+
+    const fetchData = async (e, itineraryId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8080/itineraries/detail/${itineraryId}`);
+            if (response.ok) {
+                const itinerarieData = await response.json();
+                setItinerarie(itinerarieData);
+                setName(itinerarieData.name); // Assign the value to name state variable
+                setContent(itinerarieData.content); // Assign the value to content state variable
+                setDateStart(itinerarieData.dateStart); // Assign the value to dateStart state variable
+                setDateEnd(itinerarieData.dateEnd); // Assign the value to dateEnd state variable
+            } else {
+                console.log('Failed to fetch itinerary data');
+            }
+        } catch (error) {
+            console.log('Error:', error);
+        }
+    };
+
+    fetchData();
+
+    const handleEdit = async (e, itineraryId) => {
+        e.preventDefault();
+        
+        try {
+          const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: name, // Tên kế hoạch mới
+              dateStart: dateStart, // Ngày bắt đầu mới
+              dateEnd: dateEnd, // Ngày kết thúc mới
+              content: content // Ghi chú mới
+            })
+          });
+    
+          if (response.ok) {
+            console.log('Update successful');
+          } else {
+            console.log('Update failed');
+          }
+        } catch (error) {
+          console.log('Error:', error);
+        }
+      };
+
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -31,55 +239,54 @@ const Itinerarie = (props) => {
                                         <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
 
                                         {/* modal */}
-                                        <div className="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                        <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                             <div className="modal-dialog modal-dialog-centered" role="document">
                                                 <div className="modal-content">
                                                     <div className="modal-header">
                                                         <h5 className="modal-title" id="exampleModalLongTitle">Lập kế hoạch</h5>
-                                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closePopup}>
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
-
-                                                    <form>
-                                                        <div className="modal-body">
+                                                    <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
+                                                        <form className="container" onSubmit={condition ? handleCreate : handleEdit}>
                                                             <div className="mb-3 mt-4">
                                                                 <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
-
-                                                                <input type="text" name="Name" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
+                                                                <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
                                                             </div>
                                                             <div className="mb-3">
-                                                                <label htmlFor="Number" className="form-label">Ngày bắt đầu:   </label>
-                                                                <input type="date" name="date" className="date"  required />
+                                                                <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
+                                                                <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required />
                                                             </div>
                                                             <div className="mb-3 mt-4">
-                                                                <label htmlFor="Number" className="form-label">Ngày kết thúc:   </label>
-                                                                <input type="date" name="date" className="date"  required />
+                                                                <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
+                                                                <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required />
                                                             </div>
                                                             <div className="mb-3">
-                                                                <label htmlFor="exampleInputEmail1" className="form-label">Số lượng người</label>
-                                                                <input type="text" name="Name" className="form-control" placeholder="Target" required autocomplete="on" />
-
+                                                                <label htmlFor="exampleFormControlTextarea1" className="form-label">Ghi chú</label>
+                                                                <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
                                                             </div>
-                                                            <div className="mb-3">
-                                                                <label htmlFor="exampleInputEmail1" className="form-label">Ngân sách</label>
-                                                                <input type="text" name="Name"  className="form-control" placeholder="Target" required autocomplete="on" />
-
+                                                            <div className="modal-footer">
+                                                                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
+                                                                <button type="submit" className="btn btn-primary">Lưu</button>
                                                             </div>
-
-                                                            <div className="mb-3">
-                                                                <label htmlFor="exampleFormControlTextarea1"className="form-label">Ghi chú</label>
-                                                                <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div className="modal-footer">
-                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            <button type="button" className="btn btn-primary">Save </button>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                        <ToastContainer
+                                                            className="toast-container"
+                                                            toastClassName="toast"
+                                                            bodyClassName="toast-body"
+                                                            progressClassName="toast-progress"
+                                                            theme='colored'
+                                                            transition={Zoom}
+                                                            autoClose={5}
+                                                            hideProgressBar={true}
+                                                        ></ToastContainer>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
 
 
 
@@ -98,38 +305,77 @@ const Itinerarie = (props) => {
                                 </div>
 
                             </div>
-                            
+
 
                             <table className="table table-striped table-hover table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>id</th>
                                         <th>Tên kế hoạch <i className="fa fa-sort"></i></th>
                                         <th>Ngày bắt đầu</th>
                                         <th>Ngày kết thúc <i className="fa fa-sort"></i></th>
-                                        <th>Số lượng người</th>
-                                        <th>Ngân sách</th>
+                                        <th>Ghi chú</th>
                                         <th>Hành động</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Nghỉ hè</td>
-                                        <td>1/1/2024</td>
-                                        <td>1/2/2024</td>
-                                        <td>2</td>
-                                        <td>2000000</td>
-                                        <td>
-                                            <a href="/ItinerarieView" className="view" title="View" data-toggle="tooltip"><i className="material-icons">&#xE417;</i></a>
-                                            <a href="#" className="edit" title="Edit" data-toggle="modal" data-target="#exampleModal"><i className="material-icons">&#xE254;</i></a>
 
 
-                                            <a href="/ItinerarieEdit" className="delete" title="Delete" data-toggle="tooltip"><i className="material-icons">&#xE872;</i></a>
-                                        </td>
-                                    </tr>
 
-                                </tbody>
+
+
+                                {sessionStorage.getItem('username') ? (
+                                    <tbody>
+                                        {itinerariesOfUser.map((itinerary, ii) => (
+                                            <tr key={ii}>
+                                                <td value={itinerary.id}>  {itinerary.id}</td>
+                                                <td> {itinerary.name}</td>
+                                                <td> {itinerary.dateStart}</td>
+                                                <td>{itinerary.dateEnd}</td>
+                                                <td>{itinerary.content}</td>
+
+                                                <td>
+
+
+                                                    <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip"><i className="material-icons">&#xE417;</i></Link>
+                                                    <a
+                                                        className="edit"
+                                                        title="Edit"
+                                                        data-toggle="modal"
+                                                        data-target="#exampleModal"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            fetchData(e, itinerary.id);
+                                                            handleEdit(e, itinerary.id);
+                                                        }}
+                                                    >
+                                                        <i className="material-icons">&#xE254;</i>
+                                                    </a>
+
+                                               
+
+                                                    <a
+                                                        className="delete"
+                                                        title="Xóa"
+                                                        data-toggle="tooltip"
+                                                        onClick={(e) => handleRemove(e, itinerary.id)}
+                                                    >
+                                                        <i className="material-icons">&#xE872;</i>
+                                                    </a>
+                                                   
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                ) :
+
+
+                                    (
+                                        <p>Hãy tạo kế hoạch</p>
+
+                                    )}
+
+
+
                             </table>
                             <div className="clearfix">
                                 <div className="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>

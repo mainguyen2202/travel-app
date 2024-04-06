@@ -1,7 +1,5 @@
-import { Button, Form } from "react-bootstrap";
-
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -10,6 +8,10 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    useEffect(() => {
+
+
+    }, []);
 
     // Login bình thường
     const ProceedLogin = async (e) => {
@@ -31,21 +33,27 @@ const Login = () => {
 
             console.log(response);
             if (response.ok) {// có dữ liệu trả về
-                if (response.status == 400) {
+                if (response.status === 400) {
                     //
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     //
-                } else if (response.status == 200) {
+                } else if (response.status === 200) {
                     //
-                    const data = await response.json();
-                    if (data.status === 1) {
-                        const storedUsername =  sessionStorage.setItem('username', username);// Lưu giá trị từ biến state `username`
-                        console.log(storedUsername); // In ra giá trị username đã lưu trữ trong phiên làm việc
+                    const resq = await response.json();
+                    if (resq.status === 1) {
+                        sessionStorage.setItem('username', resq.data.username);// Lưu giá trị từ biến state `username`
+                        
+                        // Store JSON Data
+                        let dataConvertString = JSON.stringify(resq.data);// convert string to object 
+                        sessionStorage.setItem('userInfo', dataConvertString);
+
+                        let name = sessionStorage.getItem('username');
+                        console.log(name); // In ra giá trị username đã lưu trữ trong phiên làm việc
                         // sessionStorage.setItem('jwttoken', resp.jwtToken);
                         // sessionStorage.setItem('userrole', resp.data.role);
                         navigate('/');
                     } else {
-                        toast.error(data.message); // Hiển thị thông báo lỗi từ API trong giao diện
+                        toast.error(resq.message); // Hiển thị thông báo lỗi từ API trong giao diện
                     }
                 }
             }
@@ -138,7 +146,7 @@ const Login = () => {
                                         progressClassName="toast-progress"
                                         theme='colored'
                                         transition={Zoom}
-                                        autoClose={20000}
+                                        autoClose={5}
                                         hideProgressBar={true}
                                     ></ToastContainer>
 

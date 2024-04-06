@@ -172,7 +172,7 @@ const Registration = (props) => {
                                         {/* </div> */}
                                         {/* </div> */}
                                     </form>
-                                    {/* <ToastContainer theme='colored' transition={Zoom} autoClose={20000} hideProgressBar={true}></ToastContainer> */}
+                                    {/* <ToastContainer theme='colored' transition={Zoom} autoClose={5} hideProgressBar={true}></ToastContainer> */}
                                     <ToastContainer
                                         className="toast-container"
                                         toastClassName="toast"
@@ -180,7 +180,7 @@ const Registration = (props) => {
                                         progressClassName="toast-progress"
                                         theme='colored'
                                         transition={Zoom}
-                                        autoClose={20000}
+                                        autoClose={5}
                                         hideProgressBar={true}
                                     ></ToastContainer>
                                     <hr />

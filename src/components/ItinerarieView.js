@@ -1,7 +1,68 @@
 import { Dropdown, DropdownButton } from "react-bootstrap";
-
+import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const ItinerarieView = (props) => {
+    const [name, setName] = useState('');
+    const [content, setContent] = useState('');
+    const [dateStart, setDateStart] = useState('');
+    const [dateEnd, setDateEnd] = useState('');
+  
+    const [searchParams, setSearchParams] = useSearchParams();
+    const itinerarieId = searchParams.get('itinerarie_id');
+  
+    const [itinerarie, setItinerarie] = useState([]);
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:8080/itineraries/detail/${itinerarieId}`);
+          if (response.ok) {
+            const itinerarieData = await response.json();
+            setItinerarie(itinerarieData);
+            setName(itinerarieData.name); // Assign the value to name state variable
+            setContent(itinerarieData.content); // Assign the value to content state variable
+            setDateStart(itinerarieData.dateStart); // Assign the value to dateStart state variable
+            setDateEnd(itinerarieData.dateEnd); // Assign the value to dateEnd state variable
+          } else {
+            console.log('Failed to fetch itinerary data');
+          }
+        } catch (error) {
+          console.log('Error:', error);
+        }
+      };
+  
+      fetchData();
+    }, [itinerarieId]);
+  
+    const handleEdit = async (e) => {
+      e.preventDefault();
+      
+      try {
+        const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itinerarieId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: name, // Tên kế hoạch mới
+            dateStart: dateStart, // Ngày bắt đầu mới
+            dateEnd: dateEnd, // Ngày kết thúc mới
+            content: content // Ghi chú mới
+          })
+        });
+  
+        if (response.ok) {
+          console.log('Update successful');
+        } else {
+          console.log('Update failed');
+        }
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    };
+  
+
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -29,40 +90,26 @@ const ItinerarieView = (props) => {
 
 
 
-                                <form>
-                                    <div className="modal-body">
-                                        <div className="mb-3 mt-4">
-                                            <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
-
-                                            <input type="text" name="Name" value="Nghỉ hè" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" disabled />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="Number" className="form-label">Ngày bắt đầu</label>
-                                            <input type="date" name="date" className="date" value="2023-07-01" required   disabled/>
-                                        </div>
-                                        <div className="mb-3 mt-4">
-                                            <label htmlFor="Number" className="form-label">Ngày kết thúc</label>
-                                            <input type="date" name="date" className="date" value="2023-07-01" required  disabled/>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="exampleInputEmail1" className="form-label">Số lượng người</label>
-                                            <input type="text" name="Name" value="2" className="form-control" placeholder="Target" required autocomplete="on" disabled />
-
-                                        </div>
-                                        <div className="mb-3">
-                                            <label htmlFor="exampleInputEmail1" className="form-label">Ngân sách</label>
-                                            <input type="text" name="Name" value="20000000" className="form-control" placeholder="Target" required autocomplete="on" disabled />
-
-                                        </div>
-
-                                        <div className="mb-3">
-                                            <label htmlFor="exampleFormControlTextarea1"className="form-label">Ghi chú</label>
-                                            <textarea className="form-control" id="exampleFormControlTextarea1" rows="3" value="dd"disabled></textarea>
-
-
-                                        </div>
+                                <form className="container" onSubmit={handleEdit}>
+                                    <div className="mb-3 mt-4">
+                                        <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
+                                        <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
                                     </div>
-
+                                    <div className="mb-3">
+                                        <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
+                                        <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required />
+                                    </div>
+                                    <div className="mb-3 mt-4">
+                                        <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
+                                        <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="exampleFormControlTextarea1" className="form-label">Ghi chú</label>
+                                        <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="submit" className="btn btn-primary">Cập nhật</button>
+                                    </div>
                                 </form>
 
 
@@ -96,69 +143,7 @@ const ItinerarieView = (props) => {
 
 
 
-                            <div className="row">
-                                {/* lặp */}
-                                <div className="col-sm col-md-6 col-lg-4 ftco-animate">
 
-
-
-
-
-
-                                    <div className="destination" style={{
-                                        boxShadow: '0px 2px 10px  #d9d9d9'
-
-                                    }}>
-                                        <div className="card" >
-                                            <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
-                                            <div className="card-body">
-                                                <div className="d-flex">
-                                                    <div className="one">
-                                                        <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-                                                        <p className="rate">
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star-o"></i>
-                                                        </p>
-                                                    </div>
-                                                    <div className="two">
-
-                                                    </div>
-
-                                                </div>
-                                                <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-                                                <hr />
-                                                <p className="bottom-area d-flex">
-
-
-
-                                                    <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                        <span className="s18_s">  <i className="material-icons">  favorite_border</i></span>
-                                                    </a>
-
-                                                    <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
-                                                        <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                                                        <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                                                        <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                                                    </DropdownButton>
-
-
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
-
-                                </div>
-
-
-
-
-                            </div>
 
 
                             <div className="row mt-5">

@@ -1,12 +1,15 @@
-import logo from './logo.svg';
 // import './App.css';
 import Footer from './components/Footer';
 import Header from './components/Header';
-
-
-
 import { Outlet } from "react-router-dom";
+import { useEffect } from 'react';
+
 function App() {
+
+	useEffect(() => {
+		console.log("app");
+	  }, []);
+
 	return (
 		<div className="App">
 			<div className='app-header'>

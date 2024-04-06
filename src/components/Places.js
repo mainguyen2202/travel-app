@@ -22,10 +22,9 @@ const Places = () => {
     const [topicsId, setTopicsId] = useState(0); // giá trị mặc định
     const [subTopicsId, setSubTopicsId] = useState(0); // giá trị mặc định
 
+    const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
+    const [userId, setUserId] = useState(0);
 
-    const [itinerariesIdUser, setItinerariesIdUser] = useState(0); // giá trị mặc định
-
-    const [idUser, setidUser] = useState("");
 
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
@@ -34,7 +33,7 @@ const Places = () => {
         lng: 106.72973747516444
     };
     const { isLoaded } = useJsApiLoader({
-        // googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+        googleMapsApiKey: 'mai_AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
         libraries: ['places'],
     });
     const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
@@ -50,77 +49,75 @@ const Places = () => {
 
     // hàm khởi tạo ban đầu
     useEffect(() => {
-        fetch('http://localhost:8080/places/list')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if (data.length > 0) {
-                    let placeId = data[0].id;// giá trị mặc định của Placeid
+
+        // tạo hàm xử lí lấy danh sách
+        const fetchInitData = async () => {
+
+            const placesResponse = await fetch('http://localhost:8080/places/list');
+            if (placesResponse.ok) {
+                const placesData = await placesResponse.json();
+                console.log(placesData);
+                if (placesData.length > 0) {
+                    let placeId = placesData[0].id;
                     setPlacesId(placeId);
 
                     let selectedSubTopicId = 0;
-                    getArticlesBySearch(placeId, selectedSubTopicId); // gọi api
+                    getArticlesBySearch(placeId, selectedSubTopicId);
                 }
-                setPlaces(data);
+                setPlaces(placesData);
+            } else {
+                console.error('Error:', placesResponse.status);
+            }
 
-            })
-            .catch(e => {
-                console.error(e);
-            });
-
-        fetch('http://localhost:8080/topics/list')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
+            const topicsResponse = await fetch('http://localhost:8080/topics/list');
+            if (topicsResponse.ok) {
+                const topicsData = await topicsResponse.json();
+                console.log(topicsData);
 
                 let selectedDefaultTopicId = 0;
-                const filteredTopics = data.filter(item => item.subTopicsId === selectedDefaultTopicId);
+                const filteredTopics = topicsData.filter(item => item.subTopicsId === selectedDefaultTopicId);
                 setTopics(filteredTopics);
 
                 console.log(filteredTopics);
                 if (filteredTopics.length > 0) {
                     let selectedTopicId = filteredTopics[0].id;
-                    setTopicsId(selectedTopicId);// giá trị mặc định của TopicId
+                    setTopicsId(selectedTopicId);
 
-                    const filteredSubTopics = data.filter(item => item.subTopicsId === selectedTopicId);
+                    const filteredSubTopics = topicsData.filter(item => item.subTopicsId === selectedTopicId);
                     if (filteredSubTopics.length > 0) {
                         setShowNatureSelect(true);
                         setSubTopics(filteredSubTopics);
-
-                        // let selectedSubTopicId = filteredSubTopics[0].id;
-
-                        // // Tìm danh sách sản phẩm tương ứng với chủ đề được chọn
-                        // const filteredPlaces = data.filter(
-                        //     (item) => item.places === selectedSubTopicId
-                        // );
-
-                        // // Cập nhật danh sách sản phẩm và chủ đề được chọn
-                        // setPlaces(filteredPlaces);
-
                     } else {
                         setShowNatureSelect(false);
                     }
                 }
-            })
-            .catch(e => {
-                console.error(e);
-            });
+            } else {
+                console.error('Error:', topicsResponse.status);
+            }
 
-        fetch('http://localhost:8080/itineraries/list?users_id=${userId}')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if (data.length > 0) {
-                    let UsersId = data[0].id;// giá trị mặc định của Placeid
-                    setItinerariesIdUser(UsersId);
+            // Retrieve the object from the storage
+            const userInfoString = sessionStorage.getItem("userInfo");
+            const userInfoConvertObject = JSON.parse(userInfoString);
+            if (userInfoConvertObject !== null) {
 
+                const idUser = userInfoConvertObject.id;
+                setUserId(idUser);
+
+                const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+                if (itinerariesResponse.ok) {
+                    const itinerariesData = await itinerariesResponse.json();
+                    console.log(itinerariesData);
+                    if (itinerariesData.length > 0) {
+                        setItinerariesOfUser(itinerariesData);
+                    }
+                } else {
+                    console.error('Error:', itinerariesResponse.status);
                 }
-                setItinerariesIdUser(data);
+            }
 
-            })
-            .catch(e => {
-                console.error(e);
-            });
+        };
+
+        fetchInitData();// sử dụng hàm lấy danh sách
     }, []);
 
 
@@ -192,35 +189,7 @@ const Places = () => {
     };
 
 
-    useEffect(() => {
-        let temp = sessionStorage.getItem('idUser');
-        if (temp && temp !== idUser) {
-            setidUser(temp);
-        }
-    }, [idUser]);
 
-    // async function getItinerariesBySearch(userId) {
-    //     placeId = 0;// TODO mainguyen debug
-    //     // topicId = 0;// TODO mainguyen debug
-    //     await fetch(`http://localhost:8080/itineraries/list?users_id${userId}`)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             setItinerariesIdUser(data);// làm việc 
-
-    //         })
-    //         .catch(error => {
-    //             console.error(error);
-    //             return [];
-    //         });
-    // };
-    // const handleSelectChangeItinerariesByIdUser = (event) => {
-    //     const selectedItinerariesByIdUser = parseInt(event.target.value);
-    //     setSubTopicsId(selectedItinerariesByIdUser);// giá trị mặc định của SubTopicId
-
-    //     console.log("click subtopic", selectedItinerariesByIdUser);
-
-    //     // getItinerariesBySearch( selectedItinerariesByIdUser); // gọi api
-    // };
 
     return (
         <div>
@@ -372,7 +341,7 @@ const Places = () => {
                                         <Fragment>
                                             <div className="container">
                                                 <div style={{ height: "90vh", width: "100%" }}>
-                                                    {/* {isLoaded ? (
+                                                    {isLoaded ? (
                                                         <GoogleMap
                                                             center={myLocaction}
                                                             zoom={15}
@@ -404,7 +373,7 @@ const Places = () => {
                                                                 </MarkerF>
                                                             ))}
                                                         </GoogleMap>
-                                                    ) : null} */}
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         </Fragment>
@@ -421,21 +390,18 @@ const Places = () => {
                             </div>
 
                             <div className="row">
-                                {articles.map((place, i) => (
+                                {articles.map((article, i) => (
                                     <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
-
-                                        <div className="destination" style={{
-                                            boxShadow: '0px 2px 10px  #d9d9d9'
-
-                                        }}>
-                                            <div className="card" >
-                                                <Link to={`/ places / ${place.id}`}> <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." /></Link>
+                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                            <div className="card">
+                                                <Link to={`/detail?article_id=${article.id}`}>
+                                                    <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
+                                                </Link>
                                                 <div className="card-body">
                                                     <div className="d-flex">
                                                         <div className="one">
-                                                            <Link to={`/detail?place_id=${place.id}`} >{place.id}</Link>
-
-                                                            <h3><a href="">{place.name}</a></h3>
+                                                            <Link to={`/detail?article_id=${article.id}`}>{article.id}</Link>
+                                                            <h3><a href="">{article.name}</a></h3>
                                                             <p className="rate">
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
@@ -444,56 +410,37 @@ const Places = () => {
                                                                 <i className="icon-star-o"></i>
                                                             </p>
                                                         </div>
-                                                        <div className="two">
-
-                                                        </div>
-
+                                                        <div className="two"></div>
                                                     </div>
-                                                    <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
+                                                    <p>{article.description}</p>
                                                     <hr />
-
-
-
-                                                    {sessionStorage.getItem('idUser') ? (
-                                                        <div>
-                                                            <div className="bottom-area d-flex">
-
-                                                                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                                    <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
-                                                                </a>
-
+                                                    <div>
+                                                        <div className="bottom-area d-flex">
+                                                            <a href="/Like" className="like" title="Like" data-toggle="tooltip">
+                                                                <span className="s18_s"><i className="material-icons">favorite_border</i></span>
+                                                            </a>
+                                                            {sessionStorage.getItem('username') ? (
                                                                 <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                    {itinerariesIdUser.map((itineraries, i) => (
-
-                                                                        <Dropdown.Item href="#/action-1" value={itineraries.id} key={i}>{itineraries.name}</Dropdown.Item>
+                                                                    {itinerariesOfUser.map((itinerary, ii) => (
+                                                                        <Dropdown.Item href="#/action-1" value={itinerary.id} key={ii}>
+                                                                            {itinerary.name}
+                                                                        </Dropdown.Item>
                                                                     ))}
-
-
                                                                 </DropdownButton>
+                                                            ) :
 
 
-                                                            </div>
+                                                                (
+                                                                    <div>
+                                                                        <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
+                                                                    </div>
+
+                                                                )}
                                                         </div>
-                                                    ) : (
-                                                        <div>
-                                                            <div className="bottom-area d-flex">
-
-                                                                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                                    <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
-                                                                </a>
-
-
-
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
-
-
-
                                     </div>
                                 ))}
                             </div>

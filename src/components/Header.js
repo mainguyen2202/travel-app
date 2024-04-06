@@ -6,6 +6,7 @@ const Header = (props) => {
 	const [userName, setUserName] = useState("");
 
 	useEffect(() => {
+		console.log("header");
 		let temp = sessionStorage.getItem('username');
 		if (temp && temp !== userName) {
 		  setUserName(temp);
@@ -31,12 +32,6 @@ const Header = (props) => {
 								<div className="phone">+45 345 3324 56789</div>
 								<div className="social">
 									<ul className="social_list">
-										<li className="social_list_item"><a href="#"><i className="fa fa-pinterest" aria-hidden="true"></i></a></li>
-										<li className="social_list_item"><a href="#"><i className="fa fa-facebook" aria-hidden="true"></i></a></li>
-										<li className="social_list_item"><a href="#"><i className="fa fa-twitter" aria-hidden="true"></i></a></li>
-										<li className="social_list_item"><a href="#"><i className="fa fa-dribbble" aria-hidden="true"></i></a></li>
-										<li className="social_list_item"><a href="#"><i className="fa fa-behance" aria-hidden="true"></i></a></li>
-										<li className="social_list_item"><a href="#"><i className="fa fa-linkedin" aria-hidden="true"></i></a></li>
 									</ul>
 								</div>
 								<div className="user_box ml-auto">
@@ -134,9 +129,9 @@ const Header = (props) => {
 			<div className="menu trans_500">
 				<div className="menu_content d-flex flex-column align-items-center justify-content-center text-center">
 					<div className="menu_close_container"><div className="menu_close"></div></div>
-					<div className="logo menu_logo"><a href="#"><img src="images/logo.png" alt="" /></a></div>
+					<div className="logo menu_logo"><a href="/"><img src="images/logo.png" alt="" /></a></div>
 					<ul>
-						<li className="menu_item"><a href="#">home</a></li>
+						<li className="menu_item"><a href="/">home</a></li>
 						<li className="menu_item"><a href="about.html">about us</a></li>
 						<li className="menu_item"><a href="offers.html">offers</a></li>
 						<li className="menu_item"><a href="blog.html">news</a></li>
