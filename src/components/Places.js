@@ -29,10 +29,10 @@ const Places = () => {
 
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
-    const myLocaction = {
-        lat: 10.744890604860146,
-        lng: 106.72973747516444
-    };
+    // const myLocaction = {
+    //     lat: 10.744890604860146,
+    //     lng: 106.72973747516444
+    // };
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: 'mai_AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
         libraries: ['places'],
@@ -46,6 +46,38 @@ const Places = () => {
         }
         setIdActiveMarker(idMarker);
     };
+
+
+    const [userLocation, setUserLocation] = useState(null);
+
+    // define the function that finds the users geolocation
+    const getUserLocation = () => {
+        // if geolocation is supported by the users browser
+        if (navigator.geolocation) {
+            // get the current users location
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // save the geolocation coordinates in two variables
+                    const { latitude, longitude } = position.coords;
+                    // update the value of userlocation variable
+                    setUserLocation({ lat: latitude, lng: longitude });
+                },
+                // if there was an error getting the users location
+                (error) => {
+                    console.error('Error getting user location:', error);
+                }
+            );
+        }
+        // if geolocation is not supported by the users browser
+        else {
+            console.error('Geolocation is not supported by this browser.');
+        }
+    };
+    if (!isLoaded) {
+        // tìm kiếm vị trí của tôi
+        getUserLocation();
+        return
+    }
     // END: googlemap
 
     // hàm khởi tạo ban đầu
@@ -383,14 +415,29 @@ const Places = () => {
 
                                         <Fragment>
                                             <div className="container">
+                                                <h1 className="text-center">Vite + React | Google Map Markers</h1>
                                                 <div style={{ height: "90vh", width: "100%" }}>
                                                     {isLoaded ? (
                                                         <GoogleMap
-                                                            center={myLocaction}
+                                                            center={userLocation}
                                                             zoom={15}
                                                             onClick={() => setIdActiveMarker(null)}
                                                             mapContainerStyle={{ width: "100%", height: "90vh" }}
                                                         >
+                                                            {
+                                                                userLocation !== null ? (
+                                                                    <MarkerF
+                                                                        key={0}
+                                                                        position={userLocation}
+                                                                        icon={{
+                                                                            url: "https://t4.ftcdn.net/jpg/02/85/33/21/360_F_285332150_qyJdRevcRDaqVluZrUp8ee4H2KezU9CA.jpg",
+                                                                            scaledSize: { width: 50, height: 50 }
+                                                                        }}
+                                                                    >
+                                                                    </MarkerF>
+                                                                ) : null
+                                                            }
+
                                                             {markers.map((item) => (
                                                                 <MarkerF
                                                                     key={item.id}
@@ -412,7 +459,6 @@ const Places = () => {
                                                                             </InfoWindowF>
                                                                         ) : null
                                                                     }
-
                                                                 </MarkerF>
                                                             ))}
                                                         </GoogleMap>
