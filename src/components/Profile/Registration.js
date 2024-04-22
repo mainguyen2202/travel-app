@@ -48,7 +48,7 @@ const Registration = (props) => {
                 } else if (response.status == 200) {
                     //
                     const data = await response.json();
-                    if (data.status === 1) {
+                    if (data.status == 1) {
                         // toast.success(data.message);
                         navigate('/login');
                     } else {
@@ -62,7 +62,7 @@ const Registration = (props) => {
     };
 
     const isPasswordMatch = () => {
-        return password === confirmPassword;
+        return password == confirmPassword;
     };
 
     const isInputValid = () => {

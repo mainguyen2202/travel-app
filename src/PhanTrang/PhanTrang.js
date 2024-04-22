@@ -97,7 +97,7 @@ class PhanTrang extends Component {
           <div className="pagination-custom">
             <ul id="page-numbers">
               {pageNumbers.map((number) => {
-                if (this.state.currentPage === number) {
+                if (this.state.currentPage == number) {
                   return (
                     <li key={number} id={number} className="active">
                       {number}

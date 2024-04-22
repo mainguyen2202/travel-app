@@ -33,14 +33,14 @@ const Login = () => {
 
             console.log(response);
             if (response.ok) {// có dữ liệu trả về
-                if (response.status === 400) {
+                if (response.status == 400) {
                     //
-                } else if (response.status === 401) {
+                } else if (response.status == 401) {
                     //
-                } else if (response.status === 200) {
+                } else if (response.status == 200) {
                     //
                     const resq = await response.json();
-                    if (resq.status === 1) {
+                    if (resq.status == 1) {
                         sessionStorage.setItem('username', resq.data.username);// Lưu giá trị từ biến state `username`
                         
                         // Store JSON Data
@@ -67,11 +67,11 @@ const Login = () => {
 
     const validate = () => {
         let result = true;
-        if (username === '' || username === null) {
+        if (username == '' || username == null) {
             result = false;
             toast.warning('Please Enter Username');
         }
-        if (password === '' || password === null) {
+        if (password == '' || password == null) {
             result = false;
             toast.warning('Please Enter Password');
         }

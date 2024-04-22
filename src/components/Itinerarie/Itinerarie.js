@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css'
 const Itinerarie = (props) => {
     const [itinerarieId, setItinerarieId] = useState(-1);
     const [name, setName] = useState('');
+    const [participantCount, setParticipantCount] = useState(1);
     const [content, setContent] = useState('');
     const [dateStart, setDateStart] = useState('');
     const [dateEnd, setDateEnd] = useState('');
@@ -86,7 +87,7 @@ const Itinerarie = (props) => {
                     const data = await response.json();
                     console.log(data);
 
-                    if (data.status === 1) {
+                    if (data.status == 1) {
                         toast.success(data.message);
 
                         setPopupIsOpen(false);
@@ -95,9 +96,9 @@ const Itinerarie = (props) => {
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status === 400) {
+                } else if (response.status == 400) {
                     // Xử lý khi có lỗi 400 (Bad Request)
-                } else if (response.status === 401) {
+                } else if (response.status == 401) {
                     // Xử lý khi có lỗi 401 (Unauthorized)
                 } else {
                     // Xử lý khi có lỗi khác
@@ -131,7 +132,7 @@ const Itinerarie = (props) => {
                 const data = await response.json();
                 console.log(data);
 
-                if (data.status === 1) {
+                if (data.status == 1) {
                     toast.success(data.message);
 
                     // fetchInitData();// sử dụng hàm lấy danh sách mới nhất
@@ -168,7 +169,7 @@ const Itinerarie = (props) => {
             if (response.ok) {
                 const itinerarieData = await response.json();
                 setDetailItinerarie(itinerarieData);
-                
+
                 setItinerarieId(itinerarieData.id);
                 setName(itinerarieData.name); // Assign the value to name state variable
                 setContent(itinerarieData.content); // Assign the value to content state variable
@@ -204,7 +205,7 @@ const Itinerarie = (props) => {
                 const data = await response.json();
                 console.log(data);
 
-                if (data.status === 1) {
+                if (data.status == 1) {
                     toast.success(data.message);
 
                     return;
@@ -261,8 +262,23 @@ const Itinerarie = (props) => {
                                                     <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
                                                         <form className="container">
                                                             <div className="mb-3 mt-4">
-                                                                <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
+                                                                <label htmlFor="exampleInput" className="form-label">Tên kế hoạch</label>
                                                                 <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
+                                                            </div>
+                                                            <div className="mb-3 mt-4">
+                                                                <label htmlFor="participantCount" className="form-label">
+                                                                    Số lượng người tham gia
+                                                                </label>
+                                                                <input
+                                                                    type="number"
+                                                                    min="1"
+                                                                    max="100"
+                                                                    id="participantCount"
+                                                                    value={participantCount}
+                                                                    onChange={(e) => setParticipantCount(e.target.value)}
+                                                                    className="form-control"
+                                                                    placeholder="Số lượng người tham gia"
+                                                                />
                                                             </div>
                                                             <div className="mb-3">
                                                                 <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
@@ -324,8 +340,9 @@ const Itinerarie = (props) => {
                                         <th>Tên kế hoạch <i className="fa fa-sort"></i></th>
                                         <th>Ngày bắt đầu</th>
                                         <th>Ngày kết thúc <i className="fa fa-sort"></i></th>
-                                        <th>Ghi chú</th>
+                                        {/* <th>Ghi chú</th> */}
                                         <th>Hành động</th>
+                                        <th>Chia sẻ</th>
                                     </tr>
                                 </thead>
 
@@ -341,7 +358,7 @@ const Itinerarie = (props) => {
                                                 <td> {itinerary.name}</td>
                                                 <td> {itinerary.dateStart}</td>
                                                 <td>{itinerary.dateEnd}</td>
-                                                <td>{itinerary.content}</td>
+                                                {/* <td>{itinerary.content}</td> */}
                                                 <td>
                                                     <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip"><i className="material-icons">&#xE417;</i></Link>
                                                     <a
@@ -350,7 +367,7 @@ const Itinerarie = (props) => {
                                                         data-toggle="modal"
                                                         data-target="#exampleModalEdit"
                                                         onClick={(e) => {
-                                                            e.preventDefault();
+
                                                             getDetailByItineraryId(e, itinerary.id);
                                                         }}
                                                     >
@@ -369,8 +386,23 @@ const Itinerarie = (props) => {
                                                                 <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
                                                                     <form className="container">
                                                                         <div className="mb-3 mt-4">
-                                                                            <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
+                                                                            <label htmlFor="exampleInput" className="form-label">Tên kế hoạch</label>
                                                                             <input value={name} onChange={e => setName(e.target.value)} className="form-control" placeholder="Tên kế hoạch" />
+                                                                        </div>
+                                                                        <div className="mb-3 mt-4">
+                                                                            <label htmlFor="participantCount" className="form-label">
+                                                                                Số lượng người tham gia
+                                                                            </label>
+                                                                            <input
+                                                                                type="number"
+                                                                                min="1"
+                                                                                max="100"
+                                                                                id="participantCount"
+                                                                                value={participantCount}
+                                                                                onChange={(e) => setParticipantCount(e.target.value)}
+                                                                                className="form-control"
+                                                                                placeholder="Số lượng người tham gia"
+                                                                            />
                                                                         </div>
                                                                         <div className="mb-3">
                                                                             <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
@@ -413,6 +445,14 @@ const Itinerarie = (props) => {
                                                         <i className="material-icons">&#xE872;</i>
                                                     </a>
 
+
+                                                </td>
+                                                <td>
+                                                    <select>
+                                                        <option value="option1">Option 1</option>
+                                                        <option value="option2">Option 2</option>
+                                                        <option value="option3">Option 3</option>
+                                                    </select>
                                                 </td>
                                             </tr>
                                         ))}

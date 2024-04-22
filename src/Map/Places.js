@@ -17,7 +17,8 @@ import "@reach/combobox/styles.css";
 
 export default function Places() {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
+    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ["places"],
   });
 
@@ -75,7 +76,7 @@ const PlacesAutocomplete = ({ setSelected }) => {
       />
       <ComboboxPopover>
         <ComboboxList>
-          {status === "OK" &&
+          {status == "OK" &&
             data.map(({ place_id, description }) => (
               <ComboboxOption key={place_id} value={description} />
             ))}

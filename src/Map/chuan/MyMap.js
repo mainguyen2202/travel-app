@@ -24,8 +24,8 @@ const center = { lat:10.745264322662383, lng:  106.72938947534102 }
 const MyMapComponent = (props) => {
 
   const { isLoaded } = useJsApiLoader({
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
+    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   })
 
@@ -73,7 +73,7 @@ const MyMapComponent = (props) => {
   }
 
   async function calculateRoute() {
-    if (originRef.current.value === '' || destiantionRef.current.value === '') {
+    if (originRef.current.value == '' || destiantionRef.current.value == '') {
       return
     }
     // eslint-disable-next-line no-undef

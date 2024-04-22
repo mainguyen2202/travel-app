@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { useSearchParams } from 'react-router-dom';
 
 import { Fragment } from "react";
 import {
@@ -26,22 +27,244 @@ const Places = () => {
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
     const [userId, setUserId] = useState(0);
 
+    const [searchParams, setSearchParams] = useSearchParams();
+    // Get a specific query parameter
+    const placeId = searchParams.get('place_id');
+    const topicId = searchParams.get('topic_id');
 
+    const [like, setLike] = useState([]);
+
+
+
+    // hàm khởi tạo ban đầu
+    useEffect(() => {
+        console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
+        fetchInitData();// sử dụng hàm lấy danh sách
+        fetchInitDataLike();
+    }, []);
+
+
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitData = async () => {
+
+        const placesResponse = await fetch('http://localhost:8080/places/list');
+        if (placesResponse.ok) {
+            const placesData = await placesResponse.json();
+            console.log(placesData);
+            if (placesData.length > 0) {
+                let tmpPlaceId = placesData[0].id;
+                setPlacesId(tmpPlaceId);
+
+                getArticlesBySearch(tmpPlaceId, subTopicsId);
+            }
+            setPlaces(placesData);
+        } else {
+            console.error('Error:', placesResponse.status);
+        }
+
+        const topicsResponse = await fetch('http://localhost:8080/topics/list');
+        if (topicsResponse.ok) {
+            const topicsData = await topicsResponse.json();
+            console.log(topicsData);
+
+            const filteredTopics = topicsData.filter(item => item.subTopicsId == subTopicsId);
+            setTopics(filteredTopics);
+
+            console.log(filteredTopics);
+            if (filteredTopics.length > 0) {
+                let tmpTopicId = filteredTopics[0].id;
+                setTopicsId(tmpTopicId);
+
+                const filteredSubTopics = topicsData.filter(item => item.subTopicsId == tmpTopicId);
+                if (filteredSubTopics.length > 0) {
+                    setShowNatureSelect(true);
+                    setSubTopics(filteredSubTopics);
+                } else {
+                    setShowNatureSelect(false);
+                }
+            }
+        } else {
+            console.error('Error:', topicsResponse.status);
+        }
+
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            if (itinerariesResponse.ok) {
+                const itinerariesData = await itinerariesResponse.json();
+                console.log(itinerariesData);
+                if (itinerariesData.length > 0) {
+                    setItinerariesOfUser(itinerariesData);
+                }
+            } else {
+                console.error('Error:', itinerariesResponse.status);
+            }
+        }
+
+
+    };
+
+
+    const handleSelectChangePlaces = (e, inPlacesId) => {
+        const tmpPlacesId = parseInt(inPlacesId);
+        setPlacesId(tmpPlacesId);// giá trị placesId vẫn sai khi thoát func thì mới đúng
+        console.log("when click place placeid=", tmpPlacesId, "subtopicId=", subTopicsId);
+
+        getArticlesBySearch(tmpPlacesId, subTopicsId); // gọi api
+    };
+
+    const handleSelectChangeTopics = (e, inTopicId) => {
+        const tmpTopicId = parseInt(inTopicId);
+        setTopicsId(tmpTopicId);
+        console.log("when click topic placeid=", placesId, "subtopicId=", subTopicsId, "topicId=", tmpTopicId);
+
+        fetch(`http://localhost:8080/topics/list/${tmpTopicId}`)
+            .then(response => response.json())
+            .then(data => {
+                const filteredSubTopics = data.filter(item => item.subTopicsId == tmpTopicId);
+                if (filteredSubTopics.length > 0) {
+                    setShowNatureSelect(true);
+                    setSubTopics(filteredSubTopics);
+                } else {
+                    setShowNatureSelect(false);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    };
+
+    const handleSelectChangeSubTopics = (e, inSubTopicId) => {
+        const tmpSubTopicId = parseInt(inSubTopicId);
+        setSubTopicsId(tmpSubTopicId);// giá trị mặc định của SubTopicId
+        console.log("when click subtopic placeid=", placesId, "subtopicId=", tmpSubTopicId);
+
+        getArticlesBySearch(placesId, tmpSubTopicId); // gọi api
+    };
+
+    // phương thức bất động bồ , await gọi để sử dụng đồng bộ
+    async function getArticlesBySearch(inPlaceId, inSubtopicId) {
+        // placeId = 0;// TODO mainguyen debug
+        // topicId = 0;// TODO mainguyen debug
+        console.log("getAPI placeId=", inPlaceId, "subtopicId=", inSubtopicId);
+        await fetch(`http://localhost:8080/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}`)
+            .then(response => response.json())
+            .then(data => {
+                setArticles(data);// làm việc 
+                console.log("Articles", data, articles);
+                let ltsMarkers = data.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    position: {
+                        lat: parseFloat(item.latitude),
+                        lng: parseFloat(item.longitude)
+                    }
+                }));
+                setMarkers(ltsMarkers);
+                console.log("Markers", ltsMarkers, markers);
+            })
+            .catch(error => {
+                console.error(error);
+                return [];
+            });
+    };
+
+    const handleCreate = async (e, idArticles, idItineraries) => {
+        e.preventDefault();
+
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles
+                },
+                itineraries: {
+                    id: idItineraries
+                },
+                status: 1
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status == 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status == 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    };
+    // danh sách địa điểm yêu thích nhất
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitDataLike = async () => {
+        console.log("fetchInitDataLike");
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                if (data.length > 0) {
+                    setLike(data);
+                    let dataLike = data.map(item => ({
+                        id: item.articles.id,
+                        name: item.articles.name,
+                        title: item.articles.title,
+                        price: item.articles.price,
+                        image: item.articles.image,
+                        createAt: item.articles.createAt,
+                        content: item.articles.content,
+                        status: item.articles.status
+
+                    }));
+                    setArticles(dataLike);// làm việc 
+                }
+            } else {
+                console.error('Error:', response.status);
+            }
+        }
+
+    };
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
-    // const myLocaction = {
-    //     lat: 10.744890604860146,
-    //     lng: 106.72973747516444
-    // };
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: 'mai_AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
+        // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
         libraries: ['places'],
     });
     const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
 
     const handleActiveMarker = (idMarker) => {
         console.log("id", idMarker, idActiveMarker);
-        if (idMarker === idActiveMarker) {
+        if (idMarker == idActiveMarker) {
             return;
         }
         setIdActiveMarker(idMarker);
@@ -80,188 +303,7 @@ const Places = () => {
     }
     // END: googlemap
 
-    // hàm khởi tạo ban đầu
-    useEffect(() => {
 
-        // tạo hàm xử lí lấy danh sách
-        const fetchInitData = async () => {
-
-            const placesResponse = await fetch('http://localhost:8080/places/list');
-            if (placesResponse.ok) {
-                const placesData = await placesResponse.json();
-                console.log(placesData);
-                if (placesData.length > 0) {
-                    let placeId = placesData[0].id;
-                    setPlacesId(placeId);
-
-                    let selectedSubTopicId = 0;
-                    getArticlesBySearch(placeId, selectedSubTopicId);
-                }
-                setPlaces(placesData);
-            } else {
-                console.error('Error:', placesResponse.status);
-            }
-
-            const topicsResponse = await fetch('http://localhost:8080/topics/list');
-            if (topicsResponse.ok) {
-                const topicsData = await topicsResponse.json();
-                console.log(topicsData);
-
-                let selectedDefaultTopicId = 0;
-                const filteredTopics = topicsData.filter(item => item.subTopicsId === selectedDefaultTopicId);
-                setTopics(filteredTopics);
-
-                console.log(filteredTopics);
-                if (filteredTopics.length > 0) {
-                    let selectedTopicId = filteredTopics[0].id;
-                    setTopicsId(selectedTopicId);
-
-                    const filteredSubTopics = topicsData.filter(item => item.subTopicsId === selectedTopicId);
-                    if (filteredSubTopics.length > 0) {
-                        setShowNatureSelect(true);
-                        setSubTopics(filteredSubTopics);
-                    } else {
-                        setShowNatureSelect(false);
-                    }
-                }
-            } else {
-                console.error('Error:', topicsResponse.status);
-            }
-
-            // Retrieve the object from the storage
-            const userInfoString = sessionStorage.getItem("userInfo");
-            const userInfoConvertObject = JSON.parse(userInfoString);
-            if (userInfoConvertObject !== null) {
-
-                const idUser = userInfoConvertObject.id;
-                setUserId(idUser);
-
-                const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
-                if (itinerariesResponse.ok) {
-                    const itinerariesData = await itinerariesResponse.json();
-                    console.log(itinerariesData);
-                    if (itinerariesData.length > 0) {
-                        setItinerariesOfUser(itinerariesData);
-                    }
-                } else {
-                    console.error('Error:', itinerariesResponse.status);
-                }
-            }
-
-        };
-
-        fetchInitData();// sử dụng hàm lấy danh sách
-    }, []);
-
-
-    const handleSelectChangePlaces = (event) => {
-        const selectedPlacesId = parseInt(event.target.value);
-        setPlacesId(selectedPlacesId);
-        console.log("click place", selectedPlacesId);// giá trị placesId vẫn sai khi thoát func thì mới đúng
-
-        let selectedSubTopicId = 0;
-        getArticlesBySearch(selectedPlacesId, selectedSubTopicId); // gọi api
-    };
-
-    const handleSelectChangeTopics = (event) => {
-        console.log("placeid = when click topic", placesId);
-
-        const selectedTopicId = parseInt(event.target.value);
-        console.log("click topic", selectedTopicId);
-
-        fetch(`http://localhost:8080/topics/list/${selectedTopicId}`)
-            .then(response => response.json())
-            .then(data => {
-                const filteredSubTopics = data.filter(item => item.subTopicsId === selectedTopicId);
-                if (filteredSubTopics.length > 0) {
-                    setShowNatureSelect(true);
-                    setSubTopics(filteredSubTopics);
-                } else {
-                    setShowNatureSelect(false);
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    };
-
-    const handleSelectChangeSubTopics = (event) => {
-        console.log("placeid = when click subtopic", placesId);
-        const selectedSubTopicId = parseInt(event.target.value);
-        setSubTopicsId(selectedSubTopicId);// giá trị mặc định của SubTopicId
-
-        console.log("click subtopic", selectedSubTopicId);
-
-        getArticlesBySearch(placesId, selectedSubTopicId); // gọi api
-    };
-
-    // phương thức bất động bồ , await gọi để sử dụng đồng bộ
-    async function getArticlesBySearch(placeId, topicId) {
-        // placeId = 0;// TODO mainguyen debug
-        // topicId = 0;// TODO mainguyen debug
-        await fetch(`http://localhost:8080/articles/list?places_id=${placeId}&topics_id=${topicId}`)
-            .then(response => response.json())
-            .then(data => {
-                setArticles(data);// làm việc 
-                console.log("Articles", data, articles);
-                let ltsMarkers = data.map(item => ({
-                    id: item.id,
-                    name: item.places.name,
-                    position: {
-                        lat: parseFloat(item.places.coordinates.latitude),
-                        lng: parseFloat(item.places.coordinates.longitude)
-                    }
-                }));
-                setMarkers(ltsMarkers);
-                console.log("Markers", ltsMarkers, markers);
-            })
-            .catch(error => {
-                console.error(error);
-                return [];
-            });
-    };
-
-    const handleCreate = async (e, idArticles, idItineraries) => {
-        e.preventDefault();
-
-        try {
-            const regObj = {
-                articles: {
-                    id: idArticles
-                },
-                itineraries: {
-                    id: idItineraries
-                },
-                status: 1
-            };
-            console.log(regObj);
-
-            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-
-                if (data.status === 1) {
-                    toast.success(data.message);
-                } else {
-                    toast.error(data.message);
-                }
-            } else if (response.status === 400) {
-                // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status === 401) {
-                // Xử lý khi có lỗi 401 (Unauthorized)
-            } else {
-                // Xử lý khi có lỗi khác
-            }
-        } catch (err) {
-            toast.error('Failed: ' + err.message);
-        }
-    };
 
 
 
@@ -303,7 +345,11 @@ const Places = () => {
                                                     id=""
                                                     className="form-control"
                                                     placeholder="Keyword search"
-                                                    onChange={handleSelectChangePlaces}
+                                                    onChange={
+                                                        (e) => {
+                                                            handleSelectChangePlaces(e, e.target.value);
+                                                        }
+                                                    }
                                                 >
                                                     {places.map((place, i) => (
                                                         <option value={place.id} key={i}>
@@ -332,7 +378,11 @@ const Places = () => {
                                                         id=""
                                                         className="form-control"
                                                         placeholder="Keyword search"
-                                                        onChange={handleSelectChangeTopics}
+                                                        onChange={
+                                                            (e) => {
+                                                                handleSelectChangeTopics(e, e.target.value);
+                                                            }
+                                                        }
                                                     >
                                                         {topics.map((topic, i) => (
                                                             <option value={topic.id} key={i}>
@@ -360,7 +410,11 @@ const Places = () => {
                                                                 id=""
                                                                 className="form-control"
                                                                 placeholder="Keyword search"
-                                                                onChange={handleSelectChangeSubTopics}
+                                                                onChange={
+                                                                    (e) => {
+                                                                        handleSelectChangeSubTopics(e, e.target.value);
+                                                                    }
+                                                                }
                                                             >
                                                                 {subTopics.map((topic, i) => (
                                                                     <option value={topic.id} key={i}>
@@ -381,22 +435,27 @@ const Places = () => {
 
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
-                                <form action="#" className="card1">
-                                    <div className="fields">
+                               
+                                    <button onClick={fetchInitDataLike}>
+                                    Yêu thích
+                                    </button>
+                                    <form action="#" className="card1">
+                                        <div className="fields">
 
-                                        <div className="form-group">
-                                            <div className="select-wrap one-third">
-                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
-                                                <select name="" id="" className="form-control" placeholder="Keyword search">
-                                                    <option value="">Nổi bật</option>
-                                                    <option value="">Yêu thích</option>
-                                                    <option value="">Mới nhất đến cũ nhất</option>
-                                                </select>
+                                            <div className="form-group">
+                                                <div className="select-wrap one-third">
+                                                    <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                    <select name="" id="" className="form-control" placeholder="Keyword search">
+                                                        <option value="">Nổi bật</option>
+
+                                                        <option >Yêu thích</option>
+                                                        <option value="">Mới nhất đến cũ nhất</option>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                    </div>
-                                </form>
+                                        </div>
+                                    </form>
 
                             </div>
 
@@ -405,7 +464,7 @@ const Places = () => {
 
                         <div className="col-lg-9" >
 
-                            <div className="reservation-form" >
+                            <div className="reservation-form mainguyen" >
                                 {/* <div className="container"> */}
                                 <div className="row">
                                     {/* <div className="col-lg-12"> */}
@@ -415,16 +474,15 @@ const Places = () => {
 
                                         <Fragment>
                                             <div className="container">
-                                                <h1 className="text-center">Vite + React | Google Map Markers</h1>
                                                 <div style={{ height: "90vh", width: "100%" }}>
                                                     {isLoaded ? (
                                                         <GoogleMap
                                                             center={userLocation}
-                                                            zoom={15}
+                                                            zoom={10}
                                                             onClick={() => setIdActiveMarker(null)}
                                                             mapContainerStyle={{ width: "100%", height: "90vh" }}
                                                         >
-                                                            {
+                                                            {/* {
                                                                 userLocation !== null ? (
                                                                     <MarkerF
                                                                         key={0}
@@ -436,7 +494,7 @@ const Places = () => {
                                                                     >
                                                                     </MarkerF>
                                                                 ) : null
-                                                            }
+                                                            } */}
 
                                                             {markers.map((item) => (
                                                                 <MarkerF
@@ -449,7 +507,7 @@ const Places = () => {
                                                                 // }}
                                                                 >
                                                                     {
-                                                                        idActiveMarker === item.id ? (
+                                                                        idActiveMarker == item.id ? (
                                                                             <InfoWindowF
                                                                                 onCloseClick={() => setIdActiveMarker(null)}
                                                                             >
@@ -484,7 +542,7 @@ const Places = () => {
                                         <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                             <div className="card">
                                                 <Link to={`/detail?article_id=${article.id}`}>
-                                                    <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
+                                                    <img src={article.image} className="card-img-top" alt="..." />
                                                 </Link>
                                                 <div className="card-body">
                                                     <div className="d-flex">
@@ -501,7 +559,7 @@ const Places = () => {
                                                         </div>
                                                         <div className="two"></div>
                                                     </div>
-                                                    <p>{article.description}</p>
+                                                    <p>{article.content}</p>
                                                     <hr />
                                                     <div>
                                                         <div className="bottom-area d-flex">
@@ -516,7 +574,6 @@ const Places = () => {
                                                                             value={itinerary.id}
                                                                             key={ii}
                                                                             onClick={(e) => {
-                                                                                e.preventDefault();
                                                                                 handleCreate(e, article.id, itinerary.id);
                                                                             }}
                                                                         >

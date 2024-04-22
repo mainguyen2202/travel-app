@@ -1,8 +1,12 @@
 
 
 
-import React, { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+
+import { DropdownButton, Dropdown } from 'react-bootstrap';
+
+import { toast, ToastContainer, Zoom } from 'react-toastify';
 
 
 const PlacesSingle = (props) => {
@@ -12,26 +16,99 @@ const PlacesSingle = (props) => {
     const articleId = searchParams.get('article_id');
 
     const [data, setData] = useState([]);
+    const [userId, setUserId] = useState(0);
+    const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
 
 
 
 
     useEffect(() => {
-        const fetchData = async () => {
 
-            console.log(articleId)
-            const response = await fetch(`http://127.0.0.1:8080/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
-            if (response.ok) {
-                const resp = await response.json();
-
-                setData(resp);
-
-            }
-
-        };
 
         fetchData();
+        fetchInitData();
     }, [articleId]);
+    const fetchData = async () => {
+
+        console.log(articleId)
+        const response = await fetch(`http://127.0.0.1:8080/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
+        if (response.ok) {
+            const resp = await response.json();
+
+            setData(resp);
+
+        }
+
+    };
+
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitData = async () => {
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            if (itinerariesResponse.ok) {
+                const itinerariesData = await itinerariesResponse.json();
+                console.log(itinerariesData);
+                if (itinerariesData.length > 0) {
+                    setItinerariesOfUser(itinerariesData);
+                }
+            } else {
+                console.error('Error:', itinerariesResponse.status);
+            }
+        }
+    }
+
+    const handleCreate = async (e, idArticles, idItineraries) => {
+        e.preventDefault();
+
+        const tmpidItineraries = parseInt(idItineraries);
+        console.log("when click " + tmpidItineraries);
+
+
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles
+                },
+                itineraries: {
+                    id: idItineraries
+                },
+                status: 1
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status == 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status == 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    };
 
     return (
         <div>
@@ -54,24 +131,40 @@ const PlacesSingle = (props) => {
                     <div className="row">
                         <div className="col-lg-3 sidebar">
                             <div className="sidebar-wrap ftco-animate">
-                                <h3 className="heading mb-4">Kế hoạch</h3>
+
                                 <div>
-                                    <h1>{data.name}</h1>
+
                                 </div>
-                             
+
                                 <form action="#">
                                     <div className="fields">
 
                                         <div className="form-group">
                                             <div className="select-wrap one-third">
-                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
-                                                <select name="" id="" className="form-control" placeholder="Keyword search">
-                                                    <option value="">Select Location</option>
-                                                    <option value="">San Francisco USA</option>
-                                                    <option value="">Berlin Germany</option>
-                                                    <option value="">Lodon United Kingdom</option>
-                                                    <option value="">Paris Italy</option>
-                                                </select>
+                                                <h3 className="heading mb-4">Kế hoạch</h3>
+                                                {sessionStorage.getItem('username') ? (
+                                                    <select
+                                                        name=""
+                                                        id=""
+                                                        className="form-control"
+                                                        placeholder="Tìm kiếm theo từ khóa"
+                                                        onClick={(e) => {
+                                                            handleCreate(e, articleId, e.target.value);
+                                                        }}
+                                                    >
+                                                        {itinerariesOfUser.map((itinerary, ii) => (
+                                                            <option value={itinerary.id} key={ii}>
+                                                                {itinerary.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                ) : (
+                                                    <div>
+                                                        <a href="/itinerarie" className="btn btn-primary">
+                                                            Tạo kế hoạch
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -97,6 +190,7 @@ const PlacesSingle = (props) => {
                                 </div>
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
                                     {/* <div className="reservation-form" > */}
+                                    <h2>{data.name}</h2>
                                     <div className="row">
 
                                         <div id="map">
@@ -111,8 +205,12 @@ const PlacesSingle = (props) => {
                                 </div>
 
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
-                                    <span>Our Best hotels &amp; Rooms</span>
+                                    <p>{data.content}</p>
+
+                                    {/* <span>Our Best hotels &amp; Rooms</span>
                                     <h2>Luxury Hotel in Paris</h2>
+
+
                                     <p className="rate mb-5">
                                         <span className="loc"><a href="#"><i className="icon-map"></i> 291 South 21th Street, Suite 721 New York NY 10016</a></span>
                                         <span className="star">
@@ -138,14 +236,15 @@ const PlacesSingle = (props) => {
                                             <li>Headline of Alphabet Village and the subline</li>
                                         </ul>
                                     </div>
-                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
+                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p> */}
                                 </div>
+
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
                                     <h4 className="mb-4">Take A Tour</h4>
                                     <div className="block-16">
                                         <figure>
-                                            <img src="images/hotel-6.jpg" alt="Image placeholder" className="img-fluid" />
-                                            <a href="https://vimeo.com/45830194" className="play-button popup-vimeo"><span className="icon-play"></span></a>
+                                            <img src={data.image} alt="Image placeholder" className="img-fluid" />
+                                            <a href={data.title} className="play-button popup-vimeo" target="blank"><span className="icon-play"></span></a>
                                         </figure>
                                     </div>
                                 </div>
@@ -432,11 +531,11 @@ const PlacesSingle = (props) => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
 
 
-        </div>
+        </div >
     )
 }
 

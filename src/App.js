@@ -1,6 +1,6 @@
 // import './App.css';
-import Footer from './components/Footer';
-import Header from './components/Header';
+import Footer from './components/headerFooter/Footer';
+import Header from './components/headerFooter/Header';
 import { Outlet } from "react-router-dom";
 import { useEffect } from 'react';
 
@@ -8,6 +8,7 @@ function App() {
 
 	useEffect(() => {
 		console.log("app");
+		console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
 	  }, []);
 
 	return (

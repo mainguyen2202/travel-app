@@ -98,3 +98,43 @@ https://www.youtube.com/watch?v=Uq-0tA0f_X8
 https://github.com/Developer-Nijat/React-Google-Map-Markers/blob/main/src/App.jsx
 
 https://javascript.plainenglish.io/how-to-store-json-data-in-local-storage-js-react-angular-cba97508fbc5
+
+# How to use create-react-app with an older React version?
+
+https://stackoverflow.com/questions/46566830/how-to-use-create-react-app-with-an-older-react-version
+
+npm install --legacy-peer-deps
+
+npm audit fix --force
+
+npm install --force
+
+npm install dotenv --save --force
+
+yarn install
+
+yarn add @testing-library/dom
+
+yarn build
+
+yarn start
+
+yarn add @babel/plugin-proposal-private-property-in-object --dev
+
+# Display Directions with React Google Maps
+
+DirectionsRenderer
+
+DirectionsService
+
+https://stackoverflow.com/questions/54857375/display-directions-with-react-google-maps
+
+https://stackblitz.com/edit/react-5cuf9v?file=index.js,Map.js
+
+https://stackoverflow.com/questions/46122905/google-is-not-defined-adding-google-maps-api-in-react-js
+
+Building an interactive map with Google Maps Platform and React - Crash Course
+
+https://www.youtube.com/watch?v=2po9_CIRW7I
+
+https://github.com/leighhalliday/google-maps-react-crash-course/blob/main/components/map.tsx

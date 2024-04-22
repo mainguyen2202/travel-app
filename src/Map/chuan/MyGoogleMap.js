@@ -33,14 +33,15 @@ const markers = [
 
 const MyGoogleMap = (props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'mai_AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
+    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   });
   const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
 
   const handleActiveMarker = (idMarker) => {
     console.log("id", idMarker, idActiveMarker);
-    if (idMarker === idActiveMarker) {
+    if (idMarker == idActiveMarker) {
       return;
     }
     setIdActiveMarker(idMarker);
@@ -114,7 +115,7 @@ const MyGoogleMap = (props) => {
                 // }}
                 >
                   {
-                    idActiveMarker === item.id ? (
+                    idActiveMarker == item.id ? (
                       <InfoWindowF 
                         onCloseClick={() => setIdActiveMarker(null)}
                       >

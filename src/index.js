@@ -4,18 +4,19 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
-import About from './components/About';
-import Places from './components/Places';
-import Blog from './components/Blog';
-import Contact from './components/Contact';
-import Itinerarie from './components/Itinerarie';
-import Like from './components/Like';
+import Home from './components/homes/Home';
+import About from './components/homes/About';
+import Places from './components/place/Places';
+import Blog from './components/blog/Blog';
+import Contact from './components/homes/Contact';
 
-import PlacesSingle from './components/PlacesSingle';
-import BlogSingle from './components/BlogSingle';
-import ItinerarieView from './components/ItinerarieView';
-import ItinerarieEdit from './components/ItinerarieEdit';
+import Like from './components/homes/Like';
+
+import PlacesSingle from './components/place/PlacesSingle';
+import BlogSingle from './components/blog/BlogSingle';
+import Itinerarie from './components/Itinerarie/Itinerarie';
+import ItinerarieView from './components/Itinerarie/ItinerarieView';
+import ItinerarieEdit from './components/Itinerarie/ItinerarieEdit';
 import PhanTrang from './PhanTrang/PhanTrang';
 import Login from './components/Profile/Login';
 import Registration from './components/Profile/Registration';
@@ -23,8 +24,8 @@ import ForgotPassword from './components/Profile/ForgotPassword';
 import Profile from './components/Profile/Profile';
 import ChangePassword from './components/Profile/ChangePassword';
 import ResetPassword from './components/Profile/ResetPassword';
-import MyMapComponent from './components/MyMap';
-import MyGoogleMap from './components/MyGoogleMap';
+import MyMapComponent from './Map/chuan/MyMap';
+import MyGoogleMap from './Map/chuan/MyGoogleMap';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
