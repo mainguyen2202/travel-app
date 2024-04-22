@@ -1,33 +1,133 @@
-import { useEffect, useState } from "react";
-import { Dropdown, DropdownButton, NavLink } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { Margin } from "@mui/icons-material";
+
+import { Dropdown, DropdownButton } from "react-bootstrap";
 
 
 const Like = (props) => {
+    const [like, setLike] = useState([]);
+    const [userId, setUserId] = useState(0);
+    const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
+    
+
+    useEffect(() => {
+        fetchInitDataItineraries();
+        fetchInitDataLike();
+    }, []);
+        // tạo hàm xử lí lấy danh sách
+        const fetchInitDataLike = async () => {
+            // Retrieve the object from the storage
+            const userInfoString = sessionStorage.getItem("userInfo");
+            const userInfoConvertObject = JSON.parse(userInfoString);
+            if (userInfoConvertObject !== null) {
+    
+                const idUser = userInfoConvertObject.id;
+                setUserId(idUser);
+    
+                const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    if (data.length > 0) {
+                        setLike(data);
+                    }
+                } else {
+                    console.error('Error:', response.status);
+                }
+            }
+    
+        };
+         // tạo hàm xử lí lấy danh sách
+       const fetchInitDataItineraries = async () => {
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            if (itinerariesResponse.ok) {
+                const itinerariesData = await itinerariesResponse.json();
+                console.log(itinerariesData);
+                if (itinerariesData.length > 0) {
+                    setItinerariesOfUser(itinerariesData);
+                }
+            } else {
+                console.error('Error:', itinerariesResponse.status);
+            }
+        }
+
+    };
+    const handleCreate = async (e, idArticles, idItineraries) => {
+        e.preventDefault();
+
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles
+                },
+                itineraries: {
+                    id: idItineraries
+                },
+                status: 1
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status == 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status == 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    };
+
 
     return (
         <div>
-                    <div className="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-      <div className="overlay"></div>
-      <div className="container">
-        <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
-         style={{ height: '465px' }}
-        >
-          <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Like</span></p>
-            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Like</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <section className="ftco-section">
+            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+                <div className="overlay"></div>
+                <div className="container">
+                    <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+                        style={{ height: '465px' }}
+                    >
+                        <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Like</span></p> */}
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Yêu thích</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         
+            <section className="ftco-section">
                 <div className="container">
                     <div className="row">
 
 
-                        
+
                         <div className="col-lg-12">
-                          
+
                             <div className="reservation-form" >
                                 <div className="container">
                                     <div className="row">
@@ -42,129 +142,81 @@ const Like = (props) => {
                                             </div>
                                         </div>
 
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
 
 
+                <div className="container">
 
-                        
+                    <div className="row">
+                        {sessionStorage.getItem('username') ? (
+
                             <div className="row">
+                                {like.map((likes, i) => (
+                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
+                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                            <div className="card">
+                                                <Link to={`/detail?article_id=${likes.articles.id}`}>
+                                                    <img src={likes.articles.image} className="card-img-top" alt="..." />
+                                                </Link>
+                                                <div className="card-body">
+                                                    <div className="d-flex">
+                                                        <div className="one">
+                                                            <Link to={`/detail?article_id=${likes.articles.id}`}>{likes.articles.id}</Link>
+                                                            <h3><a href="">{likes.articles.name}</a></h3>
+                                                            <p className="rate">
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star-o"></i>
+                                                            </p>
+                                                        </div>
+                                                        <div className="two"></div>
+                                                    </div>
+                                                    <p>{likes.articles.content}</p>
+                                                    <hr />
+                                                    <div>
+                                                        <div className="bottom-area d-flex">
 
-                            <div className="col-sm col-md-6 col-lg-4 ftco-animate">
+                                                            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                                {itinerariesOfUser.map((itinerary, ii) => (
+                                                                    <Dropdown.Item
 
+                                                                        value={itinerary.id}
+                                                                        key={ii}
+                                                                        onClick={(e) => {
+                                                                            handleCreate(e, likes.articles.id, itinerary.id);
+                                                                        }}
+                                                                    >
+                                                                        {itinerary.name}
+                                                                    </Dropdown.Item>
+                                                                ))}
+                                                            </DropdownButton>
 
-
-{/* <div className="destination" style={{ border: '5px solid #EDF2F7', borderRadius: '15px' }}>
-    <div>
-
-        <a href="PlacesSingle" className="img img-2 d-flex justify-content-center align-items-center" style={{ backgroundImage: `url('./image1/home/hoChiMinh.jpg')` }}>
-            <div className="icon d-flex justify-content-center align-items-center">
-                <span className="icon-link"></span>
-            </div>
-        </a>
-    </div>
-    <div className="text p-3">
-        <div className="d-flex">
-            <div className="one">
-                <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-
-            </div>
-            <div className="two">
-                <p className="rate">
-                    <i className="icon-star"></i>
-                    <i className="icon-star"></i>
-                    <i className="icon-star"></i>
-                    <i className="icon-star"></i>
-                    <i className="icon-star-o"></i>
-                </p>
-            </div>
-
-        </div>
-        <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng
-            sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-        <hr />
-        <p className="bottom-area d-flex">
-
-            <a href="" className="like" title="Like" data-toggle="tooltip">      <i className="bi bi-heart"></i></a>
-
-
-            <a href="/ItinerarieEdit" className="like" title="Like" data-toggle="tooltip">
-                <span className="s18_s" >  <i className="material-icons">  favorite_border</i></span>
-            </a>
-            <a href="/ItinerarieEdit" className="like" title="Like" data-toggle="tooltip"><i className="material-icons">  favorite</i></a>
-
-            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
-                <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-            </DropdownButton>
-
-
-        </p>
-
-
-
-    </div>
-
-</div> */}
-
-
-
-<div className="destination" style={{
-    boxShadow: '0px 2px 10px  #d9d9d9'
-
-}}>
-    <div className="card" >
-        <img src="./image1/home/hoChiMinh.jpg" className="card-img-top" alt="..." />
-        <div className="card-body">
-            <div className="d-flex">
-                <div className="one">
-                    <h3><a href="/placesSingle">Hồ Chí Minh</a></h3>
-                    <p className="rate">
-                        <i className="icon-star"></i>
-                        <i className="icon-star"></i>
-                        <i className="icon-star"></i>
-                        <i className="icon-star"></i>
-                        <i className="icon-star-o"></i>
-                    </p>
-                </div>
-                <div className="two">
-
-                </div>
-
-            </div>
-            <p>Sau lưng thành phố là một vùng đồng bằng rộng lớn trải dài về phía Tây qua Campuchia và với đồng bằng sông Cửu Long trù phú dưới chân, Thành phố Hồ Chí Minh tọa lạc trên một khúc cua khổng lồ của sông Sài Gòn.</p>
-            <hr />
-            <p className="bottom-area d-flex">
-
-
-
-                <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                    <span className="s18_s">  <i className="material-icons">  favorite_border</i></span>
-                </a>
-
-                <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Dropdown button">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                </DropdownButton>
-
-
-            </p>
-        </div>
-    </div>
-</div>
-
-
-
-
-</div>
-                                
-
+                                                        </div>
+                                                    </div>
+                                                                     
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
+                        ) : (
+                            <div>
+                                <p>Đăng nhập để thấy địa điểm yêu thích</p>
+                            </div>
+                        )}
+
+
+
+
+                    </div>
+                </div>
 
 
                             <div className="row mt-5">

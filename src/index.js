@@ -16,8 +16,6 @@ import PlacesSingle from './components/place/PlacesSingle';
 import BlogSingle from './components/blog/BlogSingle';
 import Itinerarie from './components/Itinerarie/Itinerarie';
 import ItinerarieView from './components/Itinerarie/ItinerarieView';
-import ItinerarieEdit from './components/Itinerarie/ItinerarieEdit';
-import PhanTrang from './PhanTrang/PhanTrang';
 import Login from './components/Profile/Login';
 import Registration from './components/Profile/Registration';
 import ForgotPassword from './components/Profile/ForgotPassword';
@@ -48,7 +46,6 @@ root.render(
 
           <Route path="itinerarie" element={<Itinerarie />} />
           <Route path="itinerarieView" element={<ItinerarieView />} />
-          <Route path="itinerarieEdit" element={<ItinerarieEdit />} />
           <Route path="like" element={<Like />} />
 
           <Route path="blog" element={<Blog />} />
@@ -70,7 +67,7 @@ root.render(
 
 
           {/* <Route path="Map" element={<MyMapComponent />} /> */}
-          <Route path="Map" element={<MyGoogleMap />} />
+          {/* <Route path="Map" element={<MyGoogleMap />} /> */}
 
           {/* <Route path="PhanTrang" element={<PhanTrang />} /> */}
 

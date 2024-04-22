@@ -10,8 +10,8 @@ const ChangePassword = (props) => {
                         style={{ height: '465px' }}
                     >
                         <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>BLOG</span></p>
-                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Tips & Itinerarie</h1>
+                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>BLOG</span></p> */}
+                            {/* <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Tips & Itinerarie</h1> */}
                         </div>
                     </div>
                 </div>

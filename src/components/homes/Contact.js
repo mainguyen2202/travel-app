@@ -10,8 +10,8 @@ const Contact = (props) => {
          style={{ height: '465px' }}
         >
           <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Contact</span></p>
-            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Contact</h1>
+            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Contact</span></p> */}
+            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Liên hệ</h1>
           </div>
         </div>
       </div>

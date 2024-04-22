@@ -41,6 +41,7 @@ const Places = () => {
         console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
         fetchInitData();// sử dụng hàm lấy danh sách
         fetchInitDataLike();
+        fetchInitDataDescDate();
     }, []);
 
 
@@ -177,6 +178,7 @@ const Places = () => {
 
     const handleCreate = async (e, idArticles, idItineraries) => {
         e.preventDefault();
+        
 
         try {
             const regObj = {
@@ -233,8 +235,8 @@ const Places = () => {
                 const data = await response.json();
                 console.log(data);
                 if (data.length > 0) {
-                    setLike(data);
-                    let dataLike = data.map(item => ({
+                    // setLike(data);
+                    let dataItem = data.map(item => ({
                         id: item.articles.id,
                         name: item.articles.name,
                         title: item.articles.title,
@@ -245,13 +247,105 @@ const Places = () => {
                         status: item.articles.status
 
                     }));
-                    setArticles(dataLike);// làm việc 
+                    setArticles(dataItem);// làm việc 
                 }
             } else {
                 console.error('Error:', response.status);
             }
         }
 
+    };
+    const fetchInitDataHistoryArticles = async () => {
+
+
+        const response = await fetch(`http://127.0.0.1:8080/historyArticles/list`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            if (data.length > 0) {
+
+                let dataItem = data.map(item => ({
+                    id: item.articles.id,
+                    name: item.articles.name,
+                    title: item.articles.title,
+                    price: item.articles.price,
+                    image: item.articles.image,
+                    createAt: item.articles.createAt,
+                    content: item.articles.content,
+                    status: item.articles.status
+
+                }));
+                setArticles(dataItem);// làm việc 
+            }
+        } else {
+            console.error('Error:', response.status);
+        }
+
+
+    };
+    const fetchInitDataDescDate = async () => {
+
+
+        const response = await fetch(`http://localhost:8080/articles/listDate`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data);
+            if (data.length > 0) {
+
+                setArticles(data);// làm việc 
+            }
+        } else {
+            console.error('Error:', response.status);
+        }
+
+
+    };
+
+    const handleCreateLike = async (e, idArticles) => {
+        e.preventDefault();
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles
+                } ,
+                users: {
+                    id: idUser
+                }
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/likes/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status == 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status == 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    }
     };
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
@@ -317,8 +411,8 @@ const Places = () => {
                         style={{ height: '465px' }}
                     >
                         <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Places</span></p>
-                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Destinations</h1>
+                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Địa điểm</span></p> */}
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Địa điểm</h1>
                         </div>
                     </div>
                 </div>
@@ -435,27 +529,34 @@ const Places = () => {
 
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
-                               
-                                    <button onClick={fetchInitDataLike}>
+
+                                <button onClick={fetchInitDataLike}>
                                     Yêu thích
-                                    </button>
-                                    <form action="#" className="card1">
-                                        <div className="fields">
+                                </button>
 
-                                            <div className="form-group">
-                                                <div className="select-wrap one-third">
-                                                    <div className="icon"><span className="ion-ios-arrow-down"></span></div>
-                                                    <select name="" id="" className="form-control" placeholder="Keyword search">
-                                                        <option value="">Nổi bật</option>
+                                <button onClick={fetchInitDataHistoryArticles}>
+                                    Nổi Bật
+                                </button>
+                                <button onClick={fetchInitDataDescDate}>
+                                    Mới nhất đến cũ nhất
+                                </button>
+                                <form action="#" className="card1">
+                                    <div className="fields">
 
-                                                        <option >Yêu thích</option>
-                                                        <option value="">Mới nhất đến cũ nhất</option>
-                                                    </select>
-                                                </div>
+                                        <div className="form-group">
+                                            <div className="select-wrap one-third">
+                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                <select name="" id="" className="form-control" placeholder="Keyword search">
+                                                    <option value="">Nổi bật</option>
+
+                                                    <option >Yêu thích</option>
+                                                    <option value="">Mới nhất đến cũ nhất</option>
+                                                </select>
                                             </div>
-
                                         </div>
-                                    </form>
+
+                                    </div>
+                                </form>
 
                             </div>
 
@@ -512,6 +613,7 @@ const Places = () => {
                                                                                 onCloseClick={() => setIdActiveMarker(null)}
                                                                             >
                                                                                 <div>
+                                                                                <Link to={`/detail?article_id=${item.id}`}>{item.name}</Link>
                                                                                     <p>{item.name}</p>
                                                                                 </div>
                                                                             </InfoWindowF>
@@ -548,6 +650,7 @@ const Places = () => {
                                                     <div className="d-flex">
                                                         <div className="one">
                                                             <Link to={`/detail?article_id=${article.id}`}>{article.id}</Link>
+                                                          
                                                             <h3><a href="">{article.name}</a></h3>
                                                             <p className="rate">
                                                                 <i className="icon-star"></i>
@@ -562,11 +665,16 @@ const Places = () => {
                                                     <p>{article.content}</p>
                                                     <hr />
                                                     <div>
-                                                        <div className="bottom-area d-flex">
-                                                            <a href="/Like" className="like" title="Like" data-toggle="tooltip">
-                                                                <span className="s18_s"><i className="material-icons">favorite_border</i></span>
-                                                            </a>
-                                                            {sessionStorage.getItem('username') ? (
+                                                        {sessionStorage.getItem('username') ? (
+                                                            <div className="bottom-area d-flex">
+                                                                <a onClick={(e) => {
+                                                                    handleCreateLike(e, article.id);
+                                                                }} className="like" title="Like" data-toggle="tooltip">
+                                                                    <span className="s18_s"><i className="material-icons">favorite_border</i></span>
+                                                                </a>
+                                                                {/* <button onClick={(e) => {
+                                                                    handleCreateLike(e, article.id);
+                                                                }}> <span className="s18_s"><i className="material-icons">favorite_border</i></span></button> */}
                                                                 <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
                                                                     {itinerariesOfUser.map((itinerary, ii) => (
                                                                         <Dropdown.Item
@@ -581,12 +689,15 @@ const Places = () => {
                                                                         </Dropdown.Item>
                                                                     ))}
                                                                 </DropdownButton>
-                                                            ) : (
+                                                            </div>
+                                                        ) : (
+                                                            <div className="bottom-area d-flex">
                                                                 <div>
                                                                     <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
                                                                 </div>
-                                                            )}
-                                                        </div>
+                                                            </div>
+                                                        )}
+
                                                     </div>
                                                 </div>
                                             </div>

@@ -110,6 +110,53 @@ const PlacesSingle = (props) => {
         }
     };
 
+    const handleCreateLike = async (e) => {
+        e.preventDefault();
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+            try {
+                const regObj = {
+                    articles: {
+                        id: articleId
+                    },
+                    users: {
+                        id: idUser
+                    }
+                };
+                console.log(regObj);
+
+                const response = await fetch("http://127.0.0.1:8080/likes/create", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(regObj)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+
+                    if (data.status == 1) {
+                        toast.success(data.message);
+                    } else {
+                        toast.error(data.message);
+                    }
+                } else if (response.status == 400) {
+                    // Xử lý khi có lỗi 400 (Bad Request)
+                } else if (response.status == 401) {
+                    // Xử lý khi có lỗi 401 (Unauthorized)
+                } else {
+                    // Xử lý khi có lỗi khác
+                }
+            } catch (err) {
+                toast.error('Failed: ' + err.message);
+            }
+        }
+    };
+
     return (
         <div>
 
@@ -120,8 +167,8 @@ const PlacesSingle = (props) => {
                         style={{ height: '465px' }}
                     >
                         <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Places</span></p>
-                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Destinations</h1>
+                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Places</span></p> */}
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Địa điểm chi tiết</h1>
                         </div>
                     </div>
                 </div>
@@ -129,68 +176,73 @@ const PlacesSingle = (props) => {
             <section className="ftco-section ftco-degree-bg">
                 <div className="container">
                     <div className="row">
-                        <div className="col-lg-3 sidebar">
-                            <div className="sidebar-wrap ftco-animate">
 
-                                <div>
-
-                                </div>
-
-                                <form action="#">
-                                    <div className="fields">
-
-                                        <div className="form-group">
-                                            <div className="select-wrap one-third">
-                                                <h3 className="heading mb-4">Kế hoạch</h3>
-                                                {sessionStorage.getItem('username') ? (
-                                                    <select
-                                                        name=""
-                                                        id=""
-                                                        className="form-control"
-                                                        placeholder="Tìm kiếm theo từ khóa"
-                                                        onClick={(e) => {
-                                                            handleCreate(e, articleId, e.target.value);
-                                                        }}
-                                                    >
-                                                        {itinerariesOfUser.map((itinerary, ii) => (
-                                                            <option value={itinerary.id} key={ii}>
-                                                                {itinerary.name}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                ) : (
-                                                    <div>
-                                                        <a href="/itinerarie" className="btn btn-primary">
-                                                            Tạo kế hoạch
-                                                        </a>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </form>
-                            </div>
-
-                        </div>
-                        <div className="col-lg-9">
+                        <div className="col-lg-12">
                             <div className="row">
-                                <div className="col-md-12 ftco-animate">
-                                    <div className="single-slider owl-carousel">
-                                        <div className="item">
-                                            <div className="hotel-img" style={{ backgroundImage: `url('./images/hotel-2.jpg')` }}></div>
+                                <div className="col-md-12 ftco-animate ">
+                                    {/* <div className="col-lg-3 sidebar"> */}
+                                    {/* <div className="sidebar-wrap ftco-animate"> */}
+
+
+
+
+                                    {sessionStorage.getItem('username') ? (
+
+                                        <div>
+                                            <a
+                                                onClick={(e) => {
+                                                    handleCreateLike(e);
+                                                }}
+                                                className="like" title="Like" data-toggle="tooltip"
+
+                                            >
+                                                <span className="s18_s "><i className="material-icons "  style={{fontSize:'50px'}} >favorite_border</i></span>
+                                            </a>
+                                         
+                                            <form action="#">
+
+                                                <div className="fields col-lg-3  ">
+
+                                                    <div className="form-group">
+                                                        <div className="select-wrap one-third">
+                                                            <h3 className="heading mb-4">Kế hoạch</h3>
+                                                            <select
+                                                                name=""
+                                                                id=""
+                                                                className="form-control"
+                                                                placeholder="Tìm kiếm theo từ khóa"
+                                                                onClick={(e) => {
+                                                                    handleCreate(e, articleId, e.target.value);
+                                                                }}
+                                                            >
+                                                                {itinerariesOfUser.map((itinerary, ii) => (
+                                                                    <option value={itinerary.id} key={ii}>
+                                                                        {itinerary.name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div className="item">
-                                            <div className="hotel-img" style={{ backgroundImage: `url('./images/hotel-3.jpg')` }}></div>
+
+                                    ) : (
+                                        <div>
+                                            <a href="/itinerarie" className="btn btn-primary">
+                                                Tạo kế hoạch
+                                            </a>
                                         </div>
-                                        <div className="item">
-                                            <div className="hotel-img" style={{ backgroundImage: `url('./images/hotel-4.jpg')` }}></div>
-                                        </div>
-                                    </div>
+                                    )}
+
+                                    {/* </div> */}
+
+                                    {/* </div> */}
                                 </div>
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
                                     {/* <div className="reservation-form" > */}
-                                    <h2>{data.name}</h2>
+                                    {/* <h2>{data.name}</h2> */}
                                     <div className="row">
 
                                         <div id="map">
@@ -204,14 +256,15 @@ const PlacesSingle = (props) => {
                                     {/* </div> */}
                                 </div>
 
+
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
+
+                                    <span>Our Best hotels &amp; Rooms</span>
+                                    <h2>{data.name}</h2>
                                     <p>{data.content}</p>
 
-                                    {/* <span>Our Best hotels &amp; Rooms</span>
-                                    <h2>Luxury Hotel in Paris</h2>
 
-
-                                    <p className="rate mb-5">
+                                    {/* <p className="rate mb-5">
                                         <span className="loc"><a href="#"><i className="icon-map"></i> 291 South 21th Street, Suite 721 New York NY 10016</a></span>
                                         <span className="star">
                                             <i className="icon-star"></i>
@@ -236,11 +289,13 @@ const PlacesSingle = (props) => {
                                             <li>Headline of Alphabet Village and the subline</li>
                                         </ul>
                                     </div>
-                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p> */}
+                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the 
+                                    skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road,
+                                     the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p> */}
                                 </div>
 
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
-                                    <h4 className="mb-4">Take A Tour</h4>
+                                    <h4 className="mb-4">Đi tham quan</h4>
                                     <div className="block-16">
                                         <figure>
                                             <img src={data.image} alt="Image placeholder" className="img-fluid" />

@@ -184,3 +184,15 @@ table.table td i {
 
 }
 /*end dang ky*/
+
+/*start like*/
+
+.like{
+  float: right;
+}
+a:not([href]):not([tabindex]) {
+  color: #f9be37;
+  text-decoration: none;
+}
+
+/* end like */

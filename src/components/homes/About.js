@@ -11,8 +11,8 @@ const About = (props) => {
          style={{ height: '465px' }}
         >
           <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>About</span></p>
-            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">About Us</h1>
+            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>About</span></p> */}
+            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Giới thiệu</h1>
           </div>
         </div>
       </div>
