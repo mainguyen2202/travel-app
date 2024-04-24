@@ -742,7 +742,7 @@ const PlacesSingle = (props) => {
                                                         <div className="card-body">
                                                             <div className="d-flex">
                                                                 <div className="one">
-                                                                    <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>{articlesPlacesIds.id}</Link>
+                                                                    {/* <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>{articlesPlacesIds.id}</Link> */}
 
                                                                     <h3><a href="">{articlesPlacesIds.name}</a></h3>
                                                                     <p className="rate">

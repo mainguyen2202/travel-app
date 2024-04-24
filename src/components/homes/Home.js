@@ -325,8 +325,9 @@ const Home = (props) => {
                                                 <div className="card-body">
                                                     <div className="d-flex">
                                                         <div className="one">
-                                                            <Link to={`/detail?article_id=${likes.articles.id}`}>{likes.articles.id}</Link>
+                                                            {/* <Link to={`/detail?article_id=${likes.articles.id}`}>{likes.articles.id}</Link> */}
                                                             <h3><a href="">{likes.articles.name}</a></h3>
+                                                            <h3><a href="">{likes.articles.price+"VNĐ/ Khách"}</a></h3>
                                                             <p className="rate">
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>

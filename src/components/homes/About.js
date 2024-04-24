@@ -4,200 +4,34 @@ const About = (props) => {
     return (
         <div>
 
-<div className="hero-wrap js-fullheight"style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
-      <div className="overlay"></div>
-      <div className="container">
-        <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
-         style={{ height: '465px' }}
-        >
-          <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>About</span></p> */}
-            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Giới thiệu</h1>
-          </div>
-        </div>
-      </div>
-    </div>
-   
-
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-            <section className="ftco-section">
+            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+                <div className="overlay"></div>
                 <div className="container">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="intro">
-                                <h3><span>01</span> Travel</h3>
-                                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="intro">
-                                <h3><span>02</span> Experience</h3>
-                                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-                            </div>
-                        </div>
-                        <div className="col-md-4">
-                            <div className="intro">
-                                <h3><span>03</span> Relax</h3>
-                                <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-                            </div>
+                    <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
+                        style={{ height: '465px' }}
+                    >
+                        <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
+                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>About</span></p> */}
+                            <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Giới thiệu</h1>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section className="ftco-section ftco-counter img" id="section-counter" style={{ backgroundImage: `url('./images/bg_1jpg')` }} data-stellar-background-ratio="0.5">
-                <div className="container">
-                    <div className="row justify-content-center">
-                        <div className="col-md-10">
-                            <div className="row">
-                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div className="block-18 text-center">
-                                        <div className="text">
-                                            <strong className="number" data-number="100000">0</strong>
-                                            <span>Happy Customers</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div className="block-18 text-center">
-                                        <div className="text">
-                                            <strong className="number" data-number="40000">0</strong>
-                                            <span>Destination Places</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div className="block-18 text-center">
-                                        <div className="text">
-                                            <strong className="number" data-number="87000">0</strong>
-                                            <span>Hotels</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 d-flex justify-content-center counter-wrap ftco-animate">
-                                    <div className="block-18 text-center">
-                                        <div className="text">
-                                            <strong className="number" data-number="56400">0</strong>
-                                            <span>Restaurant</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section className="ftco-about d-md-flex">
-                <div className="one-half img" style={{ backgroundImage: `url('./images/about.jpg')` }}></div>
-                <div className="one-half ftco-animate">
-                    <div className="heading-section ftco-animate ">
-                        <h2 className="mb-4">The Best Travel Agency</h2>
-                    </div>
-                    <div>
-                        <p>On her way she met a copy. The copy warned the Little Blind Text, that where it came from it would have been rewritten a thousand times and everything that was left from its origin would be the word "and" and the Little Blind Text should turn around and return to its own, safe country. But nothing the copy said could convince her and so it didn’t take long until a few insidious Copy Writers ambushed her, made her drunk with Longe and Parole and dragged her into their agency, where they abused her for their.</p>
-                    </div>
-                </div>
-            </section>
 
-            <section className="ftco-section testimony-section">
-                <div className="container">
-                    <div className="row justify-content-center mb-5 pb-3">
-                        <div className="col-md-7 text-center heading-section heading-section-white ftco-animate">
-                            <h2 className="mb-4">Our satisfied customer says</h2>
-                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in</p>
-                        </div>
-                    </div>
-                    <div className="row ftco-animate">
-                        <div className="col-md-12">
-                            <div className="carousel-testimony owl-carousel ftco-owl">
-                                <div className="item">
-                                    <div className="testimony-wrap p-4 pb-5">
-                                        <div className="user-img mb-5" style={{ backgroundImage: `url('./images/person_1jpg')` }}>
-                                            <span className="quote d-flex align-items-center justify-content-center">
-                                                <i className="icon-quote-left"></i>
-                                            </span>
-                                        </div>
-                                        <div className="text">
-                                            <p className="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                            <p className="name">Mark Web</p>
-                                            <span className="position">Marketing Manager</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="item">
-                                    <div className="testimony-wrap p-4 pb-5">
-                                        <div className="user-img mb-5" style={{ backgroundImage: `url('./images/person_2jpg')` }}>
-                                            <span className="quote d-flex align-items-center justify-content-center">
-                                                <i className="icon-quote-left"></i>
-                                            </span>
-                                        </div>
-                                        <div className="text">
-                                            <p className="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                            <p className="name">Mark Web</p>
-                                            <span className="position">Interface Designer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="item">
-                                    <div className="testimony-wrap p-4 pb-5">
-                                        <div className="user-img mb-5" style={{ backgroundImage: `url('./images/person_3jpg')` }}>
-                                            <span className="quote d-flex align-items-center justify-content-center">
-                                                <i className="icon-quote-left"></i>
-                                            </span>
-                                        </div>
-                                        <div className="text">
-                                            <p className="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                            <p className="name">Mark Web</p>
-                                            <span className="position">UI Designer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="item">
-                                    <div className="testimony-wrap p-4 pb-5">
-                                        <div className="user-img mb-5" style={{ backgroundImage: `url('./images/person_1jpg')` }}>
-                                            <span className="quote d-flex align-items-center justify-content-center">
-                                                <i className="icon-quote-left"></i>
-                                            </span>
-                                        </div>
-                                        <div className="text">
-                                            <p className="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                            <p className="name">Mark Web</p>
-                                            <span className="position">Web Developer</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="item">
-                                    <div className="testimony-wrap p-4 pb-5">
-                                        <div className="user-img mb-5" style={{ backgroundImage: `url('./images/person_1jpg')` }}>
-                                            <span className="quote d-flex align-items-center justify-content-center">
-                                                <i className="icon-quote-left"></i>
-                                            </span>
-                                        </div>
-                                        <div className="text">
-                                            <p className="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                            <p className="name">Mark Web</p>
-                                            <span className="position">System Analyst</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <section className="ftco-section services-section bg-light">
                 <div className="container">
@@ -206,8 +40,8 @@ const About = (props) => {
                             <div className="media block-6 services d-block">
                                 <div className="icon"><span className="flaticon-yatch"></span></div>
                                 <div className="media-body">
-                                    <h3 className="heading mb-3">Special Activities</h3>
-                                    <p>A small river named Duden flows by their place and supplies.</p>
+                                    <h3 className="heading mb-3">Hoạt động đặc biệt</h3>
+                                    <p>Tổ chức các chuyến du lịch khám phá văn hóa và ẩm thực tại các thành phố lớn như Hà Nội và Sài Gòn..</p>
                                 </div>
                             </div>
                         </div>
@@ -215,8 +49,8 @@ const About = (props) => {
                             <div className="media block-6 services d-block">
                                 <div className="icon"><span className="flaticon-around"></span></div>
                                 <div className="media-body">
-                                    <h3 className="heading mb-3">Travel Arrangements</h3>
-                                    <p>A small river named Duden flows by their place and supplies.</p>
+                                    <h3 className="heading mb-3">Sắp xếp chuyến đi</h3>
+                                    <p>Tạo ra những chuyến đi không thể quên đến những điểm đến đẹp như Hạ Long Bay, Sapa, Huế và Nha Trang, mang đến trải nghiệm tuyệt vời cho du khách..</p>
                                 </div>
                             </div>
                         </div>
@@ -224,8 +58,8 @@ const About = (props) => {
                             <div className="media block-6 services d-block">
                                 <div className="icon"><span className="flaticon-compass"></span></div>
                                 <div className="media-body">
-                                    <h3 className="heading mb-3">Private Guide</h3>
-                                    <p>A small river named Duden flows by their place and supplies.</p>
+                                    <h3 className="heading mb-3">Hướng dẫn riêng</h3>
+                                    <p>Hướng dẫn riêng và cá nhân hóa cho từng du khách, giúp họ khám phá và trải nghiệm vẻ đẹp độc đáo của Việt Nam một cách tốt nhất..</p>
                                 </div>
                             </div>
                         </div>
@@ -233,8 +67,8 @@ const About = (props) => {
                             <div className="media block-6 services d-block">
                                 <div className="icon"><span className="flaticon-map-of-roads"></span></div>
                                 <div className="media-body">
-                                    <h3 className="heading mb-3">Location Manager</h3>
-                                    <p>A small river named Duden flows by their place and supplies.</p>
+                                    <h3 className="heading mb-3">Vị trí</h3>
+                                    <p>Thông tin và cung cấp dịch vụ du lịch đa dạng, giúp du khách tìm hiểu và lựa chọn các chuyến đi tới Việt Nam..</p>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +76,48 @@ const About = (props) => {
                 </div>
             </section>
 
-     
+
+            <section className="ftco-about d-md-flex">
+                <div className="one-half img" style={{ backgroundImage: `url('./images/about.jpg')` }}></div>
+                <div className="one-half ftco-animate">
+                    <div className="heading-section ftco-animate ">
+                        <h2 className="mb-4">Công ty Du lịch Tốt Nhất</h2>
+                    </div>
+
+                    <p>Web du lịch Việt Nam mang đến cho du khách trải nghiệm du lịch tuyệt vời với dịch vụ chuyên nghiệp, lựa chọn đa dạng về điểm đến và hướng dẫn riêng biệt, đồng hành cùng họ khám phá những vẻ đẹp độc đáo của Việt Nam. Với sự chăm sóc và quan tâm tận tâm, chúng tôi cam kết đem đến cho du khách những kỷ niệm vô giá trị và trọn vẹn trong mỗi chuyến đi.</p>
+
+                </div>
+            </section>
+
+
+            <section className="ftco-section">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <div className="intro">
+                                <h3><span>01</span> Chuyển đi</h3>
+                                <p>Khám phá vẻ đẹp tuyệt vời của Việt Nam qua các hành trình khám phá đa dạng, từ cảnh quan thiên nhiên kỳ vĩ đến di sản văn hóa phong phú, và tạo ra những kỷ niệm đáng nhớ trên mỗi chuyến đi của bạn.</p>
+                                <p>Hãy khám phá những bãi biển tuyệt đẹp, những ngôi chùa linh thiêng và những thành phố sôi động, tạo nên một hành trình du lịch tuyệt vời tại Việt Nam.</p>
+                                <p>Với sự hòa quyện giữa truyền thống và hiện đại, Việt Nam là điểm đến lý tưởng để khám phá văn hóa đa dạng và thưởng thức ẩm thực tuyệt hảo.</p>
+                            </div>
+                        </div>
+                        
+                        <div className="col-md-6">
+                            <div className="intro">
+                                <h3><span>02</span> Thư giản</h3>
+                                <p>Hãy thả lỏng tâm hồn và tận hưởng những giây phút thư giãn tuyệt vời trong chuyến du lịch đến Việt Nam, nơi bạn có thể tìm thấy bình yên trong cảnh quan thiên nhiên tươi đẹp và những kỳ quan kiến trúc độc đáo.</p>
+                                <p>Hòa mình vào không gian yên bình của thiên nhiên Việt Nam, bạn sẽ có cơ hội tìm lại sự cân bằng và nạp lại năng lượng cho tâm hồn.
+                                </p>
+                                <p> Hãy thả mình vào nhịp sống chậm rãi của các làng quê truyền thống, khám phá nét đẹp văn hóa độc đáo và tận hưởng sự đơn giản và thân thiện của người dân Việt Nam.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+
         </div >
     )
 }

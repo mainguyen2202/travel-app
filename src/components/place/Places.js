@@ -650,20 +650,21 @@ const Places = () => {
                                                 <div className="card-body">
                                                     <div className="d-flex">
                                                         <div className="one">
-                                                            <Link to={`/detail?article_id=${article.id}`}>{article.id}</Link>
+                                                            {/* <Link to={`/detail?article_id=${article.id}`}>{article.id}</Link> */}
                                                           
                                                             <h3><a href="">{article.name}</a></h3>
-                                                            <p className="rate">
+                                                            <h3><a href="">{article.price+"VNĐ/ Khách"}</a></h3>
+                                                            {/* <p className="rate">
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star-o"></i>
-                                                            </p>
+                                                            </p> */}
                                                         </div>
                                                         <div className="two"></div>
                                                     </div>
-                                                    <p>{article.content}</p>
+                                                    {/* <p>{article.content}</p> */}
                                                     <hr />
                                                     <div>
                                                         {sessionStorage.getItem('username') ? (

@@ -394,7 +394,33 @@ const ItinerarieView = (props) => {
                 </form>
 
                 <form className="container">
+                  <button type="button" className="btn btn-primary" onClick={findByAllDate}>Xem tất cả</button>
                   <div className="mb-3 mt-4">
+                    <input
+                      type="date"
+                      id="dateStart"
+                      className="form-control"
+                      min={dateStart}
+                      max={dateEnd}
+                      value={dateStartItineraryArticles}
+                      onChange={e => findByDate(e, e.target.value)}
+                    />
+                  </div>
+
+
+                  <div className="mb-3 mt-4">
+                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền trên 1 người </label>
+                    <input value={totalPrice + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
+                  </div>
+
+
+                  <div className="mb-3 mt-4">
+                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền </label>
+                    <input value={totalPriceParticipantCount + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
+                  </div>
+
+                  {/* <hr /> */}
+                  {/* <div className="mb-3 mt-4">
                     <h4>
                       <b>
 
@@ -411,36 +437,9 @@ const ItinerarieView = (props) => {
                       </b>
                     </h4>
 
-                  </div>
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền trên 1 người </label>
-                    <input value={totalPrice + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
-                  </div>
+                  </div> */}
 
 
-
-
-
-
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền </label>
-                    <input value={totalPriceParticipantCount + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
-                  </div>
-
-                  {/* <hr /> */}
-                  <div className="mb-3 mt-4">
-                    <input
-                      type="date"
-                      id="dateStart"
-                      className="form-control"
-                      min={dateStart}
-                      max={dateEnd}
-                      value={dateStartItineraryArticles}
-                      onChange={e => findByDate(e, e.target.value)}
-                    />
-                  </div>
-
-                  <button type="button" className="btn btn-primary" onClick={findByAllDate}>Xem tất cả</button>
                 </form>
 
 
@@ -511,25 +510,25 @@ const ItinerarieView = (props) => {
                         <div className="card-body">
                           <div className="d-flex">
                             <div className="one">
-                              <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>{itineraryArticle.articles.id}</Link>
+                              {/* <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>{itineraryArticle.articles.id}</Link> */}
                               <h3><a href="">{itineraryArticle.articles.name}</a></h3>
-                              <h3><a href="">{itineraryArticle.articles.price}</a></h3>
+                              <h3><a href="">{itineraryArticle.articles.price+"VNĐ/ Khách"}</a></h3>
                               {
                                 itineraryArticle.dateStart !== null ? (
                                   <b>{itineraryArticle.dateStart}</b>
                                 ) : <b>-</b>
                               }
-                              <p className="rate">
+                              {/* <p className="rate">
                                 <i className="icon-star"></i>
                                 <i className="icon-star"></i>
                                 <i className="icon-star"></i>
                                 <i className="icon-star"></i>
                                 <i className="icon-star-o"></i>
-                              </p>
+                              </p> */}
                             </div>
                             <div className="two"></div>
                           </div>
-                          <p>{itineraryArticle.articles.content}</p>
+                          {/* <p>{itineraryArticle.articles.content}</p> */}
                           <hr />
                           <div>
                             <div className="bottom-area d-flex">
@@ -569,7 +568,7 @@ const ItinerarieView = (props) => {
                                           <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Save</button>
                                         </div>
                                       </form>
-                                    
+
                                     </div>
                                   </div>
                                 </div>
