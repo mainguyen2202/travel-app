@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -139,16 +139,7 @@ const Login = () => {
                                             <button type="submit" className="btn btn-primary btn-lg btn-block">Đăng nhập</button>
                                         </div>
                                     </form>
-                                    <ToastContainer
-                                        className="toast-container"
-                                        toastClassName="toast"
-                                        bodyClassName="toast-body"
-                                        progressClassName="toast-progress"
-                                        theme='colored'
-                                        transition={Zoom}
-                                        autoClose={5}
-                                        hideProgressBar={true}
-                                    ></ToastContainer>
+                                  
 
                                     <div className="container">
                                         <h3 className="mt-5 mb-5 text-center">Toggle password visibility</h3>

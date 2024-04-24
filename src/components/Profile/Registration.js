@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer,  Zoom } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Registration = (props) => {
@@ -172,17 +172,7 @@ const Registration = (props) => {
                                         {/* </div> */}
                                         {/* </div> */}
                                     </form>
-                                    {/* <ToastContainer theme='colored' transition={Zoom} autoClose={5} hideProgressBar={true}></ToastContainer> */}
-                                    <ToastContainer
-                                        className="toast-container"
-                                        toastClassName="toast"
-                                        bodyClassName="toast-body"
-                                        progressClassName="toast-progress"
-                                        theme='colored'
-                                        transition={Zoom}
-                                        autoClose={5}
-                                        hideProgressBar={true}
-                                    ></ToastContainer>
+                                  
                                     <hr />
                                     <p className="d-flex my-3 justify-content-center-login">
                                         Bạn đã có sẵn một tài khoản?

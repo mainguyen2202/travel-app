@@ -84,7 +84,7 @@ const Header = (props) => {
 										<li className="main_nav_item"><a href="/blog">Tin tức</a></li>
 										<li className="main_nav_item"><a href="/contact">Liên Hệ</a></li>
 
-										<li className="main_nav_item"><a href="/map">Map</a></li>
+										{/* <li className="main_nav_item"><a href="/map">Map</a></li> */}
 									</ul>
 
 

@@ -3,6 +3,8 @@ import Footer from './components/headerFooter/Footer';
 import Header from './components/headerFooter/Header';
 import { Outlet } from "react-router-dom";
 import { useEffect } from 'react';
+import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -24,6 +26,17 @@ function App() {
 			<div className='app-header'>
 				<Footer />
 			</div>
+
+			<ToastContainer
+                                        className="toast-container"
+                                        toastClassName="toast"
+                                        bodyClassName="toast-body"
+                                        progressClassName="toast-progress"
+                                        theme='colored'
+                                        transition={Zoom}
+                                        autoClose={5}
+                                        hideProgressBar={true}
+                                    ></ToastContainer>
 
 		</div>
 	);

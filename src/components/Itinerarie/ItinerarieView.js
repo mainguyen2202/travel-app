@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Fragment } from "react";
 import {
@@ -568,16 +569,7 @@ const ItinerarieView = (props) => {
                                           <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Save</button>
                                         </div>
                                       </form>
-                                      <ToastContainer
-                                        className="toast-container"
-                                        toastClassName="toast"
-                                        bodyClassName="toast-body"
-                                        progressClassName="toast-progress"
-                                        theme='colored'
-                                        transition={Zoom}
-                                        autoClose={5}
-                                        hideProgressBar={true}
-                                      ></ToastContainer>
+                                    
                                     </div>
                                   </div>
                                 </div>

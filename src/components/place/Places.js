@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
 import { useSearchParams } from 'react-router-dom';
+import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { Fragment } from "react";
 import {
@@ -644,7 +645,7 @@ const Places = () => {
                                         <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                             <div className="card">
                                                 <Link to={`/detail?article_id=${article.id}`}>
-                                                    <img src={article.image} className="card-img-top" alt="..." />
+                                                    <img src={article.image} className="card-img-top card-img-top-mainguyen" alt="..." />
                                                 </Link>
                                                 <div className="card-body">
                                                     <div className="d-flex">

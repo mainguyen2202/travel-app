@@ -2,7 +2,7 @@ import { Dropdown, DropdownButton, Form } from "react-bootstrap";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css';
 
 const Itinerarie = (props) => {
     const [itinerarieId, setItinerarieId] = useState(-1);
@@ -297,16 +297,7 @@ const Itinerarie = (props) => {
                                                                 <button type="submit" className="btn btn-primary" onClick={(e) => { handleCreate(e); }}>Lưu</button>
                                                             </div>
                                                         </form>
-                                                        <ToastContainer
-                                                            className="toast-container"
-                                                            toastClassName="toast"
-                                                            bodyClassName="toast-body"
-                                                            progressClassName="toast-progress"
-                                                            theme='colored'
-                                                            transition={Zoom}
-                                                            autoClose={5}
-                                                            hideProgressBar={true}
-                                                        ></ToastContainer>
+                                                       
                                                     </div>
                                                 </div>
                                             </div>
@@ -421,16 +412,7 @@ const Itinerarie = (props) => {
                                                                             <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Save</button>
                                                                         </div>
                                                                     </form>
-                                                                    <ToastContainer
-                                                                        className="toast-container"
-                                                                        toastClassName="toast"
-                                                                        bodyClassName="toast-body"
-                                                                        progressClassName="toast-progress"
-                                                                        theme='colored'
-                                                                        transition={Zoom}
-                                                                        autoClose={5}
-                                                                        hideProgressBar={true}
-                                                                    ></ToastContainer>
+                                                                 
                                                                 </div>
                                                             </div>
                                                         </div>

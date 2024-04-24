@@ -2,8 +2,9 @@ import { Margin } from "@mui/icons-material";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
 import { toast, ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Home = (props) => {
     const [place, setPlace] = useState([]);

@@ -195,4 +195,7 @@ a:not([href]):not([tabindex]) {
   text-decoration: none;
 }
 
+.card-img-top-mainguyen:hover { 
+  transform: scale(1.2); 
+}
 /* end like */
