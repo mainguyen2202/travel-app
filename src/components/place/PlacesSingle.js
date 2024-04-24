@@ -482,60 +482,42 @@ const PlacesSingle = (props) => {
                                             <div className="tag-widget post-tag-container mb-5 mt-5">
                                                 <div className="tagcloud">
 
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e)=>{
-
-                                                            fetchInitDataFeedbacks()
-                                                        }
-                                                        }
-
-                                                    >Tất cả
+                                                    <button 
+                                                    // className="tag-cloud-link" 
+                                                    type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e)=>{ fetchInitDataFeedbacks()  }  } >Tất cả
                                                     </button>
+                                                    
 
 
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e) => {
-                                                            handleFeedbacksHeart(e, 5
-                                                            );
-                                                        }}
+                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => {  handleFeedbacksHeart(e, 5  );   }}
 
-                                                    ><i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i>
+                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
 
                                                     </button>
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e) => {
-                                                            handleFeedbacksHeart(e, 4
-                                                            );
-                                                        }}
+                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { handleFeedbacksHeart(e, 4); }}
 
-                                                    ><i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i>
+                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
 
                                                     </button>
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e) => {
-                                                            handleFeedbacksHeart(e, 3
-                                                            );
-                                                        }}
+                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => {  handleFeedbacksHeart(e, 3 ); }}
 
-                                                    > <i className="icon-star"></i> <i className="icon-star"></i> <i className="icon-star"></i>
+                                                    > <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
 
                                                     </button>
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e) => {
-                                                            handleFeedbacksHeart(e, 2
-                                                            );
-                                                        }}
+                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { handleFeedbacksHeart(e, 2); }}
 
-                                                    ><i className="icon-star"></i> <i className="icon-star"></i>
+                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
 
                                                     </button>
-                                                    <button className="tag-cloud-link"
-                                                        onClick={(e) => {
-                                                            handleFeedbacksHeart(e, 1
-                                                            );
-                                                        }}
+                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => {  handleFeedbacksHeart(e, 1  );   }}
 
-                                                    > <i className="icon-star"></i>
+                                                    > <i className="icon-star"style={{color:'#f9be37'}}></i>
 
                                                     </button>
 
@@ -564,6 +546,7 @@ const PlacesSingle = (props) => {
                                                             </div>
                                                             <div className="comment-body">
                                                                 <h3>{feedbacksOfUsers.users.name}</h3>
+                                                                <div className="meta">{feedbacksOfUsers.heart} <i className="icon-star" style={{color:'#f9be37'}}></i></div>
                                                                 <div className="meta">{feedbacksOfUsers.creatAt}</div>
                                                                 <p>{feedbacksOfUsers.review}</p>
                                                                 <p><a href="#" className="reply">Reply</a></p>
