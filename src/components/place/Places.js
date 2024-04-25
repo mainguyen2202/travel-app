@@ -179,7 +179,7 @@ const Places = () => {
 
     const handleCreate = async (e, idArticles, idItineraries) => {
         e.preventDefault();
-        
+
 
         try {
             const regObj = {
@@ -310,43 +310,43 @@ const Places = () => {
 
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
-        try {
-            const regObj = {
-                articles: {
-                    id: idArticles
-                } ,
-                users: {
-                    id: idUser
-                }
-            };
-            console.log(regObj);
+            try {
+                const regObj = {
+                    articles: {
+                        id: idArticles
+                    },
+                    users: {
+                        id: idUser
+                    }
+                };
+                console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/likes/create", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
+                const response = await fetch("http://127.0.0.1:8080/likes/create", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(regObj)
+                });
 
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
 
-                if (data.status == 1) {
-                    toast.success(data.message);
+                    if (data.status == 1) {
+                        toast.success(data.message);
+                    } else {
+                        toast.error(data.message);
+                    }
+                } else if (response.status == 400) {
+                    // Xử lý khi có lỗi 400 (Bad Request)
+                } else if (response.status == 401) {
+                    // Xử lý khi có lỗi 401 (Unauthorized)
                 } else {
-                    toast.error(data.message);
+                    // Xử lý khi có lỗi khác
                 }
-            } else if (response.status == 400) {
-                // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
-                // Xử lý khi có lỗi 401 (Unauthorized)
-            } else {
-                // Xử lý khi có lỗi khác
+            } catch (err) {
+                toast.error('Failed: ' + err.message);
             }
-        } catch (err) {
-            toast.error('Failed: ' + err.message);
         }
-    }
     };
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
@@ -530,18 +530,21 @@ const Places = () => {
 
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
+                                <div>
 
-                                <button onClick={fetchInitDataLike}>
-                                    Yêu thích
-                                </button>
 
-                                <button onClick={fetchInitDataHistoryArticles}>
+                                    <button type="button" class="btn btn-outline-secondary" onClick={fetchInitDataLike}>
+                                        Yêu thích
+                                    </button>
+                                </div>
+
+                                <button type="button" class="btn btn-outline-secondary" onClick={fetchInitDataHistoryArticles}>
                                     Nổi Bật
                                 </button>
-                                <button onClick={fetchInitDataDescDate}>
+                                <button type="button" class="btn btn-outline-secondary" onClick={fetchInitDataDescDate}>
                                     Mới nhất đến cũ nhất
                                 </button>
-                                <form action="#" className="card1">
+                                {/* <form action="#" className="card1">
                                     <div className="fields">
 
                                         <div className="form-group">
@@ -557,7 +560,7 @@ const Places = () => {
                                         </div>
 
                                     </div>
-                                </form>
+                                </form> */}
 
                             </div>
 
@@ -614,7 +617,7 @@ const Places = () => {
                                                                                 onCloseClick={() => setIdActiveMarker(null)}
                                                                             >
                                                                                 <div>
-                                                                                <Link to={`/detail?article_id=${item.id}`}>{item.name}</Link>
+                                                                                    <Link to={`/detail?article_id=${item.id}`}>{item.name}</Link>
                                                                                     <p>{item.name}</p>
                                                                                 </div>
                                                                             </InfoWindowF>
@@ -651,9 +654,9 @@ const Places = () => {
                                                     <div className="d-flex">
                                                         <div className="one">
                                                             {/* <Link to={`/detail?article_id=${article.id}`}>{article.id}</Link> */}
-                                                          
+
                                                             <h3><a href="">{article.name}</a></h3>
-                                                            <h3><a href="">{article.price+"VNĐ/ Khách"}</a></h3>
+                                                            <h3><a href="">{article.price + "VNĐ/ Khách"}</a></h3>
                                                             {/* <p className="rate">
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>

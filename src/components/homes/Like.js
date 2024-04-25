@@ -11,37 +11,37 @@ const Like = (props) => {
     const [like, setLike] = useState([]);
     const [userId, setUserId] = useState(0);
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
-    
+
 
     useEffect(() => {
         fetchInitDataItineraries();
         fetchInitDataLike();
     }, []);
-        // tạo hàm xử lí lấy danh sách
-        const fetchInitDataLike = async () => {
-            // Retrieve the object from the storage
-            const userInfoString = sessionStorage.getItem("userInfo");
-            const userInfoConvertObject = JSON.parse(userInfoString);
-            if (userInfoConvertObject !== null) {
-    
-                const idUser = userInfoConvertObject.id;
-                setUserId(idUser);
-    
-                const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    if (data.length > 0) {
-                        setLike(data);
-                    }
-                } else {
-                    console.error('Error:', response.status);
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitDataLike = async () => {
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                if (data.length > 0) {
+                    setLike(data);
                 }
+            } else {
+                console.error('Error:', response.status);
             }
-    
-        };
-         // tạo hàm xử lí lấy danh sách
-       const fetchInitDataItineraries = async () => {
+        }
+
+    };
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitDataItineraries = async () => {
         const userInfoString = sessionStorage.getItem("userInfo");
         const userInfoConvertObject = JSON.parse(userInfoString);
         if (userInfoConvertObject !== null) {
@@ -120,7 +120,7 @@ const Like = (props) => {
                     </div>
                 </div>
             </div>
-         
+
             <section className="ftco-section">
                 <div className="container">
                     <div className="row">
@@ -129,7 +129,7 @@ const Like = (props) => {
 
                         <div className="col-lg-12">
 
-                            <div className="reservation-form" >
+                            <div className="reservation-form mainguyen" >
                                 <div className="container">
                                     <div className="row">
                                         <div className="col-lg-12">
@@ -143,81 +143,82 @@ const Like = (props) => {
                                             </div>
                                         </div>
 
-                        </div>
-                    </div>
-                </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
 
 
-                <div className="container">
+                            <div className="container">
 
-                    <div className="row">
-                        {sessionStorage.getItem('username') ? (
+                                <div className="row">
+                                    {sessionStorage.getItem('username') ? (
 
-                            <div className="row">
-                                {like.map((likes, i) => (
-                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
-                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                            <div className="card">
-                                                <Link to={`/detail?article_id=${likes.articles.id}`}>
-                                                    <img src={likes.articles.image} className="card-img-top" alt="..." />
-                                                </Link>
-                                                <div className="card-body">
-                                                    <div className="d-flex">
-                                                        <div className="one">
-                                                            {/* <Link to={`/detail?article_id=${likes.articles.id}`}>{likes.articles.id}</Link> */}
-                                                            <h3><a href="">{likes.articles.name}</a></h3>
-                                                            <p className="rate">
+                                        <div className="row">
+                                            {like.map((likes, i) => (
+                                                <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
+                                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                        <div className="card">
+                                                            <Link to={`/detail?article_id=${likes.articles.id}`}>
+                                                                <img src={likes.articles.image} className="card-img-top" alt="..." />
+                                                            </Link>
+                                                            <div className="card-body">
+                                                                <div className="d-flex">
+                                                                    <div className="one">
+                                                                        {/* <Link to={`/detail?article_id=${likes.articles.id}`}>{likes.articles.id}</Link> */}
+                                                                        <h3><a href="">{likes.articles.name}</a></h3>
+                                                                        <h3><a href="">{likes.articles.price + "VNĐ/ Khách"}</a></h3>
+                                                                        {/* <p className="rate">
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star-o"></i>
-                                                            </p>
+                                                            </p> */}
+                                                                    </div>
+                                                                    <div className="two"></div>
+                                                                </div>
+                                                                {/* <p>{likes.articles.content}</p> */}
+                                                                <hr />
+                                                                <div>
+                                                                    <div className="bottom-area d-flex">
+
+                                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                                            {itinerariesOfUser.map((itinerary, ii) => (
+                                                                                <Dropdown.Item
+
+                                                                                    value={itinerary.id}
+                                                                                    key={ii}
+                                                                                    onClick={(e) => {
+                                                                                        handleCreate(e, likes.articles.id, itinerary.id);
+                                                                                    }}
+                                                                                >
+                                                                                    {itinerary.name}
+                                                                                </Dropdown.Item>
+                                                                            ))}
+                                                                        </DropdownButton>
+
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
                                                         </div>
-                                                        <div className="two"></div>
                                                     </div>
-                                                    <p>{likes.articles.content}</p>
-                                                    <hr />
-                                                    <div>
-                                                        <div className="bottom-area d-flex">
-
-                                                            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                {itinerariesOfUser.map((itinerary, ii) => (
-                                                                    <Dropdown.Item
-
-                                                                        value={itinerary.id}
-                                                                        key={ii}
-                                                                        onClick={(e) => {
-                                                                            handleCreate(e, likes.articles.id, itinerary.id);
-                                                                        }}
-                                                                    >
-                                                                        {itinerary.name}
-                                                                    </Dropdown.Item>
-                                                                ))}
-                                                            </DropdownButton>
-
-                                                        </div>
-                                                    </div>
-                                                                     
                                                 </div>
-                                            </div>
+                                            ))}
                                         </div>
-                                    </div>
-                                ))}
+                                    ) : (
+                                        <div>
+                                            <p>Đăng nhập để thấy địa điểm yêu thích</p>
+                                        </div>
+                                    )}
+
+
+
+
+                                </div>
                             </div>
-                        ) : (
-                            <div>
-                                <p>Đăng nhập để thấy địa điểm yêu thích</p>
-                            </div>
-                        )}
-
-
-
-
-                    </div>
-                </div>
 
 
                             <div className="row mt-5">

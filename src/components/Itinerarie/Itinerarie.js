@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Itinerarie = (props) => {
     const [itinerarieId, setItinerarieId] = useState(-1);
     const [name, setName] = useState('');
@@ -188,6 +189,7 @@ const Itinerarie = (props) => {
 
     const handleEdit = async (e, itineraryId) => {
         e.preventDefault();
+        console.log(" handleEdit itineraryId itineraryId:" + itineraryId);
 
         try {
             const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
@@ -221,6 +223,68 @@ const Itinerarie = (props) => {
             console.log('Error:', error);
         }
     };
+
+ 
+
+
+    const handleShare = async (e, itineraryId) => {
+        e.preventDefault();
+        if (!validate()) {
+            return;
+
+        }
+        console.log("handleShare itineraryId" + itineraryId);
+        console.log("handleShare username: " + username);
+        const response = await fetch(`http://127.0.0.1:8080/users/detailBySearchUserName?username=${username}`);
+        if (response.ok) {
+            const data = await response.json();
+
+            const userid = data.id;
+            console.log("handleShare id: " + userid);
+
+            const regObj = {
+                users: {
+                    id: userid
+                },
+                itineraries: {
+                    id: itineraryId
+                }
+            };
+            const reps = await fetch("  http://127.0.0.1:8080/shareItineraries/create", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj)
+            });
+            if (reps.ok) {
+                const data = await reps.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            }
+
+
+
+        }
+    };
+
+
+
+
+
+    const validate = () => {
+        let result = true;
+        if (username == '' || username == null) {
+            result = false;
+            toast.warning('Please Enter Username');
+        }
+
+        return result;
+    };
+    // End Share
 
     return (
         <div>
@@ -365,22 +429,24 @@ const Itinerarie = (props) => {
                                                 </button>
                                             </div>
                                             <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
-                                                <form className="container">
-                                                    <div className="mb-3 mt-4">
+                                                <form className="container"  >
+                                                    {/* <div className="mb-3 mt-4">
                                                         <label htmlFor="exampleInput" className="form-label">Email</label>
                                                             <input value={email} onChange={e => emailchange(e.target.value)} className="form-control" placeholder="Email"></input>
-                                                    </div>
+                                                    </div> */}
                                                     <div className="mb-3 mt-4">
                                                         <label htmlFor="exampleInput" className="form-label">Tên đăng nhập</label>
-                                                    <input value={username} onChange={e => usernamechange(e.target.value)} className="form-control" placeholder="Tên đăng nhập" ></input>
+                                                        <input value={username}
+
+                                                            onChange={e => usernamechange(e.target.value)} className="form-control" placeholder="Tên đăng nhập" ></input>
                                                     </div>
 
-                                                  
+
 
 
                                                     <div className="modal-footer">
                                                         <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Save</button>
+                                                        <button type="submit" className="btn btn-primary" onClick={(e) => handleShare(e, itinerarieId)} >Save</button>
                                                     </div>
                                                 </form>
 
@@ -452,7 +518,13 @@ const Itinerarie = (props) => {
                                                                     <i className="material-icons">&#xE872;</i>
                                                                 </a>
                                                                 <button data-toggle="modal"
-                                                                    data-target="#exampleModalShare">Chia sẻ</button>
+                                                                    data-target="#exampleModalShare"
+
+                                                                    onClick={(e) => {
+
+                                                                        getDetailByItineraryId(e, itinerary.id);
+                                                                    }}
+                                                                >Chia sẻ</button>
 
                                                                 {/* <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
                                                                     {itinerariesOfUser.map((itinerary, ii) => (
