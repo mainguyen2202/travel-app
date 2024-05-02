@@ -32,18 +32,56 @@ const Places = () => {
     // Get a specific query parameter
     const placeId = searchParams.get('place_id');
     const topicId = searchParams.get('topic_id');
+    
 
     const [like, setLike] = useState([]);
 
 
 
     // hàm khởi tạo ban đầu
+    // useEffect(() => {
+    //     console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
+    //     fetchInitData();// sử dụng hàm lấy danh sách
+    //     fetchInitDataLike();
+    //     fetchInitDataDescDate();
+     
+    //     timkiem();
+        
+    // }, []);
+
     useEffect(() => {
         console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
-        fetchInitData();// sử dụng hàm lấy danh sách
-        fetchInitDataLike();
-        fetchInitDataDescDate();
-    }, []);
+        fetchData();
+      
+      }, []);
+      
+      const fetchData = async () => {
+        await fetchInitData();
+        await fetchInitDataLike();
+        await fetchInitDataDescDate();
+        await timkiem();
+      };
+
+ 
+    const timkiem = async () => {
+        if (searchParams.get("keyword") !== null) {
+            let tuKhoa = searchParams.get("keyword");
+            //có từ khóa tìm kiếm
+            console.log("maiaiaiaSearch Keyword ", tuKhoa.trim());
+            const response = await fetch(`http://127.0.0.1:8080/articles/listSearchKeyWord?name=${tuKhoa.trim()}`)
+            if (response.ok) {
+                const data = await response.json();
+                console.log("timkiem", data);
+                if (data.length > 0) {
+
+                    setArticles(data);// làm việc 
+                }
+            } else {
+                console.error('Error:', response.status);
+            }
+        }
+
+    }
 
 
     // tạo hàm xử lí lấy danh sách

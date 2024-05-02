@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+
 const Header = (props) => {
 	const navigate = useNavigate();
 	const [userName, setUserName] = useState("");
@@ -9,15 +12,30 @@ const Header = (props) => {
 		console.log("header");
 		let temp = sessionStorage.getItem('username');
 		if (temp && temp !== userName) {
-		  setUserName(temp);
+			setUserName(temp);
 		}
-	  }, [userName]);
+	}, [userName]);
 
 	function logout() {
 		sessionStorage.clear();
 		navigate('/login')
 	}
 
+
+
+	const [record, setRecord] = useState('');
+
+	const handleKeyDown = (event) => {
+		if (event.key === 'Enter') {
+			event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter
+			searchRecords();
+		}
+	};
+
+	const searchRecords = () => {
+		console.log("Search Keyword ", record);
+		navigate(`/places?keyword=${record}`);//API GET có param
+	}
 
 
 	return (
@@ -44,7 +62,7 @@ const Header = (props) => {
 											<div className="user_box_login user_box_link">
 												<a href="/profile">{userName}</a>
 											</div>
-											
+
 											<div className="user_box_logout user_box_link" style={{ color: 'white' }} onClick={logout}>
 												Đăng xuất
 											</div>
@@ -113,9 +131,28 @@ const Header = (props) => {
 									</svg>
 								</div>
 
+
 								<form id="search_form" className="search_form bez_1">
-									<input type="search" className="search_content_input bez_1" />
+									<input id="searchInput"
+										type="text"
+										placeholder="Tìm kiếm ..."
+										className="search_content_input bez_1"
+										value={record}
+										onChange={(event) => setRecord(event.target.value)}
+										onKeyDown={handleKeyDown}
+									/>
 								</form>
+								
+								{/* <Form className="d-flex">
+									<input id="searchInput" type="text" placeholder="Tìm kiếm ..."
+										onChange={(event) => {
+											setRecord(event.target.value);
+										}} />
+
+									<Button type="button" onClick={searchRecords} variant="outline-success">Tìm kiếm</Button>
+								</Form> */}
+
+
 
 								<div className="hamburger">
 									<i className="fa fa-bars trans_200"></i>

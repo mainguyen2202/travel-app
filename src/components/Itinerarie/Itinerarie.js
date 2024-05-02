@@ -5,6 +5,10 @@ import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+
+
 const Itinerarie = (props) => {
     const [itinerarieId, setItinerarieId] = useState(-1);
     const [name, setName] = useState('');
@@ -224,7 +228,7 @@ const Itinerarie = (props) => {
         }
     };
 
- 
+
 
 
     const handleShare = async (e, itineraryId) => {
@@ -286,6 +290,10 @@ const Itinerarie = (props) => {
     };
     // End Share
 
+    //STRART TAB
+    const [key, setKey] = useState('home');
+
+    //END TAB
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -472,8 +480,15 @@ const Itinerarie = (props) => {
                                 </div>
                             </div> */}
                         </div>
-                        <div></div>
-                        {sessionStorage.getItem('username') ? (
+                        {/* Start tab */}
+                        <Tabs
+                            id="controlled-tab-example"
+                            activeKey={key}
+                            onSelect={(k) => setKey(k)}
+                            className="mb-3"
+                        >
+                            <Tab eventKey="home" title=" Kế hoạch cá nhân">
+                            {sessionStorage.getItem('username') ? (
                             <div className="row" >
                                 {itinerariesOfUser.map((itinerary, i) => (
                                     <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
@@ -562,12 +577,17 @@ const Itinerarie = (props) => {
                                 ))}
                             </div>
                         ) :
-
-
                             (
                                 <p>Hãy tạo kế hoạch</p>
 
                             )}
+                            </Tab>
+                            <Tab eventKey="profile" title=" Kế hoạch được chia sẻ">
+                            
+                            </Tab>
+                           
+                        </Tabs>
+                     
 
                     </div>
 
