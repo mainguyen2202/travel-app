@@ -408,8 +408,8 @@ const Itinerarie = (props) => {
                                                                             <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
                                                                         </div>
                                                                         <div className="modal-footer">
-                                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                                            <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Save</button>
+                                                                            <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                                            <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Gửi</button>
                                                                         </div>
                                                                     </form>
                                                                  

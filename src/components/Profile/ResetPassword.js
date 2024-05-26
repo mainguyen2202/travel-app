@@ -1,6 +1,49 @@
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const ResetPassword = (props) => {
+
+    const [email, setEmail] = useState('');
+
+     // Login bình thường
+     const ProceedReset = async (e) => {
+        e.preventDefault();
+      
+        const loginDTO = {
+            email: email
+        };
+        try {
+            const response = await fetch("http://localhost:8080/users/forgotPassword", {
+                method: "POST",
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify(loginDTO)
+            });
+
+            console.log(response);
+            if (response.ok) {// có dữ liệu trả về
+                if (response.status == 400) {
+                    //
+                } else if (response.status == 401) {
+                    //
+                } else if (response.status == 200) {
+                    //
+                    const resq = await response.json();
+                    if (resq.status == 1) {
+                  
+                    } else {
+                        toast.error(resq.message); // Hiển thị thông báo lỗi từ API trong giao diện
+                    }
+                }
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message); // Hiển thị thông báo lỗi trong giao diện
+        }
+    };
 
 
-const ChangePassword = (props) => {
+
     return (
         <div >
             <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -10,8 +53,7 @@ const ChangePassword = (props) => {
                         style={{ height: '465px' }}
                     >
                         <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>BLOG</span></p> */}
-                            {/* <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Tips & Itinerarie</h1> */}
+                     
                         </div>
                     </div>
                 </div>
@@ -38,38 +80,14 @@ const ChangePassword = (props) => {
 
                                     <form className="frm_password" novalidate>
                                         <div className="form-outline mb-4">
-                                            <input type="password" className="form-control" name="ip_password" id="ip_password" placeholder="Mật khẩu cũ"
-                                             required />
+                                        <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} id="val-username" name="val-username" placeholder="Email" />
+                                                                     
                                             <div className="invalid-feedback">
                                                 Mật khẩu hợp lệ là bắt buộc.
                                             </div>
                                         </div>
 
-
-                                        <div className="form-outline mb-4">
-                                            <input type="password" className="form-control" name="ip_password" id="ip_password" placeholder="Mật khẩu mới"
-                                             required />
-                                            <div className="invalid-feedback">
-                                                Mật khẩu hợp lệ là bắt buộc.
-                                            </div>
-                                        </div>
-
-
-                                        <div className="form-outline mb-4">
-                                            <input type="password" className="form-control" name="ip_password" id="ip_password" placeholder="Nhập lại mật khẩu"
-                                               required />
-                                            <div className="invalid-feedback">
-                                                Mật khẩu hợp lệ là bắt buộc.
-                                            </div>
-                                        </div>
-
-
-
-
-
-
-
-                                        <button id="changePassword_btn" className="btn btn-primary btn-lg btn-block" type="submit"> Thay đổi mật khẩu</button>
+                                        <button onClick={(e) => { ProceedReset(e); }}   className="btn btn-primary btn-lg btn-block" type="submit"> Gửi</button>
 
 
                                     </form>
@@ -97,4 +115,4 @@ const ChangePassword = (props) => {
     )
 }
 
-export default ChangePassword;
+export default ResetPassword;

@@ -48,8 +48,8 @@ root.render(
           <Route path="itinerarieView" element={<ItinerarieView />} />
           <Route path="like" element={<Like />} />
 
-          <Route path="blog" element={<Blog />} />
-          <Route path="blogSingle" element={<BlogSingle />} />
+          {/* <Route path="blog" element={<Blog />} />
+          <Route path="blogSingle" element={<BlogSingle />} /> */}
           <Route path="contact" element={<Contact />} />
 
 
@@ -58,10 +58,10 @@ root.render(
           <Route path="login" element={<Login />} />
           <Route path="registration" element={<Registration />} />
 
-          <Route path="profile/:userId" element={<Profile />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="changePassword/:userId" element={<ChangePassword />} />
           <Route path="forgotPassword" element={<ForgotPassword />} />
-          <Route path="resetPassword/:userId/:token" element={<ResetPassword />} />
+          <Route path="resetPassword" element={<ResetPassword />} />
          
 
 

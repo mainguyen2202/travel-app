@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 
 import Tab from 'react-bootstrap/Tab';
@@ -24,9 +25,12 @@ const Itinerarie = (props) => {
 
     const [detailItinerarie, setDetailItinerarie] = useState([]);
 
+    const [itinerariesShareOfUser, setItinerariesShareOfUser] = useState([]);
+
     useEffect(() => {
 
         fetchInitData();// sử dụng hàm lấy danh sách mới nhất
+        fetchInitDataShare();
 
     }, []);
 
@@ -128,6 +132,15 @@ const Itinerarie = (props) => {
         e.preventDefault();
 
         try {
+            const result = await Swal.fire({
+              title: 'Bạn có chắc không?',
+              text: "Bạn sẽ không thể hoàn nguyên điều này!",
+              icon: 'cảnh báo',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Đồng ý'
+            });
             const response = await fetch(`http://127.0.0.1:8080/itineraries/remove/${itineraryId}`, {
                 method: 'DELETE',
                 headers: {
@@ -158,6 +171,7 @@ const Itinerarie = (props) => {
                     const newArray = itinerariesOfUser.filter((item, i) => item.id !== itineraryId);// lọc danh sách không chứa id đã xóa
                     setItinerariesOfUser(newArray);
 
+
                 } else {
                     toast.error(data.message);
                 }
@@ -179,6 +193,8 @@ const Itinerarie = (props) => {
 
                 setItinerarieId(itinerarieData.id);
                 setName(itinerarieData.name); // Assign the value to name state variable
+
+                setParticipantCount(itinerarieData.participantCount); // Assign the value to name state variable
                 setContent(itinerarieData.content); // Assign the value to content state variable
                 setDateStart(itinerarieData.dateStart); // Assign the value to dateStart state variable
                 setDateEnd(itinerarieData.dateEnd); // Assign the value to dateEnd state variable
@@ -193,7 +209,7 @@ const Itinerarie = (props) => {
 
     const handleEdit = async (e, itineraryId) => {
         e.preventDefault();
-        console.log(" handleEdit itineraryId itineraryId:" + itineraryId);
+        console.log(" handleEdit itineraryId itineraryId: participantCount" + participantCount);
 
         try {
             const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
@@ -203,6 +219,7 @@ const Itinerarie = (props) => {
                 },
                 body: JSON.stringify({
                     name: name, // Tên kế hoạch mới
+                    participantCount: participantCount,
                     dateStart: dateStart, // Ngày bắt đầu mới
                     dateEnd: dateEnd, // Ngày kết thúc mới
                     content: content // Ghi chú mới
@@ -215,6 +232,7 @@ const Itinerarie = (props) => {
 
                 if (data.status == 1) {
                     toast.success(data.message);
+                    
 
                     return;
                 } else {
@@ -294,6 +312,44 @@ const Itinerarie = (props) => {
     const [key, setKey] = useState('home');
 
     //END TAB
+
+    // tạo hàm xử lí lấy danh sách
+    const fetchInitDataShare = async () => {
+
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
+
+            const itinerariesResponse = await fetch(`http://127.0.0.1:8080/shareItineraries/listBySearch?users_id=${idUser}`);
+            if (itinerariesResponse.ok) {
+                const data = await itinerariesResponse.json();
+                console.log(data);
+                if (data.length > 0) {
+
+                    let dataItem = data.map(item => ({
+                        id: item.itineraries.id,
+                        name: item.itineraries.name,
+                        participantCount: item.itineraries.participantCount,
+                        dateStart: item.itineraries.dateStart,
+                        dateEnd: item.itineraries.dateEnd,
+                        content: item.itineraries.content,
+                        usersName: item.users.name
+
+
+
+                    }));
+                    setItinerariesShareOfUser(dataItem);
+                }
+            } else {
+                console.error('Error:', itinerariesResponse.status);
+            }
+        }
+
+    };
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -416,8 +472,8 @@ const Itinerarie = (props) => {
                                                         <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
                                                     </div>
                                                     <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Save</button>
+                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                        <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Gửi</button>
                                                     </div>
                                                 </form>
 
@@ -453,8 +509,8 @@ const Itinerarie = (props) => {
 
 
                                                     <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => handleShare(e, itinerarieId)} >Save</button>
+                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                        <button type="submit" className="btn btn-primary" onClick={(e) => handleShare(e, itinerarieId)} >Gửi</button>
                                                     </div>
                                                 </form>
 
@@ -488,106 +544,125 @@ const Itinerarie = (props) => {
                             className="mb-3"
                         >
                             <Tab eventKey="home" title=" Kế hoạch cá nhân">
-                            {sessionStorage.getItem('username') ? (
-                            <div className="row" >
-                                {itinerariesOfUser.map((itinerary, i) => (
-                                    <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
-                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                            <div className="card">
+                                {sessionStorage.getItem('username') ? (
+                                    <div className="row" >
+                                        {itinerariesOfUser.map((itinerary, i) => (
+                                            <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                    <div className="card">
 
-                                                <div className="card-body">
-                                                    <div className="d-flex">
-                                                        <div className="one">
+                                                        <div className="card-body">
+                                                            <div className="d-flex">
+                                                                <div className="one">
 
 
 
-                                                            <h3>  <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip">{itinerary.name}</Link></h3>
-
-                                                            <p> {itinerary.dateStart + " -> " + itinerary.dateEnd}</p>
-                                                            <p>{itinerary.content + "."}</p>
-                                                        </div>
-                                                    </div>
-                                                    <hr />
-                                                    <div>
-                                                        {sessionStorage.getItem('username') ? (
-                                                            <div className="bottom-area d-flex">
-
-                                                                <a
-                                                                    className="edit"
-                                                                    title="Edit"
-                                                                    data-toggle="modal"
-                                                                    data-target="#exampleModalEdit"
-                                                                    onClick={(e) => {
-
-                                                                        getDetailByItineraryId(e, itinerary.id);
-                                                                    }}
-                                                                >
-                                                                    <i className="material-icons">&#xE254;</i>
-                                                                </a>
-                                                                <a
-                                                                    className="delete"
-                                                                    title="Xóa"
-                                                                    data-toggle="tooltip"
-                                                                    onClick={(e) => handleRemove(e, itinerary.id)}
-                                                                >
-                                                                    <i className="material-icons">&#xE872;</i>
-                                                                </a>
-                                                                <button data-toggle="modal"
-                                                                    data-target="#exampleModalShare"
-
-                                                                    onClick={(e) => {
-
-                                                                        getDetailByItineraryId(e, itinerary.id);
-                                                                    }}
-                                                                >Chia sẻ</button>
-
-                                                                {/* <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                    {itinerariesOfUser.map((itinerary, ii) => (
-                                                                        <Dropdown.Item
-
-                                                                            value={itinerary.id}
-                                                                            key={ii}
-                                                                            onClick={(e) => {
-                                                                                handleCreate(e, article.id, itinerary.id);
-                                                                            }}
-                                                                        >
-                                                                            {itinerary.name}
-                                                                        </Dropdown.Item>
-                                                                    ))}
-                                                                </DropdownButton> */}
-                                                                {/* <select>
-                                                                    <option value="option1">Option 1</option>
-                                                                    <option value="option2">Option 2</option>
-                                                                    <option value="option3">Option 3</option>
-                                                                </select> */}
-                                                            </div>
-                                                        ) : (
-                                                            <div className="bottom-area d-flex">
-                                                                <div>
-                                                                    <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
+                                                                    <h3 style={{ height: '70px' }}>  <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip">{itinerary.name}</Link></h3>
+                                                                    <hr />
+                                                                    <p> {itinerary.dateStart + " -> " + itinerary.dateEnd}</p>
+                                                                    <p>{"Số lượng: " + itinerary.participantCount + "người"}</p>
+                                                                    <p style={{ height: '100px' }}>{itinerary.content + "."}</p>
                                                                 </div>
                                                             </div>
-                                                        )}
+                                                            <hr />
+                                                            <div>
+                                                                {sessionStorage.getItem('username') ? (
+                                                                    <div className="bottom-area d-flex">
 
+                                                                        <a
+                                                                            className="edit"
+                                                                            title="Edit"
+                                                                            data-toggle="modal"
+                                                                            data-target="#exampleModalEdit"
+                                                                            onClick={(e) => {
+
+                                                                                getDetailByItineraryId(e, itinerary.id);
+                                                                            }}
+                                                                        >
+                                                                            <i className="material-icons">&#xE254;</i>
+                                                                        </a>
+                                                                        <a
+                                                                            className="delete"
+                                                                            title="Xóa"
+                                                                            data-toggle="tooltip"
+                                                                            onClick={(e) => handleRemove(e, itinerary.id)}
+                                                                        >
+                                                                            <i className="material-icons">&#xE872;</i>
+                                                                        </a>
+                                                                        <button
+                                                                            type="button"
+                                                                            class="btn btn-primary"
+                                                                            data-toggle="modal"
+                                                                            data-target="#exampleModalShare"
+                                                                            onClick={(e) => {
+                                                                                getDetailByItineraryId(e, itinerary.id);
+                                                                            }}
+                                                                        >
+                                                                            Chia sẻ
+                                                                        </button>
+
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="bottom-area d-flex">
+                                                                        <div>
+                                                                            <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        ) :
-                            (
-                                <p>Hãy tạo kế hoạch</p>
+                                ) :
+                                    (
+                                        <p>Hãy tạo kế hoạch</p>
 
-                            )}
+                                    )}
                             </Tab>
                             <Tab eventKey="profile" title=" Kế hoạch được chia sẻ">
-                            
+                                {sessionStorage.getItem('username') ? (
+                                    <div className="row" >
+                                        {itinerariesShareOfUser.map((itinerary, i) => (
+                                            <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                    <div className="card">
+
+                                                        <div className="card-body">
+                                                            <div className="d-flex">
+                                                                <div className="one">
+
+
+
+                                                                    <h3>  <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip">{itinerary.name}</Link></h3>
+
+                                                                    <p> {itinerary.dateStart + " -> " + itinerary.dateEnd}</p>
+                                                                    <p>{"Số lượng: " + itinerary.participantCount + "người"}
+
+                                                                    </p>
+                                                                    <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
+                                                                    <p>{itinerary.content + "."}</p>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) :
+                                    (
+                                        <p>Chia được chia sẻ</p>
+
+                                    )}
                             </Tab>
-                           
+
                         </Tabs>
-                     
+
 
                     </div>
 

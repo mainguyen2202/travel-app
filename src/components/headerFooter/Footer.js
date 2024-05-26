@@ -10,9 +10,13 @@ const Footer = (props) => {
                             <h2 className="ftco-heading-2">Công ty Du lịch Tốt Nhất</h2>
                             <p>Web du lịch Việt Nam mang đến cho du khách trải nghiệm du lịch tuyệt vời với dịch vụ chuyên nghiệp, lựa chọn đa dạng về điểm đến và hướng dẫn riêng biệt, đồng hành cùng họ khám phá những vẻ đẹp độc đáo của Việt Nam. Với sự chăm sóc và quan tâm tận tâm, chúng tôi cam kết đem đến cho du khách những kỷ niệm vô giá trị và trọn vẹn trong mỗi chuyến đi.</p>
                             <ul className="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
+                                <div className="row">
                                 <li className="ftco-animate"><a href="#"><span className="icon-twitter"></span></a></li>
                                 <li className="ftco-animate"><a href="#"><span className="icon-facebook"></span></a></li>
                                 <li className="ftco-animate"><a href="#"><span className="icon-instagram"></span></a></li>
+                                <li ></li>
+                                </div>
+                            
                             </ul>
                         </div>
                     </div>

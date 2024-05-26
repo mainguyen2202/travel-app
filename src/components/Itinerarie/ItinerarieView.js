@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Swal from 'sweetalert2';
 
 import { Fragment } from "react";
 import {
@@ -195,12 +196,55 @@ const ItinerarieView = (props) => {
         console.log(data);
         if (data.status == 1) {
           toast.success(data.message);
+          setItineraryArticles(prevData => prevData.filter(item => item.id !== itineraryArticlesId));
           return;
         } else {
           toast.error(data.message);
         }
       } else {
         console.log('Update failed');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+
+  const handleRemove = async (e, itineraryArticlesId) => {
+    e.preventDefault();
+
+    try {
+      const result = await Swal.fire({
+        title: 'Bạn có chắc không?',
+        text: "Bạn sẽ không thể hoàn nguyên điều này!",
+        icon: 'cảnh báo',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Đồng ý'
+      });
+
+      if (result.isConfirmed) {
+        const response = await fetch(`http://127.0.0.1:8080/itineraryArticles/remove/${itineraryArticlesId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+
+          if (data.status === 1) {
+            toast.success(data.message);
+            // Xóa mục hàng khỏi state data
+            setItineraryArticles(prevData => prevData.filter(item => item.id !== itineraryArticlesId));
+          } else {
+            toast.error(data.message);
+          }
+        } else {
+          console.log('Deletion failed');
+        }
       }
     } catch (error) {
       console.log('Error:', error);
@@ -564,8 +608,8 @@ const ItinerarieView = (props) => {
                                           <input type="date" id="dateStart" className="form-control" min={dateStart} max={dateEnd} value={dateStartByItineraryArticles !== null ? dateStartByItineraryArticles : dateStart} onChange={e => setDateStartByItineraryArticles(e.target.value)} />
                                         </div>
                                         <div className="modal-footer">
-                                          <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                          <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Save</button>
+                                          <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                          <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Gửi</button>
                                         </div>
                                       </form>
 
@@ -574,8 +618,18 @@ const ItinerarieView = (props) => {
                                 </div>
                               </div>
 
-                              <a href="/Like" className="like" title="Xóa" data-toggle="tooltip">
-                                <span className="s18_s">  <i className="material-icons">&#xE872;</i></span>
+                           
+
+                              <a
+                                className="Remove"
+                                title="Remove"
+                              
+                                onClick={(e) => {
+
+                                  handleRemove(e, itineraryArticle.id);
+                                }}
+                              >
+                                <i className="material-icons">&#xE872;</i>
                               </a>
 
                             </div>

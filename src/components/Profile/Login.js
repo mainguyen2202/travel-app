@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,7 +42,7 @@ const Login = () => {
                     const resq = await response.json();
                     if (resq.status == 1) {
                         sessionStorage.setItem('username', resq.data.username);// Lưu giá trị từ biến state `username`
-                        
+
                         // Store JSON Data
                         let dataConvertString = JSON.stringify(resq.data);// convert string to object 
                         sessionStorage.setItem('userInfo', dataConvertString);
@@ -76,6 +76,34 @@ const Login = () => {
             toast.warning('Please Enter Password');
         }
         return result;
+    };
+
+
+    const [passwordVisibility, setPasswordVisibility] = useState({
+        'password': false,
+    });
+
+    const passwordInputRef = useRef(null);
+    const passwordIconRef = useRef(null);
+
+    const togglePasswordVisibility = (inputId) => {
+        setPasswordVisibility((prevState) => ({
+            ...prevState,
+            [inputId]: !prevState[inputId],
+        }));
+
+        const passwordInput = passwordInputRef.current;
+        const passwordIcon = passwordIconRef.current;
+
+        if (passwordVisibility[inputId]) {
+            passwordInput.type = 'text';
+            passwordIcon.classList.remove('fa-eye-slash');
+            passwordIcon.classList.add('fa-eye');
+        } else {
+            passwordInput.type = 'password';
+            passwordIcon.classList.remove('fa-eye');
+            passwordIcon.classList.add('fa-eye-slash');
+        }
     };
     return (
         <div >
@@ -115,23 +143,39 @@ const Login = () => {
                                         <div className="card-body">
                                             <div className="form-group">
                                                 <p className="textlabel3">Tên đăng nhập</p>
-                                                <input value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" />
+                                                <input id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} className="form-control" />
                                             </div>
+
+
                                             <div className="form-group">
                                                 <p className="textlabel">Mật khẩu</p>
-                                                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" />
+                                                <div className="input-group">
+                                                    <input
+                                                        type="password"
+                                                        id="password"
+                                                        name="password"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                        className="form-control"
+                                                        ref={passwordInputRef}
+                                                    />
+                                                    <div className="input-group-append show-pass">
+                                                        <span
+                                                            className="input-group-text"
+                                                            onClick={() => togglePasswordVisibility('password')}
+                                                        >
+                                                            <i id="old-password-icon" className="fa fa-eye-slash" ref={passwordIconRef}></i>
+                                                            Mở
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="row remember-row">
-                                            {/* <div className="col-xs-6 col-sm-6">
-            <label className="checkbox text-left">
-              <input type="checkbox" value="remember-me" />
-              <span className="label-text">Nhớ mật khẩu</span>
-            </label>
-          </div> */}
+
                                             <div className="col-xs-6 col-sm-6">
                                                 <p className="forgotPwd">
-                                                    <a className="lnk-toggler" data-panel=".panel-forgot" href="/quenMatKhau">Quên mật khẩu?</a>
+                                                    <a className="lnk-toggler" data-panel=".panel-forgot" href="/resetPassword">Quên mật khẩu?</a>
                                                 </p>
                                             </div>
                                         </div>
@@ -139,50 +183,7 @@ const Login = () => {
                                             <button type="submit" className="btn btn-primary btn-lg btn-block">Đăng nhập</button>
                                         </div>
                                     </form>
-                                  
 
-                                    <div className="container">
-                                        <h3 className="mt-5 mb-5 text-center">Toggle password visibility</h3>
-                                        <div className="form-group">
-                                            <label htmlFor="ipnPassword">Password</label>
-                                            <div className="input-group mb-3">
-                                                <input type="password" className="form-control" id="ipnPassword" />
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-outline-secondary" type="button" id="btnPassword">
-                                                        hhh
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <p className="text-muted">(Nhập pass vào ô input ở trên và click vào icon con mắt để hiển thị)</p>
-                                        </div>
-                                    </div>
-
-
-                                    <div className="container">
-                                        <input type="password" placeholder="Nhập Mật Khẩu" required />
-                                        <span className="show-btn"><i className="bi bi-eye-fill"></i></span>
-                                    </div>
-
-                                    <p className="d-flex text-center justify-content-center-login">Chưa có tài khoản tại? <a
-                                        href="/registration">Đăng
-                                        ký</a></p>
-
-
-
-
-
-
-
-
-
-                                    <hr className="my-4" />
-
-                                    <button className="btn  btn-lg btn-block  btn-danger "
-                                        type="submit"><i className="fab fa-google me-2"></i> Đăng nhập google</button>
-
-
-                                    <button className="btn btn-lg btn-block btn-info mb-2"
-                                        type="submit"><i className="fab fa-facebook-f me-2"></i>Đăng nhập facebook</button>
 
                                 </div>
                             </div>

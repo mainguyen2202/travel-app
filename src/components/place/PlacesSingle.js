@@ -2,6 +2,7 @@
 
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import { useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,10 +11,12 @@ import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 
 const PlacesSingle = (props) => {
+    const navigate = useNavigate();
+
     // const {placeId } = useParams();// route param /:id
     const [searchParams, setSearchParams] = useSearchParams();
     // Get a specific query parameter
-    const articleId = searchParams.get('article_id');
+    const articleId = searchParams.get('article_id') ? parseInt(searchParams.get('article_id')) : 0;
     const [articles, setArticles] = useState([]);
     const [data, setData] = useState([]);
     const [userId, setUserId] = useState(0);
@@ -25,16 +28,23 @@ const PlacesSingle = (props) => {
 
 
     useEffect(() => {
-
+        if (articleId != 0) {
+            handleClickView(articleId);
+        } else {
+            navigate('/places');
+        }
 
         fetchData();
         fetchInitDataItineraries();
         fetchInitDataFeedbacks();
         fetchDataArticlesBySearch();
-    }, [articleId]);
+         getListLike4ArticlesByUserId();
+    }, []);
+
     const fetchData = async () => {
 
-        console.log(articleId)
+        console.log(articleId);
+
         const response = await fetch(`http://127.0.0.1:8080/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
         if (response.ok) {
             const resp = await response.json();
@@ -43,6 +53,44 @@ const PlacesSingle = (props) => {
             setPlacesId(placesIda);
         }
 
+    };
+
+    const handleClickView = async (idArticles) => {
+        try {
+            const regObj = {
+                articles: {
+                    id: idArticles,
+                },
+            };
+            console.log(regObj);
+
+            const response = await fetch("http://127.0.0.1:8080/historyArticles/clickView", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(regObj),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if (data.status == 1) {
+                    // toast.success(data.message);
+                } else {
+                    console.log(data.message);
+                    toast.error(data.message);
+                }
+
+            } else if (response.status == 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+            } else if (response.status == 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+            } else {
+                // Xử lý khi có lỗi khác
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
     };
 
     // tạo hàm xử lí lấy danh sách
@@ -115,52 +163,90 @@ const PlacesSingle = (props) => {
         }
     };
 
-    const handleCreateLike = async (e) => {
-        e.preventDefault();
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
+  // START LIKE
+  const [likedArticlesId, setLikedArticlesId] = useState([]);
+  const handleCreateLike = async (e, idArticles) => {
+      e.preventDefault();
+      const userInfoString = sessionStorage.getItem("userInfo");
+      const userInfoConvertObject = JSON.parse(userInfoString);
+      if (userInfoConvertObject !== null) {
+          const idUser = userInfoConvertObject.id;
+          setUserId(idUser);
 
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-            try {
-                const regObj = {
-                    articles: {
-                        id: articleId
-                    },
-                    users: {
-                        id: idUser
-                    }
-                };
-                console.log(regObj);
+          try {
 
-                const response = await fetch("http://127.0.0.1:8080/likes/create", {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(regObj)
-                });
+              const regObj = {
+                  articles: {
+                      id: idArticles,
+                  },
+                  users: {
+                      id: idUser,
+                  },
+              };
+              console.log(regObj);
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
+              let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                  method: "POST",
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(regObj),
+              });
 
-                    if (data.status == 1) {
-                        toast.success(data.message);
-                    } else {
-                        toast.error(data.message);
-                    }
-                } else if (response.status == 400) {
-                    // Xử lý khi có lỗi 400 (Bad Request)
-                } else if (response.status == 401) {
-                    // Xử lý khi có lỗi 401 (Unauthorized)
-                } else {
-                    // Xử lý khi có lỗi khác
-                }
-            } catch (err) {
-                toast.error('Failed: ' + err.message);
-            }
-        }
-    };
+              if (response.ok) {
+                  const data = await response.json();
+                  console.log(data);
+
+                  if (data.status == 1) {
+                      toast.success(data.message);
+
+                      await getListLike4ArticlesByUserId();// lấy lại danh sách mới
+
+                  } else {
+                      toast.error(data.message);
+                  }
+              } else if (response.status == 400) {
+                  // Handle 400 Bad Request error
+              } else if (response.status == 401) {
+                  // Handle 401 Unauthorized error
+              } else {
+                  // Handle other errors
+              }
+          } catch (err) {
+              toast.error('Failed: ' + err.message);
+          }
+      }
+  };
+
+  const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
+  const getListLike4ArticlesByUserId = async () => {
+      // Retrieve the object from the storage
+      const userInfoString = sessionStorage.getItem("userInfo");
+      const userInfoConvertObject = JSON.parse(userInfoString);
+      if (userInfoConvertObject !== null) {
+          const idUser = userInfoConvertObject.id;
+          setUserId(idUser);
+
+          const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+          if (checkResponse.ok) {
+              const data = await checkResponse.json();
+              console.log(data);
+              if (data.length > 0) {
+                  setLikedArticlesByUserId(data);
+
+                  let tmpLikedArticlesId = [];
+                  data.map(item => {
+                      if (item.status === 1) {
+                          tmpLikedArticlesId.push(item.articles.id);
+                      }
+                  });
+                  setLikedArticlesId(tmpLikedArticlesId);
+              }
+          } else {
+              console.error('Error:', checkResponse.status);
+          }
+      }
+  };
+
+  // END LIKE
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataFeedbacks = async () => {
@@ -354,15 +440,20 @@ const PlacesSingle = (props) => {
                                     {sessionStorage.getItem('username') ? (
 
                                         <div>
-                                            <a
-                                                onClick={(e) => {
-                                                    handleCreateLike(e);
-                                                }}
-                                                className="like" title="Like" data-toggle="tooltip"
+                                          
 
-                                            >
-                                                <span className="s18_s "><i className="material-icons " style={{ fontSize: '50px' }} >favorite_border</i></span>
-                                            </a>
+                                            <a
+                                                                    onClick={(e) => handleCreateLike(e, articleId)}
+                                                                    className={`like ${likedArticlesId.includes(articleId) ? 'liked' : ''}`}
+                                                                    title="Like"
+                                                                    data-toggle="tooltip"
+                                                                >
+                                                                    <span className="s18_s">
+                                                                        <i className="material-icons"  style={{ fontSize: '50px' }}>
+                                                                            {likedArticlesId.includes(articleId) ? 'favorite' : 'favorite_border'}
+                                                                        </i>
+                                                                    </span>
+                                                                </a>
 
                                             <form action="#">
 
@@ -381,7 +472,7 @@ const PlacesSingle = (props) => {
                                                                 }}
                                                             >
                                                                 {itinerariesOfUser.map((itinerary, ii) => (
-                                                                    <option value={itinerary.id} key={ii}>
+                                                                    <option value={itinerary.id} key={ii} >
                                                                         {itinerary.name}
                                                                     </option>
                                                                 ))}
@@ -428,35 +519,6 @@ const PlacesSingle = (props) => {
                                     <h2>{data.name}</h2>
                                     <p>{data.content}</p>
 
-
-                                    {/* <p className="rate mb-5">
-                                        <span className="loc"><a href="#"><i className="icon-map"></i> 291 South 21th Street, Suite 721 New York NY 10016</a></span>
-                                        <span className="star">
-                                            <i className="icon-star"></i>
-                                            <i className="icon-star"></i>
-                                            <i className="icon-star"></i>
-                                            <i className="icon-star"></i>
-                                            <i className="icon-star-o"></i>
-                                            8 Rating</span>
-                                    </p>
-                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
-                                    <div className="d-md-flex mt-5 mb-5">
-                                        <ul>
-                                            <li>The Big Oxmox advised her not to do so</li>
-                                            <li>When she reached the first hills of the Italic Mountains</li>
-                                            <li>She had a last view back on the skyline of her hometown </li>
-                                            <li>Bookmarksgrove, the headline of Alphabet </li>
-                                        </ul>
-                                        <ul className="ml-md-5">
-                                            <li>Question ran over her cheek, then she continued</li>
-                                            <li>Pityful a rethoric question ran</li>
-                                            <li>Mountains, she had a last view back on the skyline</li>
-                                            <li>Headline of Alphabet Village and the subline</li>
-                                        </ul>
-                                    </div>
-                                    <p>When she reached the first hills of the Italic Mountains, she had a last view back on the 
-                                    skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road,
-                                     the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p> */}
                                 </div>
 
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
@@ -482,42 +544,42 @@ const PlacesSingle = (props) => {
                                             <div className="tag-widget post-tag-container mb-5 mt-5">
                                                 <div className="tagcloud">
 
-                                                    <button 
-                                                    // className="tag-cloud-link" 
-                                                    type="button" class="btn btn-outline-secondary"
-                                                        onClick={(e)=>{ fetchInitDataFeedbacks()  }  } >Tất cả
+                                                    <button
+                                                        // className="tag-cloud-link" 
+                                                        type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { fetchInitDataFeedbacks() }} >Tất cả
                                                     </button>
-                                                    
 
 
-                                                    <button   type="button" class="btn btn-outline-secondary"
-                                                        onClick={(e) => {  handleFeedbacksHeart(e, 5  );   }}
 
-                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { handleFeedbacksHeart(e, 5); }}
+
+                                                    ><i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i>
 
                                                     </button>
-                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                    <button type="button" class="btn btn-outline-secondary"
                                                         onClick={(e) => { handleFeedbacksHeart(e, 4); }}
 
-                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
+                                                    ><i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i>
 
                                                     </button>
-                                                    <button   type="button" class="btn btn-outline-secondary"
-                                                        onClick={(e) => {  handleFeedbacksHeart(e, 3 ); }}
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { handleFeedbacksHeart(e, 3); }}
 
-                                                    > <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
+                                                    > <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i>
 
                                                     </button>
-                                                    <button   type="button" class="btn btn-outline-secondary"
+                                                    <button type="button" class="btn btn-outline-secondary"
                                                         onClick={(e) => { handleFeedbacksHeart(e, 2); }}
 
-                                                    ><i className="icon-star"style={{color:'#f9be37'}}></i> <i className="icon-star"style={{color:'#f9be37'}}></i>
+                                                    ><i className="icon-star" style={{ color: '#f9be37' }}></i> <i className="icon-star" style={{ color: '#f9be37' }}></i>
 
                                                     </button>
-                                                    <button   type="button" class="btn btn-outline-secondary"
-                                                        onClick={(e) => {  handleFeedbacksHeart(e, 1  );   }}
+                                                    <button type="button" class="btn btn-outline-secondary"
+                                                        onClick={(e) => { handleFeedbacksHeart(e, 1); }}
 
-                                                    > <i className="icon-star"style={{color:'#f9be37'}}></i>
+                                                    > <i className="icon-star" style={{ color: '#f9be37' }}></i>
 
                                                     </button>
 
@@ -546,7 +608,7 @@ const PlacesSingle = (props) => {
                                                             </div>
                                                             <div className="comment-body">
                                                                 <h3>{feedbacksOfUsers.users.name}</h3>
-                                                                <div className="meta">{feedbacksOfUsers.heart} <i className="icon-star" style={{color:'#f9be37'}}></i></div>
+                                                                <div className="meta">{feedbacksOfUsers.heart} <i className="icon-star" style={{ color: '#f9be37' }}></i></div>
                                                                 <div className="meta">{feedbacksOfUsers.creatAt}</div>
                                                                 <p>{feedbacksOfUsers.review}</p>
                                                                 <p><a href="#" className="reply">Reply</a></p>
@@ -737,14 +799,11 @@ const PlacesSingle = (props) => {
                                                 <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                                     <div className="card">
                                                         <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>
-                                                            <img src={articlesPlacesIds.image} className="card-img-top card-img-top-mainguyen" alt="..." />
+                                                            <img src={articlesPlacesIds.image} className="card-img-top card-img-top-mainguyen" style={{height:'170px'}}alt="..." />
                                                         </Link>
                                                         <div className="card-body">
                                                             <div className="d-flex">
                                                                 <div className="one">
-                                                                    {/* <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>{articlesPlacesIds.id}</Link> */}
-
-                                                                    <h3><a href="">{articlesPlacesIds.name}</a></h3>
                                                                     <p className="rate">
                                                                         <i className="icon-star"></i>
                                                                         <i className="icon-star"></i>
@@ -752,19 +811,36 @@ const PlacesSingle = (props) => {
                                                                         <i className="icon-star"></i>
                                                                         <i className="icon-star-o"></i>
                                                                     </p>
+                                                                    <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${articlesPlacesIds.id}`}>{articlesPlacesIds.name}</a></h3>
+
                                                                 </div>
                                                                 <div className="two"></div>
+                                                                <span className="price">{articlesPlacesIds.price + "VNĐ"}</span>
                                                             </div>
-                                                            <p>{articlesPlacesIds.content}</p>
+                                                            <p className="days">
+                                                                {articlesPlacesIds.historyArticles.length > 0 ?
+                                                                    <span> {articlesPlacesIds.historyArticles[0].count} lượt xem</span>
+                                                                    :
+                                                                    <span>Xem chi tiết</span>
+                                                                }
+                                                            </p>
                                                             <hr />
                                                             <div>
                                                                 {sessionStorage.getItem('username') ? (
                                                                     <div className="bottom-area d-flex">
-                                                                        <a onClick={(e) => {
-                                                                            handleCreateLike(e, articlesPlacesIds.id);
-                                                                        }} className="like" title="Like" data-toggle="tooltip">
-                                                                            <span className="s18_s"><i className="material-icons">favorite_border</i></span>
-                                                                        </a>
+                                                                    
+                                                                <a
+                                                                    onClick={(e) => handleCreateLike(e, articlesPlacesIds.id)}
+                                                                    className={`like ${likedArticlesId.includes(articlesPlacesIds.id) ? 'liked' : ''}`}
+                                                                    title="Like"
+                                                                    data-toggle="tooltip"
+                                                                >
+                                                                    <span className="s18_s">
+                                                                        <i className="material-icons">
+                                                                            {likedArticlesId.includes(articlesPlacesIds.id) ? 'favorite' : 'favorite_border'}
+                                                                        </i>
+                                                                    </span>
+                                                                </a>
 
                                                                         <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
                                                                             {itinerariesOfUser.map((itinerary, ii) => (
