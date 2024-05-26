@@ -252,7 +252,15 @@ const Places = () => {
                     position: {
                         lat: parseFloat(item.latitude),
                         lng: parseFloat(item.longitude)
-                    }
+                    },
+                 
+                    title: item.title,
+                    price: item.price,
+                    image: item.image,
+                    createAt: item.createAt,
+                    content: item.content,
+                    status: item.status
+
                 }));
                 setMarkers(ltsMarkers);
                 console.log("Markers", ltsMarkers, markers);

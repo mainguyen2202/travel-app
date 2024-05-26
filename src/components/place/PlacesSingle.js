@@ -38,7 +38,7 @@ const PlacesSingle = (props) => {
         fetchInitDataItineraries();
         fetchInitDataFeedbacks();
         fetchDataArticlesBySearch();
-         getListLike4ArticlesByUserId();
+        getListLike4ArticlesByUserId();
     }, []);
 
     const fetchData = async () => {
@@ -163,90 +163,90 @@ const PlacesSingle = (props) => {
         }
     };
 
-  // START LIKE
-  const [likedArticlesId, setLikedArticlesId] = useState([]);
-  const handleCreateLike = async (e, idArticles) => {
-      e.preventDefault();
-      const userInfoString = sessionStorage.getItem("userInfo");
-      const userInfoConvertObject = JSON.parse(userInfoString);
-      if (userInfoConvertObject !== null) {
-          const idUser = userInfoConvertObject.id;
-          setUserId(idUser);
+    // START LIKE
+    const [likedArticlesId, setLikedArticlesId] = useState([]);
+    const handleCreateLike = async (e, idArticles) => {
+        e.preventDefault();
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
 
-          try {
+            try {
 
-              const regObj = {
-                  articles: {
-                      id: idArticles,
-                  },
-                  users: {
-                      id: idUser,
-                  },
-              };
-              console.log(regObj);
+                const regObj = {
+                    articles: {
+                        id: idArticles,
+                    },
+                    users: {
+                        id: idUser,
+                    },
+                };
+                console.log(regObj);
 
-              let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
-                  method: "POST",
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(regObj),
-              });
+                let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(regObj),
+                });
 
-              if (response.ok) {
-                  const data = await response.json();
-                  console.log(data);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
 
-                  if (data.status == 1) {
-                      toast.success(data.message);
+                    if (data.status == 1) {
+                        toast.success(data.message);
 
-                      await getListLike4ArticlesByUserId();// lấy lại danh sách mới
+                        await getListLike4ArticlesByUserId();// lấy lại danh sách mới
 
-                  } else {
-                      toast.error(data.message);
-                  }
-              } else if (response.status == 400) {
-                  // Handle 400 Bad Request error
-              } else if (response.status == 401) {
-                  // Handle 401 Unauthorized error
-              } else {
-                  // Handle other errors
-              }
-          } catch (err) {
-              toast.error('Failed: ' + err.message);
-          }
-      }
-  };
+                    } else {
+                        toast.error(data.message);
+                    }
+                } else if (response.status == 400) {
+                    // Handle 400 Bad Request error
+                } else if (response.status == 401) {
+                    // Handle 401 Unauthorized error
+                } else {
+                    // Handle other errors
+                }
+            } catch (err) {
+                toast.error('Failed: ' + err.message);
+            }
+        }
+    };
 
-  const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
-  const getListLike4ArticlesByUserId = async () => {
-      // Retrieve the object from the storage
-      const userInfoString = sessionStorage.getItem("userInfo");
-      const userInfoConvertObject = JSON.parse(userInfoString);
-      if (userInfoConvertObject !== null) {
-          const idUser = userInfoConvertObject.id;
-          setUserId(idUser);
+    const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
+    const getListLike4ArticlesByUserId = async () => {
+        // Retrieve the object from the storage
+        const userInfoString = sessionStorage.getItem("userInfo");
+        const userInfoConvertObject = JSON.parse(userInfoString);
+        if (userInfoConvertObject !== null) {
+            const idUser = userInfoConvertObject.id;
+            setUserId(idUser);
 
-          const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
-          if (checkResponse.ok) {
-              const data = await checkResponse.json();
-              console.log(data);
-              if (data.length > 0) {
-                  setLikedArticlesByUserId(data);
+            const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+            if (checkResponse.ok) {
+                const data = await checkResponse.json();
+                console.log(data);
+                if (data.length > 0) {
+                    setLikedArticlesByUserId(data);
 
-                  let tmpLikedArticlesId = [];
-                  data.map(item => {
-                      if (item.status === 1) {
-                          tmpLikedArticlesId.push(item.articles.id);
-                      }
-                  });
-                  setLikedArticlesId(tmpLikedArticlesId);
-              }
-          } else {
-              console.error('Error:', checkResponse.status);
-          }
-      }
-  };
+                    let tmpLikedArticlesId = [];
+                    data.map(item => {
+                        if (item.status === 1) {
+                            tmpLikedArticlesId.push(item.articles.id);
+                        }
+                    });
+                    setLikedArticlesId(tmpLikedArticlesId);
+                }
+            } else {
+                console.error('Error:', checkResponse.status);
+            }
+        }
+    };
 
-  // END LIKE
+    // END LIKE
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataFeedbacks = async () => {
@@ -440,20 +440,20 @@ const PlacesSingle = (props) => {
                                     {sessionStorage.getItem('username') ? (
 
                                         <div>
-                                          
+
 
                                             <a
-                                                                    onClick={(e) => handleCreateLike(e, articleId)}
-                                                                    className={`like ${likedArticlesId.includes(articleId) ? 'liked' : ''}`}
-                                                                    title="Like"
-                                                                    data-toggle="tooltip"
-                                                                >
-                                                                    <span className="s18_s">
-                                                                        <i className="material-icons"  style={{ fontSize: '50px' }}>
-                                                                            {likedArticlesId.includes(articleId) ? 'favorite' : 'favorite_border'}
-                                                                        </i>
-                                                                    </span>
-                                                                </a>
+                                                onClick={(e) => handleCreateLike(e, articleId)}
+                                                className={`like ${likedArticlesId.includes(articleId) ? 'liked' : ''}`}
+                                                title="Like"
+                                                data-toggle="tooltip"
+                                            >
+                                                <span className="s18_s">
+                                                    <i className="material-icons" style={{ fontSize: '50px' }}>
+                                                        {likedArticlesId.includes(articleId) ? 'favorite' : 'favorite_border'}
+                                                    </i>
+                                                </span>
+                                            </a>
 
                                             <form action="#">
 
@@ -608,7 +608,15 @@ const PlacesSingle = (props) => {
                                                             </div>
                                                             <div className="comment-body">
                                                                 <h3>{feedbacksOfUsers.users.name}</h3>
-                                                                <div className="meta">{feedbacksOfUsers.heart} <i className="icon-star" style={{ color: '#f9be37' }}></i></div>
+                                                                {/* <div className="meta">{feedbacksOfUsers.heart} <i className="icon-star" style={{ color: '#f9be37' }}></i></div> */}
+
+
+                                                                <div className="meta">
+                                                                    {[...Array(feedbacksOfUsers.heart)].map((_, index) => (
+                                                                        <i key={index} className="icon-star" style={{ color: '#f9be37' }}></i>
+                                                                    ))}
+                                                                </div>
+
                                                                 <div className="meta">{feedbacksOfUsers.creatAt}</div>
                                                                 <p>{feedbacksOfUsers.review}</p>
                                                                 <p><a href="#" className="reply">Reply</a></p>
@@ -799,7 +807,7 @@ const PlacesSingle = (props) => {
                                                 <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                                     <div className="card">
                                                         <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>
-                                                            <img src={articlesPlacesIds.image} className="card-img-top card-img-top-mainguyen" style={{height:'170px'}}alt="..." />
+                                                            <img src={articlesPlacesIds.image} className="card-img-top card-img-top-mainguyen" style={{ height: '170px' }} alt="..." />
                                                         </Link>
                                                         <div className="card-body">
                                                             <div className="d-flex">
@@ -828,19 +836,19 @@ const PlacesSingle = (props) => {
                                                             <div>
                                                                 {sessionStorage.getItem('username') ? (
                                                                     <div className="bottom-area d-flex">
-                                                                    
-                                                                <a
-                                                                    onClick={(e) => handleCreateLike(e, articlesPlacesIds.id)}
-                                                                    className={`like ${likedArticlesId.includes(articlesPlacesIds.id) ? 'liked' : ''}`}
-                                                                    title="Like"
-                                                                    data-toggle="tooltip"
-                                                                >
-                                                                    <span className="s18_s">
-                                                                        <i className="material-icons">
-                                                                            {likedArticlesId.includes(articlesPlacesIds.id) ? 'favorite' : 'favorite_border'}
-                                                                        </i>
-                                                                    </span>
-                                                                </a>
+
+                                                                        <a
+                                                                            onClick={(e) => handleCreateLike(e, articlesPlacesIds.id)}
+                                                                            className={`like ${likedArticlesId.includes(articlesPlacesIds.id) ? 'liked' : ''}`}
+                                                                            title="Like"
+                                                                            data-toggle="tooltip"
+                                                                        >
+                                                                            <span className="s18_s">
+                                                                                <i className="material-icons">
+                                                                                    {likedArticlesId.includes(articlesPlacesIds.id) ? 'favorite' : 'favorite_border'}
+                                                                                </i>
+                                                                            </span>
+                                                                        </a>
 
                                                                         <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
                                                                             {itinerariesOfUser.map((itinerary, ii) => (

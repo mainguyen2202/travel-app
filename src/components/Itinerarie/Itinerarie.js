@@ -133,13 +133,13 @@ const Itinerarie = (props) => {
 
         try {
             const result = await Swal.fire({
-              title: 'Bạn có chắc không?',
-              text: "Bạn sẽ không thể hoàn nguyên điều này!",
-              icon: 'cảnh báo',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Đồng ý'
+                title: 'Bạn có chắc không?',
+                text: "Bạn sẽ không thể hoàn nguyên điều này!",
+                icon: 'cảnh báo',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý'
             });
             const response = await fetch(`http://127.0.0.1:8080/itineraries/remove/${itineraryId}`, {
                 method: 'DELETE',
@@ -232,7 +232,7 @@ const Itinerarie = (props) => {
 
                 if (data.status == 1) {
                     toast.success(data.message);
-                    
+
 
                     return;
                 } else {
@@ -543,41 +543,44 @@ const Itinerarie = (props) => {
                             onSelect={(k) => setKey(k)}
                             className="mb-3"
                         >
-                            <Tab eventKey="home" title=" Kế hoạch cá nhân">
-                                {sessionStorage.getItem('username') ? (
-                                    <div className="row" >
-                                        {itinerariesOfUser.map((itinerary, i) => (
-                                            <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
-                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                                    <div className="card">
-
-                                                        <div className="card-body">
-                                                            <div className="d-flex">
-                                                                <div className="one">
-
-
-
-                                                                    <h3 style={{ height: '70px' }}>  <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip">{itinerary.name}</Link></h3>
-                                                                    <hr />
-                                                                    <p> {itinerary.dateStart + " -> " + itinerary.dateEnd}</p>
-                                                                    <p>{"Số lượng: " + itinerary.participantCount + "người"}</p>
-                                                                    <p style={{ height: '100px' }}>{itinerary.content + "."}</p>
+                            <Tab eventKey="home" title="Kế hoạch cá nhân">
+                                {!sessionStorage.getItem('username') ? (
+                                    <p>Vui lòng đăng nhập để xem các kế hoạch cá nhân</p>
+                                ) : (
+                                    <div className="row">
+                                        {itinerariesOfUser.length > 0 ? (
+                                            itinerariesOfUser.map((itinerary, i) => (
+                                                <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                        <div className="card">
+                                                            <div className="card-body">
+                                                                <div className="d-flex">
+                                                                    <div className="one">
+                                                                        <h3 style={{ height: '70px' }}>
+                                                                            <Link
+                                                                                to={`/itinerariesView?itinerarie_id=${itinerary.id}`}
+                                                                                className="view"
+                                                                                title="View"
+                                                                                data-toggle="tooltip"
+                                                                            >
+                                                                                {itinerary.name}
+                                                                            </Link>
+                                                                        </h3>
+                                                                        <hr />
+                                                                        <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
+                                                                        <p>{'Số lượng: ' + itinerary.participantCount + ' người'}</p>
+                                                                        <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <hr />
-                                                            <div>
-                                                                {sessionStorage.getItem('username') ? (
+                                                                <hr />
+                                                                <div>
                                                                     <div className="bottom-area d-flex">
-
                                                                         <a
                                                                             className="edit"
                                                                             title="Edit"
                                                                             data-toggle="modal"
                                                                             data-target="#exampleModalEdit"
-                                                                            onClick={(e) => {
-
-                                                                                getDetailByItineraryId(e, itinerary.id);
-                                                                            }}
+                                                                            onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
                                                                         >
                                                                             <i className="material-icons">&#xE254;</i>
                                                                         </a>
@@ -589,78 +592,71 @@ const Itinerarie = (props) => {
                                                                         >
                                                                             <i className="material-icons">&#xE872;</i>
                                                                         </a>
-                                                                        <button
-                                                                            type="button"
-                                                                            class="btn btn-primary"
+                                                                        <a
+                                                                            className="share"
                                                                             data-toggle="modal"
                                                                             data-target="#exampleModalShare"
-                                                                            onClick={(e) => {
-                                                                                getDetailByItineraryId(e, itinerary.id);
-                                                                            }}
+                                                                            onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
                                                                         >
-                                                                            Chia sẻ
-                                                                        </button>
-
+                                                                            <i className="material-icons">&#xE80D;</i>
+                                                                        </a>
                                                                     </div>
-                                                                ) : (
-                                                                    <div className="bottom-area d-flex">
-                                                                        <div>
-                                                                            <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            ))
+                                        ) : (
+                                            <div className="col-12 text-center">
+                                                <h3>Hãy tạo kế hoạch</h3>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
-                                ) :
-                                    (
-                                        <p>Hãy tạo kế hoạch</p>
-
-                                    )}
+                                )}
                             </Tab>
-                            <Tab eventKey="profile" title=" Kế hoạch được chia sẻ">
-                                {sessionStorage.getItem('username') ? (
-                                    <div className="row" >
-                                        {itinerariesShareOfUser.map((itinerary, i) => (
+                            <Tab eventKey="profile" title="Kế hoạch được chia sẻ">
+                                {!sessionStorage.getItem('username') ? (
+                                    <p>Vui lòng đăng nhập để xem các kế hoạch được chia sẻ</p>
+                                ) : (
+                                    <div className="row">
+                                        {itinerariesShareOfUser.length > 0 ? (
+                                        itinerariesShareOfUser.map((itinerary, i) => (
                                             <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
                                                 <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                                     <div className="card">
-
                                                         <div className="card-body">
                                                             <div className="d-flex">
                                                                 <div className="one">
-
-
-
-                                                                    <h3>  <Link to={`/itinerarieView?itinerarie_id=${itinerary.id}`} className="view" title="View" data-toggle="tooltip">{itinerary.name}</Link></h3>
-
-                                                                    <p> {itinerary.dateStart + " -> " + itinerary.dateEnd}</p>
-                                                                    <p>{"Số lượng: " + itinerary.participantCount + "người"}
-
-                                                                    </p>
+                                                                    <h3 style={{ height: '70px' }}>
+                                                                        <Link
+                                                                            to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
+                                                                            className="view"
+                                                                            title="View"
+                                                                            data-toggle="tooltip"
+                                                                        >
+                                                                            {itinerary.name}
+                                                                        </Link>
+                                                                    </h3>
+                                                                    <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
+                                                                    <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
                                                                     <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
-                                                                    <p>{itinerary.content + "."}</p>
+                                                                    <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))}
+                                         ))
+                                        ) : (
+                                            <div className="col-12 text-center">
+                                                <h3>Chưa được chia sẻ</h3>
+                                            </div>
+                                        )}
                                     </div>
-                                ) :
-                                    (
-                                        <p>Chia được chia sẻ</p>
-
-                                    )}
+                                )}
                             </Tab>
-
                         </Tabs>
 
 
