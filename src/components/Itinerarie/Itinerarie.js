@@ -352,7 +352,7 @@ const Itinerarie = (props) => {
     };
     return (
         <div>
-            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+            <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
                 <div className="overlay"></div>
                 <div className="container">
                     <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
@@ -524,12 +524,12 @@ const Itinerarie = (props) => {
 
 
                             </div>
-                            <div className="col-sm-1">
+                            {/* <div className="col-sm-1">
                                 <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Sắp xếp">
                                     <Dropdown.Item href="#/action-1">Mới tới cũ</Dropdown.Item>
                                     <Dropdown.Item href="#/action-2">Cũ tới mới</Dropdown.Item>
                                 </DropdownButton>
-                            </div>
+                            </div> */}
                             {/* <div className="col-sm-10">
                                 <div className="search-box" >
                                     <input type="text" className="form-control" placeholder="Tìm kiếm" />
@@ -558,7 +558,7 @@ const Itinerarie = (props) => {
                                                                     <div className="one">
                                                                         <h3 style={{ height: '70px' }}>
                                                                             <Link
-                                                                                to={`/itinerariesView?itinerarie_id=${itinerary.id}`}
+                                                                                to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
                                                                                 className="view"
                                                                                 title="View"
                                                                                 data-toggle="tooltip"

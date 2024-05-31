@@ -241,7 +241,7 @@ const Home = (props) => {
     return (
         <div>
 
-            <div className="hero-wrap js-fullheight" style={{ height: '919px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+            <div className="hero-wrap js-fullheight" style={{ height: '800px', backgroundImage: `url('./images/bg_1.jpg')` }}>
                 <div className="overlay"></div>
                 <div className="container">
 

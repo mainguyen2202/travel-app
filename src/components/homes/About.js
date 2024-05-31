@@ -4,7 +4,7 @@ const About = (props) => {
     return (
         <div>
 
-            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+            <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
                 <div className="overlay"></div>
                 <div className="container">
                     <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
@@ -104,7 +104,7 @@ const About = (props) => {
                         
                         <div className="col-md-6">
                             <div className="intro">
-                                <h3><span>02</span> Thư giản</h3>
+                                <h3><span>02</span> Thư giãn</h3>
                                 <p>Hãy thả lỏng tâm hồn và tận hưởng những giây phút thư giãn tuyệt vời trong chuyến du lịch đến Việt Nam, nơi bạn có thể tìm thấy bình yên trong cảnh quan thiên nhiên tươi đẹp và những kỳ quan kiến trúc độc đáo.</p>
                                 <p>Hòa mình vào không gian yên bình của thiên nhiên Việt Nam, bạn sẽ có cơ hội tìm lại sự cân bằng và nạp lại năng lượng cho tâm hồn.
                                 </p>

@@ -99,7 +99,7 @@ const MyMapComponent = (props) => {
 
   return (
     <div>
-        <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+        <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
           <div className="overlay"></div>
           <div className="container">
               <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"

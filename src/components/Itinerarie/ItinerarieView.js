@@ -388,13 +388,12 @@ const ItinerarieView = (props) => {
 
   return (
     <div>
-      <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+      <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
         <div className="overlay"></div>
         <div className="container">
           <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
             style={{ height: '465px' }} >
             <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-              {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Itinerarie</span></p> */}
               <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Kế hoạch</h1>
             </div>
           </div>
@@ -405,99 +404,62 @@ const ItinerarieView = (props) => {
         <div className="container">
           <div className="row">
 
-            <div className="col-lg-3 sidebar order-md-first ftco-animate ">
+            <div className="col-lg-3 sidebar order-md-first ftco-animate">
               <div className="sidebar-wrap ftco-animate">
-                <form className="container">
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Tên kế hoạch</label>
-                    <input value={name} className="form-control" placeholder="Tên kế hoạch" disabled />
+                <div className="container">
+                  <div className="mb-4">
+                    <h3 className="mb-3">Thông tin kế hoạch</h3>
+                    <div className="form-group">
+                      <label htmlFor="name" className="form-label">Tên kế hoạch</label>
+                      <input value={name} className="form-control" placeholder="Tên kế hoạch" disabled />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="participantCount" className="form-label">Số lượng người tham gia</label>
+                      <input value={participantCount} className="form-control" placeholder="Số lượng người tham gia" disabled />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
+                      <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required disabled />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
+                      <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required disabled />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="content" className="form-label">Ghi chú</label>
+                      <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Notes" disabled />
+                    </div>
                   </div>
-
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Số lượng người tham gia</label>
-                    <input
-
-                      value={participantCount}
-                      className="form-control"
-                      placeholder="Số lượng người tham gia"
-                      disabled />
+                  <div className="mb-4">
+                    <h3 className="mb-3">Thông tin tài chính</h3>
+                    <div className="form-group">
+                      <label htmlFor="totalPrice" className="form-label">Tổng tiền trên 1 người</label>
+                      <input value={totalPrice + "đ"} className="form-control" placeholder="Tổng tiền trên 1 người" disabled />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="totalPriceParticipantCount" className="form-label">Tổng tiền</label>
+                      <input value={totalPriceParticipantCount + "đ"} className="form-control" placeholder="Tổng tiền" disabled />
+                    </div>
                   </div>
-
-                  <div className="mb-3">
-                    <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
-                    <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required disabled />
+                  <div className="text-center">
+                    <button type="button" className="btn btn-primary" onClick={findByAllDate}>Xem tất cả</button>
                   </div>
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
-                    <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required disabled />
+                  <div className="form-group">
+                    <label htmlFor="dateStartItineraryArticles" className="form-label">Lọc theo ngày:</label>
+                    <input type="date" id="dateStartItineraryArticles" className="form-control" min={dateStart} max={dateEnd} value={dateStartItineraryArticles} onChange={e => findByDate(e, e.target.value)} />
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label">Ghi chú</label>
-                    <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" disabled />
-                  </div>
-                </form>
-
-                <form className="container">
-                  <button type="button" className="btn btn-primary" onClick={findByAllDate}>Xem tất cả</button>
-                  <div className="mb-3 mt-4">
-                    <input
-                      type="date"
-                      id="dateStart"
-                      className="form-control"
-                      min={dateStart}
-                      max={dateEnd}
-                      value={dateStartItineraryArticles}
-                      onChange={e => findByDate(e, e.target.value)}
-                    />
-                  </div>
-
-
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền trên 1 người </label>
-                    <input value={totalPrice + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
-                  </div>
-
-
-                  <div className="mb-3 mt-4">
-                    <label htmlFor="exampleInputEmail1" className="form-label">Tổng tiền </label>
-                    <input value={totalPriceParticipantCount + "đ"} className="form-control" placeholder="Tên kế hoạch" disabled />
-                  </div>
-
-                  {/* <hr /> */}
-                  {/* <div className="mb-3 mt-4">
-                    <h4>
-                      <b>
-
-                        {"Khoảng cách : " + totalPrice + "  km "}
-                      </b>
-                    </h4>
-
-                  </div>
-                  <div className="mb-3 mt-4">
-                    <h4>
-                      <b>
-
-                        {"Thởi gian: " + totalPrice + "  h "}
-                      </b>
-                    </h4>
-
-                  </div> */}
-
-
-                </form>
-
-
+                </div>
               </div>
             </div>
 
-            <div className="col-lg-9" >
-              <div className="reservation-form mainguyen" >
+            <div className="col-lg-9">
+              <div className="reservation-form mainguyen">
                 <div className="row">
                   <div id="map">
                     <Fragment>
                       <div className="container">
                         <div style={{ height: "90vh", width: "100%" }}>
-                          {isLoaded ? (
+                          {isLoaded && (
                             <GoogleMap
                               center={userLocation}
                               zoom={12}
@@ -514,28 +476,19 @@ const ItinerarieView = (props) => {
                                   position={item.position}
                                   onClick={() => handleActiveMarker(item.id, item.position)}
                                 >
-                                  {
-                                    idActiveMarker == item.id ? (
-                                      <InfoWindowF
-                                        onCloseClick={() => setIdActiveMarker(null)}
-                                      >
-                                        <div>
-                                          <p>{item.name}</p>
-                                        </div>
-                                      </InfoWindowF>
-                                    ) : null
-                                  }
-
+                                  {idActiveMarker === item.id && (
+                                    <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
+                                      <div>
+                                        <p>{item.name}</p>
+                                      </div>
+                                    </InfoWindowF>
+                                  )}
                                 </MarkerF>
                               ))}
 
-                              <DirectionsRenderer
-                                directions={myDirections}
-                              />
-
-
+                              <DirectionsRenderer directions={myDirections} />
                             </GoogleMap>
-                          ) : null}
+                          )}
                         </div>
                       </div>
                     </Fragment>
@@ -554,25 +507,12 @@ const ItinerarieView = (props) => {
                         <div className="card-body">
                           <div className="d-flex">
                             <div className="one">
-                              {/* <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>{itineraryArticle.articles.id}</Link> */}
                               <h3><a href="">{itineraryArticle.articles.name}</a></h3>
-                              <h3><a href="">{itineraryArticle.articles.price+"VNĐ/ Khách"}</a></h3>
-                              {
-                                itineraryArticle.dateStart !== null ? (
-                                  <b>{itineraryArticle.dateStart}</b>
-                                ) : <b>-</b>
-                              }
-                              {/* <p className="rate">
-                                <i className="icon-star"></i>
-                                <i className="icon-star"></i>
-                                <i className="icon-star"></i>
-                                <i className="icon-star"></i>
-                                <i className="icon-star-o"></i>
-                              </p> */}
+                              <h3><a href="">{itineraryArticle.articles.price + "VNĐ/ Khách"}</a></h3>
+                              <b>{itineraryArticle.dateStart || '-'}</b>
                             </div>
                             <div className="two"></div>
                           </div>
-                          {/* <p>{itineraryArticle.articles.content}</p> */}
                           <hr />
                           <div>
                             <div className="bottom-area d-flex">
@@ -585,10 +525,7 @@ const ItinerarieView = (props) => {
                                 title="Edit"
                                 data-toggle="modal"
                                 data-target="#exampleModalEdit"
-                                onClick={(e) => {
-
-                                  getDetailById(e, itineraryArticle.id);
-                                }}
+                                onClick={(e) => getDetailById(e, itineraryArticle.id)}
                               >
                                 <i className="material-icons">&#xE254;</i>
                               </a>
@@ -618,20 +555,15 @@ const ItinerarieView = (props) => {
                                 </div>
                               </div>
 
-                           
+
 
                               <a
                                 className="Remove"
                                 title="Remove"
-                              
-                                onClick={(e) => {
-
-                                  handleRemove(e, itineraryArticle.id);
-                                }}
+                                onClick={(e) => handleRemove(e, itineraryArticle.id)}
                               >
                                 <i className="material-icons">&#xE872;</i>
                               </a>
-
                             </div>
                           </div>
                         </div>
@@ -640,7 +572,6 @@ const ItinerarieView = (props) => {
                   </div>
                 ))}
               </div>
-
 
               <div className="row mt-5">
                 <div className="col text-center">

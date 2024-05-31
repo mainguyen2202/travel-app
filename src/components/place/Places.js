@@ -253,13 +253,14 @@ const Places = () => {
                         lat: parseFloat(item.latitude),
                         lng: parseFloat(item.longitude)
                     },
-                 
+
                     title: item.title,
                     price: item.price,
                     image: item.image,
                     createAt: item.createAt,
                     content: item.content,
-                    status: item.status
+                    status: item.status,
+                    count: item.historyArticles?.length > 0 ? item.historyArticles[0].count : 0
 
                 }));
                 setMarkers(ltsMarkers);
@@ -338,11 +339,12 @@ const Places = () => {
                         image: item.articles.image,
                         createAt: item.articles.createAt,
                         content: item.articles.content,
-                        status: item.articles.status
+                        status: item.articles.status,
+                       
 
                     }));
                     setArticles(dataItem);// làm việc 
-
+                 
                 }
             } else {
                 console.error('Error:', response.status);
@@ -482,11 +484,11 @@ const Places = () => {
 
     // END LIKE
 
-    
+
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
+        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
         // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
         libraries: ['places'],
     });
@@ -540,14 +542,13 @@ const Places = () => {
 
     return (
         <div>
-            <div className="hero-wrap js-fullheight" style={{ height: '465px', backgroundImage: `url('./images/bg_1.jpg')` }}>
+            <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
                 <div className="overlay"></div>
                 <div className="container">
                     <div className="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true"
                         style={{ height: '465px' }}
                     >
                         <div className="col-md-9 text-center ftco-animate" data-scrollax=" properties: { translateY: '70%' }">
-                            {/* <p className="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span className="mr-2"><a href="index.html">Home</a></span> <span>Địa điểm</span></p> */}
                             <h1 className="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Địa điểm</h1>
                         </div>
                     </div>
@@ -736,13 +737,25 @@ const Places = () => {
                                                                     {
                                                                         idActiveMarker == item.id ? (
                                                                             <InfoWindowF
-                                                                                onCloseClick={() => setIdActiveMarker(null)}
-                                                                            >
-                                                                                <div>
-                                                                                    <Link to={`/detail?article_id=${item.id}`}>{item.name}</Link>
-                                                                                    <p>{item.name}</p>
+                                                                            onCloseClick={() => setIdActiveMarker(null)}
+                                                                        >
+                                                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                                <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
+                                                                                    {item.name}
+                                                                                </Link>
+                                                                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                                                                    <img
+                                                                                        src={item.image || 'default-product-image.jpg'}
+                                                                                        alt={item.name}
+                                                                                        style={{ width: '80px', height: '80px', marginRight: '12px' }}
+                                                                                    />
+                                                                                    <div>
+                                                                                        <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
+                                                                                        <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                                                                    </div>
                                                                                 </div>
-                                                                            </InfoWindowF>
+                                                                            </div>
+                                                                        </InfoWindowF>
                                                                         ) : null
                                                                     }
                                                                 </MarkerF>
@@ -772,7 +785,7 @@ const Places = () => {
                                                 <Link to={`/detail?article_id=${article.id}`}>
                                                     <img src={article.image}
 
-                                                        className="card-img-top card-img-top-mainguyen" style={{height:'170px'}}alt="..." />
+                                                        className="card-img-top card-img-top-mainguyen" style={{ height: '170px' }} alt="..." />
                                                 </Link>
 
 
@@ -786,7 +799,7 @@ const Places = () => {
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star-o"></i>
                                                             </p>
-                                                            <h3 style={{ color: 'black', height:'100px' }}><a href={`/detail?article_id=${article.id}`}>{article.name}</a></h3>
+                                                            <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${article.id}`}>{article.name}</a></h3>
 
 
                                                         </div>
