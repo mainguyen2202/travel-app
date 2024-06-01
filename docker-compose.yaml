@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: travel-app
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - '3000:3000'
+    volumes:
+      - './:/app'
+      - '/app/node_modules'
+
+#mai@DESKTOP-E8EUN2H:/mnt/d/MaiNguyen/TieuLuan/travel-app$ docker-compose up -d --build

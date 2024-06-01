@@ -4,6 +4,7 @@ import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SERVER_URL } from "../../constants/constants";
 
 import { Fragment } from "react";
 import {
@@ -102,7 +103,7 @@ const Places = () => {
             let tuKhoa = searchParams.get("keyword");
             //có từ khóa tìm kiếm
             console.log("maiaiaiaSearch Keyword ", tuKhoa.trim());
-            const response = await fetch(`http://127.0.0.1:8080/articles/listSearchKeyWord?name=${tuKhoa.trim()}`)
+            const response = await fetch(`${SERVER_URL}/articles/listSearchKeyWord?name=${tuKhoa.trim()}`)
             if (response.ok) {
                 const data = await response.json();
                 console.log("timkiem", data);
@@ -120,7 +121,7 @@ const Places = () => {
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataPlaces = async () => {
 
-        const placesResponse = await fetch('http://localhost:8080/places/list');
+        const placesResponse = await fetch('${SERVER_URL}/places/list');
         if (placesResponse.ok) {
             const placesData = await placesResponse.json();
             console.log(placesData);
@@ -135,7 +136,7 @@ const Places = () => {
     };
 
     const fetchInitDataTopics = async () => {
-        const topicsResponse = await fetch('http://localhost:8080/topics/list');
+        const topicsResponse = await fetch('${SERVER_URL}/topics/list');
         if (topicsResponse.ok) {
             const topicsData = await topicsResponse.json();
             console.log(topicsData);
@@ -171,7 +172,7 @@ const Places = () => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
             if (itinerariesResponse.ok) {
                 const itinerariesData = await itinerariesResponse.json();
                 console.log(itinerariesData);
@@ -205,7 +206,7 @@ const Places = () => {
 
     const getSubTopicsByTopicId = async (inTopicId) => {
 
-        let subTopicResponse = await fetch(`http://localhost:8080/topics/list?${inTopicId}`)
+        let subTopicResponse = await fetch(`${SERVER_URL}/topics/list?${inTopicId}`)
         if (subTopicResponse.ok) {
             let data = await subTopicResponse.json();
             console.log(data);
@@ -241,7 +242,7 @@ const Places = () => {
         // placeId = 0;// TODO mainguyen debug
         // topicId = 0;// TODO mainguyen debug
         console.log("getAPI placeId=", inPlaceId, "subtopicId=", inSubtopicId);
-        await fetch(`http://localhost:8080/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}`)
+        await fetch(`${SERVER_URL}/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}`)
             .then(response => response.json())
             .then(data => {
                 setArticles(data);// làm việc 
@@ -286,7 +287,7 @@ const Places = () => {
             };
             console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(regObj)
@@ -325,7 +326,7 @@ const Places = () => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+            const response = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -355,7 +356,7 @@ const Places = () => {
     const fetchInitDataHistoryArticles = async () => {
 
 
-        const response = await fetch(`http://127.0.0.1:8080/historyArticles/list`);
+        const response = await fetch(`${SERVER_URL}/historyArticles/list`);
         if (response.ok) {
             const data = await response.json();
             console.log(data);
@@ -383,7 +384,7 @@ const Places = () => {
     const fetchInitDataDescDate = async () => {
 
 
-        const response = await fetch(`http://localhost:8080/articles/listDate`);
+        const response = await fetch(`${SERVER_URL}/articles/listDate`);
         if (response.ok) {
             const data = await response.json();
             console.log(data);
@@ -421,7 +422,7 @@ const Places = () => {
                 };
                 console.log(regObj);
 
-                let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(regObj),
@@ -461,7 +462,7 @@ const Places = () => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+            const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
             if (checkResponse.ok) {
                 const data = await checkResponse.json();
                 console.log(data);

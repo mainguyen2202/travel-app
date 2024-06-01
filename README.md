@@ -146,3 +146,30 @@ Building an interactive map with Google Maps Platform and React - Crash Course
 https://www.youtube.com/watch?v=2po9_CIRW7I
 
 https://github.com/leighhalliday/google-maps-react-crash-course/blob/main/components/map.tsx
+
+
+```
+Khi close tab hay close browser thì data ở localStorage vẫn tồn tại, và chỉ bị mất khi user xoá cache hoặc clear web data. 
+
+Còn đối với sessionStorage thì data sẽ bị mất ngay khi close tab hoặc close browser.
+```
+
+https://github.com/sk-Jahangeer/react-auth-jwt/blob/master/src/services/authService.js
+
+# Handling JWT Access and Refresh Token using Axios in React App
+
+https://blog.theashishmaurya.me/handling-jwt-access-and-refresh-token-using-axios-in-react-app
+
+# Deploy React với Docker, Nginx
+
+https://viblo.asia/p/deploy-react-voi-docker-nginx-YWOZrAzRKQ0
+
+.dockerignore
+
+Nó sẽ ignore các file chúng ta không muốn copy vào trong image, từ đó giúp cho giảm kích thước của image tối đa.
+
+https://stackoverflow.com/questions/63691203/how-do-i-make-a-react-app-in-docker-compose-container-is-exiting-after-build-st
+
+https://medium.com/@alialreza98/integrating-docker-with-a-react-js-application-for-both-development-and-production-part-2-bbc32f22f07d
+
+https://www.bezkoder.com/docker-compose-react-nodejs-mysql/

@@ -3,23 +3,27 @@ import { useNavigate } from "react-router-dom";
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { ACCESS_TOKEN } from '../../constants/constants';
+import { getCurrentUser } from '../../services/authServices';
 
 const Header = (props) => {
 	const navigate = useNavigate();
 	const [userName, setUserName] = useState("");
+	const token = localStorage.getItem(ACCESS_TOKEN);
 
 	useEffect(() => {
 		console.log("header");
-		let temp = sessionStorage.getItem('username');
-		if (temp && temp !== userName) {
-			setUserName(temp);
+		const userInfo = getCurrentUser();
+		if (userInfo && userInfo.sub !== userName) {
+		  setUserName(userInfo.sub);
+		  console.log("userName", userInfo.sub);
 		}
-	}, [userName]);
-
-	function logout() {
-		sessionStorage.clear();
-		navigate('/login')
-	}
+	  }, [userName]);
+	
+	  function logout() {
+		localStorage.removeItem(ACCESS_TOKEN);
+		navigate('/login');
+	  }
 
 
 
@@ -58,7 +62,7 @@ const Header = (props) => {
 									{/* <div className="user_box_register user_box_link dropdown" data-toggle="dropdown">
 										<a href="/registration"><i className="bi bi-person-circle"></i></a></div> */}
 
-									{sessionStorage.getItem('username') ? (
+									{ (token !== '' && token !== undefined) ? (
 										<div>
 											<div className="user_box_login user_box_link">
 												<a href="/profile">{userName}</a>

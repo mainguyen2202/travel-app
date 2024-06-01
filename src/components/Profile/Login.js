@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/constants";
+import { login } from "../../services/authServices";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -18,20 +20,9 @@ const Login = () => {
         e.preventDefault();
         if (!validate()) {
             return;
-
         }
-        const loginDTO = {
-            username: username,
-            password: password
-        };
         try {
-            const response = await fetch("http://127.0.0.1:8080/users/login", {
-                method: "POST",
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify(loginDTO)
-            });
-
-            console.log(response);
+            const response = await login(username, password);
             if (response.ok) {// có dữ liệu trả về
                 if (response.status == 400) {
                     //
@@ -39,18 +30,13 @@ const Login = () => {
                     //
                 } else if (response.status == 200) {
                     //
-                    const resq = await response.json();
-                    if (resq.status == 1) {
-                        sessionStorage.setItem('username', resq.data.username);// Lưu giá trị từ biến state `username`
+                    const resq = await response.json();// dữ liệu json
+                    if (resq.access_token !== '' && resq.access_token !== undefined) {
+                        // Store the tokens in localStorage or secure cookie for later use
+                        localStorage.setItem(ACCESS_TOKEN, resq.access_token);
+                        localStorage.setItem(REFRESH_TOKEN, resq.refresh_token);
 
-                        // Store JSON Data
-                        let dataConvertString = JSON.stringify(resq.data);// convert string to object 
-                        sessionStorage.setItem('userInfo', dataConvertString);
-
-                        let name = sessionStorage.getItem('username');
-                        console.log(name); // In ra giá trị username đã lưu trữ trong phiên làm việc
-                        // sessionStorage.setItem('jwttoken', resp.jwtToken);
-                        // sessionStorage.setItem('userrole', resp.data.role);
+                        toast.success(resq.message);
                         navigate('/');
                     } else {
                         toast.error(resq.message); // Hiển thị thông báo lỗi từ API trong giao diện

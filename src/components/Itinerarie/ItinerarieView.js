@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SERVER_URL } from "../../constants/constants";
 import Swal from 'sweetalert2';
 
 import { Fragment } from "react";
@@ -46,7 +47,7 @@ const ItinerarieView = (props) => {
 
   const getDetailByItineraryId = async (e) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/itineraries/detail/${itinerarieId}`);
+      const response = await fetch(`${SERVER_URL}/itineraries/detail/${itinerarieId}`);
       if (response.ok) {
         const itinerarieData = await response.json();
         setDetailItinerarie(itinerarieData);
@@ -69,7 +70,7 @@ const ItinerarieView = (props) => {
   const fetchInitData = async (inItinerarieId, inputDateStart) => {
     console.log("list", inItinerarieId, inputDateStart);
 
-    const itineraryArticlesResponse = await fetch(`http://127.0.0.1:8080/itineraryArticles/listBySearch?itineraries_id=${inItinerarieId}&date_start=${inputDateStart}`);
+    const itineraryArticlesResponse = await fetch(`${SERVER_URL}/itineraryArticles/listBySearch?itineraries_id=${inItinerarieId}&date_start=${inputDateStart}`);
     console.log(itineraryArticlesResponse);
     if (itineraryArticlesResponse.ok) {
       const itineraryArticlesData = await itineraryArticlesResponse.json();
@@ -163,7 +164,7 @@ const ItinerarieView = (props) => {
 
   const getDetailById = async (e, itineraryArticlesId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/itineraryArticles/detail/${itineraryArticlesId}`);
+      const response = await fetch(`${SERVER_URL}/itineraryArticles/detail/${itineraryArticlesId}`);
       if (response.ok) {
         const itinerarieData = await response.json();
 
@@ -181,7 +182,7 @@ const ItinerarieView = (props) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://127.0.0.1:8080/itineraryArticles/edit/${itineraryArticlesId}`, {
+      const response = await fetch(`${SERVER_URL}/itineraryArticles/edit/${itineraryArticlesId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -224,7 +225,7 @@ const ItinerarieView = (props) => {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`http://127.0.0.1:8080/itineraryArticles/remove/${itineraryArticlesId}`, {
+        const response = await fetch(`${SERVER_URL}/itineraryArticles/remove/${itineraryArticlesId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'

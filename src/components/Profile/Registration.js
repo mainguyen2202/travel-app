@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SERVER_URL } from "../../constants/constants";
 
 
 const Registration = (props) => {
@@ -33,7 +34,7 @@ const Registration = (props) => {
         };
 
         try {
-            const response = await fetch("http://127.0.0.1:8080/users/registration", {
+            const response = await fetch(`${SERVER_URL}/users/registration`, {
                 method: "POST",
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify(regObj)

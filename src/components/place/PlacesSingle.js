@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
+import { SERVER_URL } from "../../constants/constants";
 
 const PlacesSingle = (props) => {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ const PlacesSingle = (props) => {
 
         console.log(articleId);
 
-        const response = await fetch(`http://127.0.0.1:8080/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
+        const response = await fetch(`${SERVER_URL}/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
         if (response.ok) {
             const resp = await response.json();
             setData(resp);
@@ -64,7 +65,7 @@ const PlacesSingle = (props) => {
             };
             console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/historyArticles/clickView", {
+            const response = await fetch(`${SERVER_URL}/historyArticles/clickView`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(regObj),
@@ -103,7 +104,7 @@ const PlacesSingle = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
 
             if (itinerariesResponse.ok) {
                 const itinerariesData = await itinerariesResponse.json();
@@ -136,7 +137,7 @@ const PlacesSingle = (props) => {
             };
             console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(regObj)
@@ -185,7 +186,7 @@ const PlacesSingle = (props) => {
                 };
                 console.log(regObj);
 
-                let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(regObj),
@@ -225,7 +226,7 @@ const PlacesSingle = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+            const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
             if (checkResponse.ok) {
                 const data = await checkResponse.json();
                 console.log(data);
@@ -253,7 +254,7 @@ const PlacesSingle = (props) => {
         // Retrieve the object from the storage
 
 
-        const response = await fetch(`http://localhost:8080/feedbacks/listBySearch?articles_id=${articleId}`);
+        const response = await fetch(`${SERVER_URL}/feedbacks/listBySearch?articles_id=${articleId}`);
         if (response.ok) {
             const data = await response.json();
             console.log("fetchInitDataFeedbacks" + data);
@@ -265,14 +266,14 @@ const PlacesSingle = (props) => {
         }
 
     }
-    // http://127.0.0.1:8080/feedbacks/listByHeart?heart=5&articles_id=5
+    // ${SERVER_URL}/feedbacks/listByHeart?heart=5&articles_id=5
 
     const handleFeedbacksHeart = async (e, heart) => {
         // Retrieve the object from the storage
         // const tmpHeart = parseInt(heart);
         console.log("tmpHeart", heart, "tmpHeart", articleId);
 
-        const response = await fetch(`http://127.0.0.1:8080/feedbacks/listByHeart?heart=${heart}&articles_id=${articleId}`);
+        const response = await fetch(`${SERVER_URL}/feedbacks/listByHeart?heart=${heart}&articles_id=${articleId}`);
         if (response.ok) {
             const data = await response.json();
             console.log("handleFeedbacksHeart", data);
@@ -306,7 +307,7 @@ const PlacesSingle = (props) => {
                 };
                 console.log(regObj);
 
-                const response = await fetch("http://127.0.0.1:8080/feedbacks/create", {
+                const response = await fetch(`${SERVER_URL}/feedbacks/create`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(regObj)
@@ -342,7 +343,7 @@ const PlacesSingle = (props) => {
         let subtopicId = 8;
         console.log("subtopicId =", subtopicId);
 
-        const response = await fetch(`http://localhost:8080/articles/list?places_id=${placesId}&topics_id=${subtopicId}`);
+        const response = await fetch(`${SERVER_URL}/articles/list?places_id=${placesId}&topics_id=${subtopicId}`);
         if (response.ok) {
             const data = await response.json();
             console.log("fetchDataArticlesBySearch", data);

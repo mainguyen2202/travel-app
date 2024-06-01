@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { showAll } from "../../services/placeServices";
+import { showAllId } from "../../services/topicServices";
 
 
 const Home = (props) => {
@@ -13,7 +16,7 @@ const Home = (props) => {
     const [userId, setUserId] = useState(0);
 
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
-    
+    const token = localStorage.getItem(ACCESS_TOKEN);
 
     useEffect(() => {
 
@@ -30,9 +33,9 @@ const Home = (props) => {
         // Retrieve the object from the storage
 
 
-        const response = await fetch(`http://127.0.0.1:8080/places/list`);
-        if (response.ok) {
-            const placeData = await response.json();
+        const response = await showAll();
+        if (response.status === 200) {
+            const placeData = response.data;
             console.log(placeData);
             if (placeData.length > 0) {
                 setPlace(placeData);
@@ -48,9 +51,9 @@ const Home = (props) => {
     const fetchInitDataTopic = async () => {
 
         // Retrieve the object from the storage
-        const status = 0;
+        const subTopicsId = 0;
 
-        const response = await fetch(`http://127.0.0.1:8080/topics/list/${status}`);
+        const response = await showAllId(subTopicsId);
         if (response.ok) {
             const data = await response.json();
             console.log(data);
@@ -74,7 +77,16 @@ const Home = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+            const response = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`,
+            {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  }
+            }   
+            );
+          
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -97,7 +109,16 @@ const Home = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`,
+            {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  }
+            }   
+            
+            );
             if (itinerariesResponse.ok) {
                 const itinerariesData = await itinerariesResponse.json();
                 console.log(itinerariesData);
@@ -125,9 +146,12 @@ const Home = (props) => {
             };
             console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  },
                 body: JSON.stringify(regObj)
             });
 
@@ -174,9 +198,12 @@ const Home = (props) => {
                   };
                   console.log(regObj);
   
-                  let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                  let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
                       method: "POST",
-                      headers: { 'Content-Type': 'application/json' },
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                      },
                       body: JSON.stringify(regObj),
                   });
   
@@ -214,7 +241,15 @@ const Home = (props) => {
               const idUser = userInfoConvertObject.id;
               setUserId(idUser);
   
-              const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+              const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`,
+              {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  }
+            }   
+              );
               if (checkResponse.ok) {
                   const data = await checkResponse.json();
                   console.log(data);

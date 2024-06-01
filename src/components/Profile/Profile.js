@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SERVER_URL } from "../../constants/constants";
 
 const Profile = (props) => {
 
@@ -37,7 +38,7 @@ const Profile = (props) => {
     const fetchdataDetailId = async () => {
 
         console.log(usersId)
-        const response = await fetch(`http://127.0.0.1:8080/users/detail/${usersId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
+        const response = await fetch(`${SERVER_URL}/users/detail/${usersId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
         if (response.ok) {
             const resp = await response.json();
             setdataDetail(resp);
@@ -66,7 +67,7 @@ const Profile = (props) => {
                 email: email
             })
             console.log("usersId", usersId);
-            const response = await fetch(`http://localhost:8080/users/edit/${usersId}`, {
+            const response = await fetch(`${SERVER_URL}/users/edit/${usersId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -101,7 +102,7 @@ const Profile = (props) => {
                 const input = JSON.stringify({
                     password: newPassword,
                 });
-                const response = await fetch(`http://localhost:8080/users/editPassword/${usersId}`, {
+                const response = await fetch(`${SERVER_URL}/users/editPassword/${usersId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

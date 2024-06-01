@@ -5,6 +5,7 @@ import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Dropdown, DropdownButton } from "react-bootstrap";
+import { SERVER_URL } from "../../constants/constants";
 
 
 const Like = (props) => {
@@ -28,7 +29,7 @@ const Like = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const response = await fetch(`http://127.0.0.1:8080/likes/listBySearch?users_id=${idUser}`);
+            const response = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -50,7 +51,7 @@ const Like = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
             if (itinerariesResponse.ok) {
                 const itinerariesData = await itinerariesResponse.json();
                 console.log(itinerariesData);
@@ -78,7 +79,7 @@ const Like = (props) => {
             };
             console.log(regObj);
 
-            const response = await fetch("http://127.0.0.1:8080/itineraryArticles/create", {
+            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(regObj)
@@ -127,7 +128,7 @@ const Like = (props) => {
                 };
                 console.log(regObj);
 
-                let response = await fetch("http://127.0.0.1:8080/likes/clickLike", {
+                let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(regObj),
@@ -167,7 +168,7 @@ const Like = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const checkResponse = await fetch(`http://localhost:8080/likes/listBySearch?users_id=${idUser}`);
+            const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
             if (checkResponse.ok) {
                 const data = await checkResponse.json();
                 console.log(data);

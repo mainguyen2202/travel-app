@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SERVER_URL } from "../../constants/constants";
 
 const ResetPassword = (props) => {
 
@@ -15,7 +16,7 @@ const ResetPassword = (props) => {
             email: email
         };
         try {
-            const response = await fetch("http://localhost:8080/users/forgotPassword", {
+            const response = await fetch(`${SERVER_URL}/users/forgotPassword`, {
                 method: "POST",
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify(loginDTO)

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
+import { SERVER_URL } from "../../constants/constants";
 
 const ForgotPassword = (props) => {
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ const ForgotPassword = (props) => {
                 const input = JSON.stringify({
                     password: newPassword,
                 });
-                const response = await fetch(`http://localhost:8080/users/editPassword/${userId }`, {
+                const response = await fetch(`${SERVER_URL}/users/editPassword/${userId }`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

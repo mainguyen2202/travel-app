@@ -5,9 +5,9 @@ import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 
-
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
+import { SERVER_URL } from "../../constants/constants";
 
 
 const Itinerarie = (props) => {
@@ -45,7 +45,7 @@ const Itinerarie = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://localhost:8080/itineraries/listBySearch?user_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
             if (itinerariesResponse.ok) {
                 const itinerariesData = await itinerariesResponse.json();
                 console.log(itinerariesData);
@@ -86,7 +86,7 @@ const Itinerarie = (props) => {
                     dateEnd: dateEnd,
                     usersId: idUser
                 };
-                const response = await fetch("http://127.0.0.1:8080/itineraries/create", {
+                const response = await fetch(`${SERVER_URL}/itineraries/create`, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(regObj)
@@ -141,7 +141,7 @@ const Itinerarie = (props) => {
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Đồng ý'
             });
-            const response = await fetch(`http://127.0.0.1:8080/itineraries/remove/${itineraryId}`, {
+            const response = await fetch(`${SERVER_URL}/itineraries/remove/${itineraryId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -186,7 +186,7 @@ const Itinerarie = (props) => {
 
     const getDetailByItineraryId = async (e, itineraryId) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8080/itineraries/detail/${itineraryId}`);
+            const response = await fetch(`${SERVER_URL}/itineraries/detail/${itineraryId}`);
             if (response.ok) {
                 const itinerarieData = await response.json();
                 setDetailItinerarie(itinerarieData);
@@ -212,7 +212,7 @@ const Itinerarie = (props) => {
         console.log(" handleEdit itineraryId itineraryId: participantCount" + participantCount);
 
         try {
-            const response = await fetch(`http://127.0.0.1:8080/itineraries/edit/${itineraryId}`, {
+            const response = await fetch(`${SERVER_URL}/itineraries/edit/${itineraryId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -257,7 +257,7 @@ const Itinerarie = (props) => {
         }
         console.log("handleShare itineraryId" + itineraryId);
         console.log("handleShare username: " + username);
-        const response = await fetch(`http://127.0.0.1:8080/users/detailBySearchUserName?username=${username}`);
+        const response = await fetch(`${SERVER_URL}/users/detailBySearchUserName?username=${username}`);
         if (response.ok) {
             const data = await response.json();
 
@@ -272,7 +272,7 @@ const Itinerarie = (props) => {
                     id: itineraryId
                 }
             };
-            const reps = await fetch("  http://127.0.0.1:8080/shareItineraries/create", {
+            const reps = await fetch("  ${SERVER_URL}/shareItineraries/create", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(regObj)
@@ -324,7 +324,7 @@ const Itinerarie = (props) => {
             const idUser = userInfoConvertObject.id;
             setUserId(idUser);
 
-            const itinerariesResponse = await fetch(`http://127.0.0.1:8080/shareItineraries/listBySearch?users_id=${idUser}`);
+            const itinerariesResponse = await fetch(`${SERVER_URL}/shareItineraries/listBySearch?users_id=${idUser}`);
             if (itinerariesResponse.ok) {
                 const data = await itinerariesResponse.json();
                 console.log(data);
