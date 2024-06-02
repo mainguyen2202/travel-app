@@ -15,15 +15,15 @@ const Header = (props) => {
 		console.log("header");
 		const userInfo = getCurrentUser();
 		if (userInfo && userInfo.sub !== userName) {
-		  setUserName(userInfo.sub);
-		  console.log("userName", userInfo.sub);
+			setUserName(userInfo.sub);
+			console.log("userName", userInfo.sub);
 		}
-	  }, [userName]);
-	
-	  function logout() {
+	}, [userName]);
+
+	function logout() {
 		localStorage.removeItem(ACCESS_TOKEN);
 		navigate('/login');
-	  }
+	}
 
 
 
@@ -40,6 +40,9 @@ const Header = (props) => {
 		console.log("Search Keyword ", record);
 		navigate(`/places?keyword=${record}`);//API GET có param
 	}
+	const [searchKeyword, setSearchKeyword] = useState('');
+
+
 
 
 	return (
@@ -57,12 +60,12 @@ const Header = (props) => {
 									</ul>
 								</div>
 								<div className="user_box ml-auto">
-							
+
 
 									{/* <div className="user_box_register user_box_link dropdown" data-toggle="dropdown">
 										<a href="/registration"><i className="bi bi-person-circle"></i></a></div> */}
 
-									{ (token !== '' && token !== undefined) ? (
+									{(token) ? (
 										<div>
 											<div className="user_box_login user_box_link">
 												<a href="/profile">{userName}</a>
@@ -111,10 +114,12 @@ const Header = (props) => {
 
 
 								</div>
-						
+
+							
 
 
-								<form id="search_form" className="search_form bez_1">
+
+								{/* <form id="search_form" className="search_form bez_1">
 									<input id="searchInput"
 										type="text"
 										placeholder="Tìm kiếm ..."
@@ -123,11 +128,24 @@ const Header = (props) => {
 										onChange={(event) => setRecord(event.target.value)}
 										onKeyDown={handleKeyDown}
 									/>
-								</form>
-								
-							
+								</form> */}
 
 
+
+								<div class="search-container">
+									{/* <input type="text" id="search-input" placeholder="Tìm kiếm..." /> */}
+									<input id="searchInput"
+										type="text"
+										placeholder="Tìm kiếm ..."
+										className="search_content_input bez_1"
+										value={record}
+										onChange={(event) => setRecord(event.target.value)}
+										onKeyDown={handleKeyDown}
+									/>
+									{/* <button id="search-button">
+										<i class="fa fa-search"></i>
+									</button> */}
+								</div>
 
 								<div className="hamburger">
 									<i className="fa fa-bars trans_200"></i>

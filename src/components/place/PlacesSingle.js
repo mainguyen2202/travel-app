@@ -9,7 +9,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
-import { SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { getCurrentUser } from '../../services/authServices';
+import { articlesDetail, articlesListPlaceIdSubtopicId } from '../../services/articlesServices';
+import { clickView } from '../../services/historyArticlesServices';
+import { itineraryArticlesCreate } from '../../services/itineraryArticlesServices';
+import { listBySearchItineraries } from '../../services/itinerarieServices';
+import { likeCreate, listBySearchLike } from '../../services/likeServices';
+import { feedbacksCreate, listBySearchFeedbacks } from '../../services/feedbacksServices';
 
 const PlacesSingle = (props) => {
     const navigate = useNavigate();
@@ -28,6 +35,15 @@ const PlacesSingle = (props) => {
     // console.log("articleId =" + articleId);
 
 
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        const userInfo = getCurrentUser();
+        if (userInfo && userInfo.USER_ID !== userId) {
+            setUserId(userInfo.USER_ID);
+            console.log("userId", userInfo.USER_ID);
+        }
+    }
+
     useEffect(() => {
         if (articleId != 0) {
             handleClickView(articleId);
@@ -45,12 +61,12 @@ const PlacesSingle = (props) => {
     const fetchData = async () => {
 
         console.log(articleId);
+        const response = await articlesDetail(articleId);
+        if (response.status === 200) {
+            const data = await response.data;
 
-        const response = await fetch(`${SERVER_URL}/articles/detail/${articleId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
-        if (response.ok) {
-            const resp = await response.json();
-            setData(resp);
-            const placesIda = resp.places.id;
+            setData(data);
+            const placesIda = data.places.id;
             setPlacesId(placesIda);
         }
 
@@ -58,21 +74,10 @@ const PlacesSingle = (props) => {
 
     const handleClickView = async (idArticles) => {
         try {
-            const regObj = {
-                articles: {
-                    id: idArticles,
-                },
-            };
-            console.log(regObj);
 
-            const response = await fetch(`${SERVER_URL}/historyArticles/clickView`, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
+            const response = await clickView(idArticles);
+            if (response.status === 200) {
+                const data = response.data;
                 console.log(data);
 
                 if (data.status == 1) {
@@ -97,67 +102,43 @@ const PlacesSingle = (props) => {
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataItineraries = async () => {
         // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
+        if (token) {
 
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
-
-            if (itinerariesResponse.ok) {
-                const itinerariesData = await itinerariesResponse.json();
-                console.log(itinerariesData);
-                if (itinerariesData.length > 0) {
-                    setItinerariesOfUser(itinerariesData);
+            const response = await listBySearchItineraries(userId);
+            if (response.status === 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', itinerariesResponse.status);
+                console.error('Error:', data.status);
             }
         }
     }
 
     const handleCreateItineraries = async (e, idArticles, idItineraries) => {
         e.preventDefault();
-
-        const tmpidItineraries = parseInt(idItineraries);
-        console.log("when click " + tmpidItineraries);
-
-
         try {
-            const regObj = {
-                articles: {
-                    id: idArticles
-                },
-                itineraries: {
-                    id: idItineraries
-                },
-                status: 1
-            };
-            console.log(regObj);
-
-            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
+            const response = await itineraryArticlesCreate(idArticles, idItineraries);
+            if (response.status === 200) {
+                const { data } = response;
                 console.log(data);
 
-                if (data.status == 1) {
+                if (data.status === 1) {
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);
                 }
-            } else if (response.status == 400) {
+            } else if (response.status === 400) {
                 // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
+                toast.error('Bad Request');
+            } else if (response.status === 401) {
                 // Xử lý khi có lỗi 401 (Unauthorized)
+                toast.error('Unauthorized');
             } else {
                 // Xử lý khi có lỗi khác
+                toast.error('Unknown error');
             }
         } catch (err) {
             toast.error('Failed: ' + err.message);
@@ -168,32 +149,15 @@ const PlacesSingle = (props) => {
     const [likedArticlesId, setLikedArticlesId] = useState([]);
     const handleCreateLike = async (e, idArticles) => {
         e.preventDefault();
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
+        if (token) {
             try {
 
-                const regObj = {
-                    articles: {
-                        id: idArticles,
-                    },
-                    users: {
-                        id: idUser,
-                    },
-                };
-                console.log(regObj);
+                const response = await likeCreate(idArticles, userId);
 
-                let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(regObj),
-                });
 
-                if (response.ok) {
-                    const data = await response.json();
+
+                if (response.status === 200) {
+                    const data = response.data;
                     console.log(data);
 
                     if (data.status == 1) {
@@ -220,15 +184,11 @@ const PlacesSingle = (props) => {
     const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
     const getListLike4ArticlesByUserId = async () => {
         // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
+        if (token) {
 
-            const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
-            if (checkResponse.ok) {
-                const data = await checkResponse.json();
+            const response = await listBySearchLike(userId);
+            if (response.status === 200) {
+                const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
                     setLikedArticlesByUserId(data);
@@ -242,7 +202,7 @@ const PlacesSingle = (props) => {
                     setLikedArticlesId(tmpLikedArticlesId);
                 }
             } else {
-                console.error('Error:', checkResponse.status);
+                console.error('Error:', response.status);
             }
         }
     };
@@ -254,9 +214,9 @@ const PlacesSingle = (props) => {
         // Retrieve the object from the storage
 
 
-        const response = await fetch(`${SERVER_URL}/feedbacks/listBySearch?articles_id=${articleId}`);
-        if (response.ok) {
-            const data = await response.json();
+        const response = await listBySearchFeedbacks(articleId);
+        if (response.status === 200) {
+            const data = await response.data;
             console.log("fetchInitDataFeedbacks" + data);
             if (data.length > 0) {
                 setFeedbacksOfArticleId(data);
@@ -273,9 +233,9 @@ const PlacesSingle = (props) => {
         // const tmpHeart = parseInt(heart);
         console.log("tmpHeart", heart, "tmpHeart", articleId);
 
-        const response = await fetch(`${SERVER_URL}/feedbacks/listByHeart?heart=${heart}&articles_id=${articleId}`);
-        if (response.ok) {
-            const data = await response.json();
+        const response = await handleFeedbacksHeart(heart,articleId);
+        if (response.status === 200) {
+            const data = await response.data;
             console.log("handleFeedbacksHeart", data);
             if (data.length > 0) {
                 setFeedbacksOfArticleId(data);
@@ -287,35 +247,17 @@ const PlacesSingle = (props) => {
     }
     const handleCreateFeedbacks = async (e) => {
         e.preventDefault();
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
+        if (token) {
             try {
-                const regObj = {
-                    articles: {
-                        id: articleId
-                    },
-                    users: {
-                        id: idUser
-                    }
-                    ,
-                    heart: currentValue,
-                    review: review
-                };
-                console.log(regObj);
 
-                const response = await fetch(`${SERVER_URL}/feedbacks/create`, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(regObj)
-                });
+                const response = await feedbacksCreate(articleId, userId,currentValue,review);
 
-                if (response.ok) {
-                    const data = await response.json();
+
+
+                if (response.status === 200) {
+                    const data = response.data;
                     console.log(data);
+
 
                     if (data.status == 1) {
                         toast.success(data.message);
@@ -343,9 +285,9 @@ const PlacesSingle = (props) => {
         let subtopicId = 8;
         console.log("subtopicId =", subtopicId);
 
-        const response = await fetch(`${SERVER_URL}/articles/list?places_id=${placesId}&topics_id=${subtopicId}`);
-        if (response.ok) {
-            const data = await response.json();
+        const response = await articlesListPlaceIdSubtopicId(placesId, subtopicId);
+        if (response.status === 200) {
+            const data = response.data;
             console.log("fetchDataArticlesBySearch", data);
             if (data.length > 0) {
                 setArticlesPlacesId(data);
@@ -435,14 +377,9 @@ const PlacesSingle = (props) => {
                                     {/* <div className="col-lg-3 sidebar"> */}
                                     {/* <div className="sidebar-wrap ftco-animate"> */}
 
-
-
-
-                                    {sessionStorage.getItem('username') ? (
+                                    {token ? (
 
                                         <div>
-
-
                                             <a
                                                 onClick={(e) => handleCreateLike(e, articleId)}
                                                 className={`like ${likedArticlesId.includes(articleId) ? 'liked' : ''}`}
@@ -623,48 +560,7 @@ const PlacesSingle = (props) => {
                                                                 <p><a href="#" className="reply">Reply</a></p>
                                                             </div>
 
-                                                            {/* <ul className="children">
-                                                                <li className="comment">
-                                                                    <div className="vcard bio">
-                                                                        <img src="images / person_1.jpg" alt="Image placeholder" />
-                                                                    </div>
-                                                                    <div className="comment-body">
-                                                                        <h3>John Doe</h3>
-                                                                        <div className="meta">October 03, 2018 at 2:21pm</div>
-                                                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                                                        <p><a href="#" className="reply">Reply</a></p>
-                                                                    </div>
-
-
-                                                                    <ul className="children">
-                                                                        <li className="comment">
-                                                                            <div className="vcard bio">
-                                                                                <img src="images / person_1.jpg" alt="Image placeholder" />
-                                                                            </div>
-                                                                            <div className="comment-body">
-                                                                                <h3>John Doe</h3>
-                                                                                <div className="meta">October 03, 2018 at 2:21pm</div>
-                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                                                                <p><a href="#" className="reply">Reply</a></p>
-                                                                            </div>
-
-                                                                            <ul className="children">
-                                                                                <li className="comment">
-                                                                                    <div className="vcard bio">
-                                                                                        <img src="images / person_1.jpg" alt="Image placeholder" />
-                                                                                    </div>
-                                                                                    <div className="comment-body">
-                                                                                        <h3>John Doe</h3>
-                                                                                        <div className="meta">October 03, 2018 at 2:21pm</div>
-                                                                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur quidem laborum necessitatibus, ipsam impedit vitae autem, eum officia, fugiat saepe enim sapiente iste iure! Quam voluptas earum impedit necessitatibus, nihil?</p>
-                                                                                        <p><a href="#" className="reply">Reply</a></p>
-                                                                                    </div>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </li>
-                                                                    </ul>
-                                                                </li>
-                                                            </ul> */}
+                                                          
 
                                                         </li>
 
@@ -692,7 +588,7 @@ const PlacesSingle = (props) => {
 
                                     <h4 className="mb-4">Đánh giá &Bình luận</h4>
 
-                                    {sessionStorage.getItem('username') ? (
+                                    {token ? (
                                         <div>
 
                                             <div>
@@ -736,45 +632,7 @@ const PlacesSingle = (props) => {
                                                                 </div>
 
 
-                                                                {/* </div> */}
-                                                                {/* </div > */}
-                                                                {/* <div className="form-check">
-                                                                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                                                            <label className="form-check-label" htmlFor="exampleCheck1">
-                                                                                <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i> 100 Ratings</span></p>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div className="form-check">
-                                                                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                                                            <label className="form-check-label" htmlFor="exampleCheck1">
-                                                                                <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i> 30 Ratings</span></p>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div className="form-check">
-                                                                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                                                            <label className="form-check-label" htmlFor="exampleCheck1">
-                                                                                <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i> 5 Ratings</span></p>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div className="form-check">
-                                                                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                                                            <label className="form-check-label" htmlFor="exampleCheck1">
-                                                                                <p className="rate"><span><i className="icon-star"></i><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i> 0 Ratings</span></p>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div className="form-check">
-                                                                            <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                                                                            <label className="form-check-label" htmlFor="exampleCheck1">
-                                                                                <p className="rate"><span><i className="icon-star"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i><i className="icon-star-o"></i> 0 Ratings</span></p>
-                                                                            </label>
-                                                                        </div>
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="message">Message</label>
-                                                                            <textarea name="" id="message" cols="30" rows="10" className="form-control"></textarea>
-                                                                        </div>
-                                                                        <div className="form-group">
-                                                                            <input type="submit" value="Post Comment" className="btn py-3 px-4 btn-primary" />
-                                                                        </div> */}
+                                                              
 
                                                             </form>
                                                         </div>

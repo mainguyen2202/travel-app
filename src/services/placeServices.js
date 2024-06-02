@@ -18,7 +18,7 @@ export function showAllV1() {
     return response;
 }
 
-export async function showAll() {
+export async function showAllPlace() {
     const response = await api.get(`/places/list`);
     return response;
 }

@@ -1,0 +1,21 @@
+
+import api from "./api";
+
+export async function listBySearchLike(userId) {
+    return await api.get(`/likes/listBySearch?users_id=${userId}`);
+}
+
+export async function likeCreate(idArticles,idUser) {
+    const data = {
+        articles: {
+            id: idArticles,
+        },
+        users: {
+            id: idUser,
+        },
+    };
+    return await api.post(`/likes/clickLike`,data);
+}
+
+
+

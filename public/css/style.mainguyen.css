@@ -79,3 +79,39 @@ a:not([href]):not([tabindex]) {
 }
 
 /* end like */
+
+/* start phân trang */
+.pagination .page-item .page-link {
+  color: #F9BE37;
+  background-color: #fff;
+  border: 1px solid #F9BE37;
+  padding: 8px 16px;
+  margin: 0 4px;
+  border-radius: 4px;
+}
+
+.pagination .page-item.active .page-link {
+  color: #fff;
+  background-color: #F9BE37;
+  border-color: #F9BE37;
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+  border-radius: 50%;
+  padding: 8px 12px;
+}
+/* end phân trang */
+
+.search-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 16px;
+}

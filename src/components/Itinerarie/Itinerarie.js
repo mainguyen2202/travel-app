@@ -4,10 +4,14 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-
+import ReactPaginate from 'react-paginate';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { getCurrentUser } from "../../services/authServices";
+import { itinerariesDetail, itinerariesRemove, itineraryCreate, itineraryEdit, listBySearchItineraries } from "../../services/itinerarieServices";
+import {  listShareItinerariesUserId, shareItinerariesUserId } from "../../services/shareItinerariesServices";
+import { checkUserName } from "../../services/userServices";
 
 
 const Itinerarie = (props) => {
@@ -17,15 +21,21 @@ const Itinerarie = (props) => {
     const [content, setContent] = useState('');
     const [dateStart, setDateStart] = useState('');
     const [dateEnd, setDateEnd] = useState('');
-    const [popupIsOpen, setPopupIsOpen] = useState(true);
+    const [popupIsOpen, setPopupIsOpen] = useState(false);
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]);
     const [userId, setUserId] = useState(0);
     const [email, emailchange] = useState("");
     const [username, usernamechange] = useState("");
-
     const [detailItinerarie, setDetailItinerarie] = useState([]);
-
     const [itinerariesShareOfUser, setItinerariesShareOfUser] = useState([]);
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        const userInfo = getCurrentUser();
+        if (userInfo && userInfo.USER_ID !== userId) {
+            setUserId(userInfo.USER_ID);
+            console.log("userId", userInfo.USER_ID);
+        }
+    }
 
     useEffect(() => {
 
@@ -37,23 +47,16 @@ const Itinerarie = (props) => {
     // tạo hàm xử lí lấy danh sách
     const fetchInitData = async () => {
 
-        // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
-            if (itinerariesResponse.ok) {
-                const itinerariesData = await itinerariesResponse.json();
-                console.log(itinerariesData);
-                if (itinerariesData.length > 0) {
-                    setItinerariesOfUser(itinerariesData);
+        if (token) {
+            const response = await listBySearchItineraries(userId);
+            if (response.status === 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', itinerariesResponse.status);
+                console.error('Error:', response.status);
             }
         }
 
@@ -65,46 +68,27 @@ const Itinerarie = (props) => {
 
     const handleCreate = async (e) => {
         e.preventDefault();
-
         if (!isInputValid()) {
             return;
         }
 
-
         try {
-            // Lấy thông tin người dùng từ sessionStorage
-            const userInfoString = sessionStorage.getItem("userInfo");
-            const userInfoConvertObject = JSON.parse(userInfoString);
-            if (userInfoConvertObject !== null) {
-                const idUser = userInfoConvertObject.id;
-                setUserId(idUser);
-
-                const regObj = {
-                    name: name,
-                    content: content,
-                    dateStart: dateStart,
-                    dateEnd: dateEnd,
-                    usersId: idUser
-                };
-                const response = await fetch(`${SERVER_URL}/itineraries/create`, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(regObj)
-                });
-
-                // console.log(response);
-
-                if (response.ok) {
-                    const data = await response.json();
+            if (token) {
+                const response = await itineraryCreate(name, participantCount, content, dateStart, dateEnd, userId);
+                if (response.status === 200) {
+                    const data = await response.data;
                     console.log(data);
-
                     if (data.status == 1) {
                         toast.success(data.message);
+                       
+                        // Cập nhật danh sách itineraries bằng cách thêm itinerary mới
+                        // setItinerariesOfUser([...itinerariesOfUser, data.data]);
 
                         setPopupIsOpen(false);
-
                         return;
-                    } else {
+                    }
+
+                    else {
                         toast.error(data.message);
                     }
                 } else if (response.status == 400) {
@@ -141,15 +125,9 @@ const Itinerarie = (props) => {
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Đồng ý'
             });
-            const response = await fetch(`${SERVER_URL}/itineraries/remove/${itineraryId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
+            const response = await itinerariesRemove(itineraryId);
+            if (response.status === 200) {
+                const data = await response.data;
                 console.log(data);
 
                 if (data.status == 1) {
@@ -186,18 +164,16 @@ const Itinerarie = (props) => {
 
     const getDetailByItineraryId = async (e, itineraryId) => {
         try {
-            const response = await fetch(`${SERVER_URL}/itineraries/detail/${itineraryId}`);
-            if (response.ok) {
-                const itinerarieData = await response.json();
-                setDetailItinerarie(itinerarieData);
-
-                setItinerarieId(itinerarieData.id);
-                setName(itinerarieData.name); // Assign the value to name state variable
-
-                setParticipantCount(itinerarieData.participantCount); // Assign the value to name state variable
-                setContent(itinerarieData.content); // Assign the value to content state variable
-                setDateStart(itinerarieData.dateStart); // Assign the value to dateStart state variable
-                setDateEnd(itinerarieData.dateEnd); // Assign the value to dateEnd state variable
+            const response = await itinerariesDetail(itineraryId);
+            if (response.status === 200) {
+                const data = await response.data;
+                setDetailItinerarie(data);
+                setItinerarieId(data.id);
+                setName(data.name); // Assign the value to name state variable
+                setParticipantCount(data.participantCount); // Assign the value to name state variable
+                setContent(data.content); // Assign the value to content state variable
+                setDateStart(data.dateStart); // Assign the value to dateStart state variable
+                setDateEnd(data.dateEnd); // Assign the value to dateEnd state variable
             } else {
                 console.log('Failed to fetch itinerary data');
             }
@@ -212,29 +188,30 @@ const Itinerarie = (props) => {
         console.log(" handleEdit itineraryId itineraryId: participantCount" + participantCount);
 
         try {
-            const response = await fetch(`${SERVER_URL}/itineraries/edit/${itineraryId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name, // Tên kế hoạch mới
-                    participantCount: participantCount,
-                    dateStart: dateStart, // Ngày bắt đầu mới
-                    dateEnd: dateEnd, // Ngày kết thúc mới
-                    content: content // Ghi chú mới
-                })
-            });
 
-            if (response.ok) {
-                const data = await response.json();
+            const response = await itineraryEdit(name, participantCount, content, dateStart, dateEnd, itineraryId);
+            if (response.status === 200) {
+                const data = await response.data;
                 console.log(data);
 
                 if (data.status == 1) {
                     toast.success(data.message);
 
-
-                    return;
+                    // Cập nhật danh sách itineraries
+                    const updatedItineraries = itinerariesOfUser.map(itinerary => {
+                        if (itinerary.id === itineraryId) {
+                            return {
+                                ...itinerary,
+                                name,
+                                participantCount,
+                                content,
+                                dateStart,
+                                dateEnd
+                            };
+                        }
+                        return itinerary;
+                    });
+                    setItinerariesOfUser(updatedItineraries);
                 } else {
                     toast.error(data.message);
                 }
@@ -247,56 +224,36 @@ const Itinerarie = (props) => {
     };
 
 
-
-
     const handleShare = async (e, itineraryId) => {
         e.preventDefault();
         if (!validate()) {
             return;
-
         }
-        console.log("handleShare itineraryId" + itineraryId);
-        console.log("handleShare username: " + username);
-        const response = await fetch(`${SERVER_URL}/users/detailBySearchUserName?username=${username}`);
-        if (response.ok) {
-            const data = await response.json();
-
-            const userid = data.id;
-            console.log("handleShare id: " + userid);
-
-            const regObj = {
-                users: {
-                    id: userid
-                },
-                itineraries: {
-                    id: itineraryId
-                }
-            };
-            const reps = await fetch("  ${SERVER_URL}/shareItineraries/create", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
-            if (reps.ok) {
-                const data = await reps.json();
-                console.log(data);
-
-                if (data.status == 1) {
-                    toast.success(data.message);
-                } else {
-                    toast.error(data.message);
+    
+        try {
+            const responseCheck = await checkUserName(username);
+            if (responseCheck.status === 200) {
+                const dataCheck = await responseCheck.data;
+                const useridShare = dataCheck.id;
+    
+                const response = await shareItinerariesUserId(useridShare, itineraryId);
+                if (response.status === 200) {
+                    const dataShere = response.data;
+                    console.log(dataShere);
+    
+                    if (dataShere.status == 1) {
+                        toast.success(dataShere.message);
+                    } else {
+                        toast.error(dataShere.message);
+                    }
                 }
             }
-
-
-
+        } catch (err) {
+            console.error('Error sharing itinerary:', err);
+            toast.error('Failed to share itinerary.');
         }
     };
-
-
-
-
-
+ 
     const validate = () => {
         let result = true;
         if (username == '' || username == null) {
@@ -316,19 +273,12 @@ const Itinerarie = (props) => {
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataShare = async () => {
 
-        // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const itinerariesResponse = await fetch(`${SERVER_URL}/shareItineraries/listBySearch?users_id=${idUser}`);
-            if (itinerariesResponse.ok) {
-                const data = await itinerariesResponse.json();
+        if (token) {
+            const response = await listShareItinerariesUserId(userId);
+            if (response.status === 200) {
+                const data = await response.data;
                 console.log(data);
-                if (data.length > 0) {
+                if (data.length >= 0) {
 
                     let dataItem = data.map(item => ({
                         id: item.itineraries.id,
@@ -345,11 +295,22 @@ const Itinerarie = (props) => {
                     setItinerariesShareOfUser(dataItem);
                 }
             } else {
-                console.error('Error:', itinerariesResponse.status);
+                console.error('Error:', response.status);
             }
         }
 
     };
+
+       // START PAGE
+
+       const [currentPage, setCurrentPage] = useState(0);
+       const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
+   
+       const handlePageClick = (event) => {
+           setCurrentPage(event.selected);
+       };
+       // END PAGE
+   
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -544,28 +505,35 @@ const Itinerarie = (props) => {
                             className="mb-3"
                         >
                             <Tab eventKey="home" title="Kế hoạch cá nhân">
-                                {!sessionStorage.getItem('username') ? (
+                                {!token ? (
                                     <p>Vui lòng đăng nhập để xem các kế hoạch cá nhân</p>
                                 ) : (
+                                    <div>
                                     <div className="row">
                                         {itinerariesOfUser.length > 0 ? (
-                                            itinerariesOfUser.map((itinerary, i) => (
+                                           
+                                            
+                                                itinerariesOfUser.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itinerary, i) => (
+                                
                                                 <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
                                                     <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                                         <div className="card">
                                                             <div className="card-body">
                                                                 <div className="d-flex">
                                                                     <div className="one">
-                                                                        <h3 style={{ height: '70px' }}>
+                                                                        <h3   >
                                                                             <Link
                                                                                 to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
                                                                                 className="view"
                                                                                 title="View"
                                                                                 data-toggle="tooltip"
+
+
                                                                             >
                                                                                 {itinerary.name}
                                                                             </Link>
                                                                         </h3>
+
                                                                         <hr />
                                                                         <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
                                                                         <p>{'Số lượng: ' + itinerary.participantCount + ' người'}</p>
@@ -606,6 +574,7 @@ const Itinerarie = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
+                                               
                                             ))
                                         ) : (
                                             <div className="col-12 text-center">
@@ -613,51 +582,115 @@ const Itinerarie = (props) => {
                                             </div>
                                         )}
                                     </div>
+                                     <div className="row mt-5">
+                                     <div className="col text-center">
+                                         <nav aria-label="Page navigation">
+                                             <ul className="pagination justify-content-center">
+                                                 {itinerariesOfUser.length > articlesPerPage && (
+                                                     <ReactPaginate
+                                                         breakLabel="..."
+                                                         nextLabel={<span>&gt;</span>}
+                                                         onPageChange={handlePageClick}
+                                                         pageRangeDisplayed={5}
+                                                         pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
+                                                         previousLabel={<span>&lt;</span>}
+                                                         renderOnZeroPageCount={null}
+                                                         containerClassName="pagination"
+                                                         activeClassName="active"
+                                                         pageClassName="page-item"
+                                                         pageLinkClassName="page-link"
+                                                         previousClassName="page-item"
+                                                         previousLinkClassName="page-link"
+                                                         nextClassName="page-item"
+                                                         nextLinkClassName="page-link"
+                                                     />
+                                                 )}
+                                             </ul>
+                                         </nav>
+                                     </div>
+                                 </div>
+                                 </div>
                                 )}
                             </Tab>
                             <Tab eventKey="profile" title="Kế hoạch được chia sẻ">
-                                {!sessionStorage.getItem('username') ? (
+                                {!token ? (
                                     <p>Vui lòng đăng nhập để xem các kế hoạch được chia sẻ</p>
                                 ) : (
+                                    <div>
                                     <div className="row">
                                         {itinerariesShareOfUser.length > 0 ? (
-                                        itinerariesShareOfUser.map((itinerary, i) => (
-                                            <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
-                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                                    <div className="card">
-                                                        <div className="card-body">
-                                                            <div className="d-flex">
-                                                                <div className="one">
-                                                                    <h3 style={{ height: '70px' }}>
-                                                                        <Link
-                                                                            to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
-                                                                            className="view"
-                                                                            title="View"
-                                                                            data-toggle="tooltip"
-                                                                        >
-                                                                            {itinerary.name}
-                                                                        </Link>
-                                                                    </h3>
-                                                                    <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
-                                                                    <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
-                                                                    <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
-                                                                    <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
+                                                itinerariesShareOfUser.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itinerary, i) => (
+                                
+                                                <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                        <div className="card">
+                                                            <div className="card-body">
+                                                                <div className="d-flex">
+                                                                    <div className="one">
+                                                                        <h3 style={{ height: '70px' }}>
+                                                                            <Link
+                                                                                to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
+                                                                                className="view"
+                                                                                title="View"
+                                                                                data-toggle="tooltip"
+                                                                            >
+                                                                                {itinerary.name}
+                                                                            </Link>
+                                                                        </h3>
+                                                                        <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
+                                                                        <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
+                                                                        <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
+                                                                        <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                         ))
+                                            ))
                                         ) : (
                                             <div className="col-12 text-center">
                                                 <h3>Chưa được chia sẻ</h3>
                                             </div>
                                         )}
                                     </div>
+                                      <div className="row mt-5">
+                                      <div className="col text-center">
+                                          <nav aria-label="Page navigation">
+                                              <ul className="pagination justify-content-center">
+                                                  {itinerariesOfUser.length > articlesPerPage && (
+                                                      <ReactPaginate
+                                                          breakLabel="..."
+                                                          nextLabel={<span>&gt;</span>}
+                                                          onPageChange={handlePageClick}
+                                                          pageRangeDisplayed={5}
+                                                          pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
+                                                          previousLabel={<span>&lt;</span>}
+                                                          renderOnZeroPageCount={null}
+                                                          containerClassName="pagination"
+                                                          activeClassName="active"
+                                                          pageClassName="page-item"
+                                                          pageLinkClassName="page-link"
+                                                          previousClassName="page-item"
+                                                          previousLinkClassName="page-link"
+                                                          nextClassName="page-item"
+                                                          nextLinkClassName="page-link"
+                                                      />
+                                                  )}
+                                              </ul>
+                                          </nav>
+                                      </div>
+                                  </div>
+                                  </div>
+
+                                    
                                 )}
                             </Tab>
                         </Tabs>
+
+
+                        
+                       
 
 
                     </div>

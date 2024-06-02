@@ -7,13 +7,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/homes/Home';
 import About from './components/homes/About';
 import Places from './components/place/Places';
-import Blog from './components/blog/Blog';
 import Contact from './components/homes/Contact';
 
 import Like from './components/homes/Like';
 
 import PlacesSingle from './components/place/PlacesSingle';
-import BlogSingle from './components/blog/BlogSingle';
 import Itinerarie from './components/Itinerarie/Itinerarie';
 import ItinerarieView from './components/Itinerarie/ItinerarieView';
 import Login from './components/Profile/Login';
@@ -48,8 +46,6 @@ root.render(
           <Route path="itinerarieView" element={<ItinerarieView />} />
           <Route path="like" element={<Like />} />
 
-          {/* <Route path="blog" element={<Blog />} />
-          <Route path="blogSingle" element={<BlogSingle />} /> */}
           <Route path="contact" element={<Contact />} />
 
 

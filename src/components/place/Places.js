@@ -4,8 +4,8 @@ import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SERVER_URL } from "../../constants/constants";
-
+import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import ReactPaginate from 'react-paginate';
 import { Fragment } from "react";
 import {
     GoogleMap,
@@ -13,6 +13,14 @@ import {
     MarkerF,
     useJsApiLoader,
 } from "@react-google-maps/api";
+import { showAllPlace } from '../../services/placeServices';
+import { showAllId, showAllSubId, showAllTopic } from '../../services/topicServices';
+import { articlesListPlaceIdSubtopicId, getSearchResults, showAllArticlesListDate } from '../../services/articlesServices';
+import { listBySearchItineraries } from '../../services/itinerarieServices';
+import { itineraryArticlesCreate } from '../../services/itineraryArticlesServices';
+import { getCurrentUser } from '../../services/authServices';
+import { likeCreate, listBySearchLike } from '../../services/likeServices';
+import { showAllHistoryArticles } from '../../services/historyArticlesServices';
 
 const Places = () => {
     const [topics, setTopics] = useState([]);
@@ -35,6 +43,15 @@ const Places = () => {
     const topicIdSearch = searchParams.get('topic_id') ? parseInt(searchParams.get('topic_id')) : 0;
     const tuKhoaSearch = searchParams.get('keyword') ? searchParams.get('keyword') : '';
     // END: Get a specific query parameter
+
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        const userInfo = getCurrentUser();
+        if (userInfo && userInfo.USER_ID !== userId) {
+            setUserId(userInfo.USER_ID);
+            console.log("userId", userInfo.USER_ID);
+        }
+    }
 
     // hàm khởi tạo ban đầu
     // useEffect(() => {
@@ -98,32 +115,41 @@ const Places = () => {
     };
 
 
+
     const timkiem = async () => {
-        if (searchParams.get("keyword") !== null) {
-            let tuKhoa = searchParams.get("keyword");
-            //có từ khóa tìm kiếm
-            console.log("maiaiaiaSearch Keyword ", tuKhoa.trim());
-            const response = await fetch(`${SERVER_URL}/articles/listSearchKeyWord?name=${tuKhoa.trim()}`)
-            if (response.ok) {
-                const data = await response.json();
+        // Lấy từ khóa tìm kiếm từ URL search params
+        const searchKeyword = searchParams.get("keyword");
+      
+        if (searchKeyword !== null) {
+          try {
+            // Gọi hàm lấy kết quả tìm kiếm
+            const response = await getSearchResults(searchKeyword);
+      
+            // Cập nhật danh sách bài viết vào state
+            if (response.status === 200) {
+                const data = response.data;
                 console.log("timkiem", data);
                 if (data.length > 0) {
                     setArticles(data);// làm việc 
                 }
             } else {
                 console.error('Error:', response.status);
-            }
-        }
+            };
 
-    }
+
+          } catch (error) {
+            console.error('Error handling search:', error);
+          }
+        }
+      };
 
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataPlaces = async () => {
 
-        const placesResponse = await fetch('${SERVER_URL}/places/list');
-        if (placesResponse.ok) {
-            const placesData = await placesResponse.json();
+        const response = await showAllPlace();
+        if (response.status === 200) {
+            const placesData = response.data;
             console.log(placesData);
             if (placesData.length > 0) {
                 let tmpPlaceId = placesData[0].id;
@@ -131,15 +157,16 @@ const Places = () => {
             }
             setPlaces(placesData);
         } else {
-            console.error('Error:', placesResponse.status);
+            console.error('Error:', response.status);
         }
     };
 
     const fetchInitDataTopics = async () => {
-        const topicsResponse = await fetch('${SERVER_URL}/topics/list');
-        if (topicsResponse.ok) {
-            const topicsData = await topicsResponse.json();
-            console.log(topicsData);
+
+        const response = await showAllTopic();
+        if (response.status === 200) {
+            const topicsData = response.data;
+            console.log("topicsData", topicsData);
 
             const filteredTopics = topicsData.filter(item => item.subTopicsId == subTopicsId);
             setTopics(filteredTopics);
@@ -159,32 +186,8 @@ const Places = () => {
                 }
             }
         } else {
-            console.error('Error:', topicsResponse.status);
+            console.error('Error:', response.status);
         }
-    };
-
-    const fetchInitDataItineraries = async () => {
-        // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`);
-            if (itinerariesResponse.ok) {
-                const itinerariesData = await itinerariesResponse.json();
-                console.log(itinerariesData);
-                if (itinerariesData.length > 0) {
-                    setItinerariesOfUser(itinerariesData);
-                }
-            } else {
-                console.error('Error:', itinerariesResponse.status);
-            }
-        }
-
-
     };
 
 
@@ -205,10 +208,9 @@ const Places = () => {
     };
 
     const getSubTopicsByTopicId = async (inTopicId) => {
-
-        let subTopicResponse = await fetch(`${SERVER_URL}/topics/list?${inTopicId}`)
-        if (subTopicResponse.ok) {
-            let data = await subTopicResponse.json();
+        const response = await showAllSubId(inTopicId);
+        if (response.status === 200) {
+            const data = await response.data;
             console.log(data);
             if (data.length > 0) {
                 const filteredSubTopics = data.filter(item => item.subTopicsId == inTopicId);
@@ -225,7 +227,7 @@ const Places = () => {
                 }
             }
         } else {
-            console.error('Error:', subTopicResponse.status);
+            console.error('Error:', response.status);
         }
     };
 
@@ -239,129 +241,59 @@ const Places = () => {
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ
     async function getArticlesBySearch(inPlaceId, inSubtopicId) {
-        // placeId = 0;// TODO mainguyen debug
-        // topicId = 0;// TODO mainguyen debug
         console.log("getAPI placeId=", inPlaceId, "subtopicId=", inSubtopicId);
-        await fetch(`${SERVER_URL}/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}`)
-            .then(response => response.json())
-            .then(data => {
-                setArticles(data);// làm việc 
-                console.log("Articles", data, articles);
-                let ltsMarkers = data.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    position: {
-                        lat: parseFloat(item.latitude),
-                        lng: parseFloat(item.longitude)
-                    },
-
-                    title: item.title,
-                    price: item.price,
-                    image: item.image,
-                    createAt: item.createAt,
-                    content: item.content,
-                    status: item.status,
-                    count: item.historyArticles?.length > 0 ? item.historyArticles[0].count : 0
-
-                }));
-                setMarkers(ltsMarkers);
-                console.log("Markers", ltsMarkers, markers);
-            })
-            .catch(error => {
-                console.error(error);
-                return [];
-            });
-    };
-
-    const handleCreate = async (e, idArticles, idItineraries) => {
-        e.preventDefault();
-        try {
-            const regObj = {
-                articles: {
-                    id: idArticles
-                },
-                itineraries: {
-                    id: idItineraries
-                },
-                status: 1
-            };
-            console.log(regObj);
-
-            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-
-                if (data.status == 1) {
-                    toast.success(data.message);
-                } else {
-                    toast.error(data.message);
-                }
-            } else if (response.status == 400) {
-                // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
-                // Xử lý khi có lỗi 401 (Unauthorized)
-            } else {
-                // Xử lý khi có lỗi khác
-            }
-        } catch (err) {
-            toast.error('Failed: ' + err.message);
-        }
-    };
-
-    // danh sách địa điểm yêu thích nhất
-    // tạo hàm xử lí lấy danh sách
-    const fetchInitDataLike = async () => {
-        console.log("fetchInitDataLike");
-        // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const response = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-                if (data.length > 0) {
-                    // setLike(data);
-                    let dataItem = data.map(item => ({
-                        id: item.articles.id,
-                        name: item.articles.name,
-                        title: item.articles.title,
-                        price: item.articles.price,
-                        image: item.articles.image,
-                        createAt: item.articles.createAt,
-                        content: item.articles.content,
-                        status: item.articles.status,
-                       
-
-                    }));
-                    setArticles(dataItem);// làm việc 
-                 
-                }
-            } else {
-                console.error('Error:', response.status);
-            }
-        }
-
-    };
-    const fetchInitDataHistoryArticles = async () => {
-
-
-        const response = await fetch(`${SERVER_URL}/historyArticles/list`);
-        if (response.ok) {
-            const data = await response.json();
+        const response = await articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId);
+        if (response.status === 200) {
+            const data = response.data;
             console.log(data);
             if (data.length > 0) {
+                let tmpPlaceId = data[0].id;
+                // setPlacesId(tmpPlaceId);
+            }
+            setArticles(data);
+            let ltsMarkers = data.map(item => ({
+                id: item.id,
+                name: item.name,
+                position: {
+                    lat: parseFloat(item.latitude),
+                    lng: parseFloat(item.longitude)
+                },
 
+                title: item.title,
+                price: item.price,
+                image: item.image,
+                createAt: item.createAt,
+                content: item.content,
+                status: item.status,
+                count: item.historyArticles?.length > 0 ? item.historyArticles[0].count : 0
+
+            }));
+            setMarkers(ltsMarkers);
+            console.log("Markers", ltsMarkers, markers);
+
+
+        } else {
+            console.error('Error:', response.status);
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+    const fetchInitDataHistoryArticles = async () => {
+
+        const response = await showAllHistoryArticles();
+        if (response.status === 200) {
+            const data = response.data;
+            console.log(data);
+            if (data.length > 0) {
+                // setPlace(data);
                 let dataItem = data.map(item => ({
                     id: item.articles.id,
                     name: item.articles.name,
@@ -381,14 +313,17 @@ const Places = () => {
 
 
     };
+
+
     const fetchInitDataDescDate = async () => {
 
 
-        const response = await fetch(`${SERVER_URL}/articles/listDate`);
-        if (response.ok) {
-            const data = await response.json();
+        const response = await showAllArticlesListDate();
+        if (response.status === 200) {
+            const data = response.data;
             console.log(data);
             if (data.length > 0) {
+
 
                 setArticles(data);// làm việc 
             }
@@ -399,37 +334,108 @@ const Places = () => {
 
     };
 
+    // START Itineraries
+
+    const fetchInitDataItineraries = async () => {
+
+        if (token) {
+            const response = await listBySearchItineraries(userId);
+            if (response.status === 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    setItinerariesOfUser(data);
+                }
+            } else {
+                console.error('Error:', response.status);
+            }
+        }
+
+
+    };
+
+    const handleCreate = async (e, idArticles, idItineraries) => {
+        e.preventDefault();
+        console.log("idArticles, idItineraries", idArticles, idItineraries);
+
+        try {
+            const response = await itineraryArticlesCreate(idArticles, idItineraries);
+            if (response.status === 200) {
+                const { data } = response;
+                console.log(data);
+
+                if (data.status === 1) {
+                    toast.success(data.message);
+                } else {
+                    toast.error(data.message);
+                }
+            } else if (response.status === 400) {
+                // Xử lý khi có lỗi 400 (Bad Request)
+                toast.error('Bad Request');
+            } else if (response.status === 401) {
+                // Xử lý khi có lỗi 401 (Unauthorized)
+                toast.error('Unauthorized');
+            } else {
+                // Xử lý khi có lỗi khác
+                toast.error('Unknown error');
+            }
+        } catch (err) {
+            toast.error('Failed: ' + err.message);
+        }
+    };
+    // END
+
 
     // START LIKE
+
+    // danh sách địa điểm yêu thích nhất
+    // tạo hàm xử lí lấy danh sách
+
+
+    const fetchInitDataLike = async () => {
+        // const userId = 1;
+        if (token) {
+            const response = await listBySearchLike(userId);
+            if (response.status === 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    // setLike(data);
+
+                    let dataItem = data.map(item => ({
+                        id: item.articles.id,
+                        name: item.articles.name,
+                        title: item.articles.title,
+                        price: item.articles.price,
+                        image: item.articles.image,
+                        createAt: item.articles.createAt,
+                        content: item.articles.content,
+                        status: item.articles.status,
+
+
+                    }));
+                    setArticles(dataItem);// làm việc 
+
+                }
+            } else {
+                console.error('Error:', response.status);
+            }
+        }
+
+    };
+
     const [likedArticlesId, setLikedArticlesId] = useState([]);
     const handleCreateLike = async (e, idArticles) => {
         e.preventDefault();
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
+        if (token) {
             try {
 
-                const regObj = {
-                    articles: {
-                        id: idArticles,
-                    },
-                    users: {
-                        id: idUser,
-                    },
-                };
-                console.log(regObj);
+                const response = await likeCreate(idArticles, userId);
 
-                let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(regObj),
-                });
 
-                if (response.ok) {
-                    const data = await response.json();
+
+                if (response.status === 200) {
+                    const data = response.data;
                     console.log(data);
 
                     if (data.status == 1) {
@@ -456,15 +462,11 @@ const Places = () => {
     const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
     const getListLike4ArticlesByUserId = async () => {
         // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
+        if (token) {
 
-            const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`);
-            if (checkResponse.ok) {
-                const data = await checkResponse.json();
+            const response = await listBySearchLike(userId);
+            if (response.status === 200) {
+                const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
                     setLikedArticlesByUserId(data);
@@ -478,18 +480,30 @@ const Places = () => {
                     setLikedArticlesId(tmpLikedArticlesId);
                 }
             } else {
-                console.error('Error:', checkResponse.status);
+                console.error('Error:', response.status);
             }
         }
     };
 
     // END LIKE
 
+    // START PAGE
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
+
+    const handlePageClick = (event) => {
+        setCurrentPage(event.selected);
+    };
+
+    
+    // END PAGE
+
 
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
         // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
         libraries: ['places'],
     });
@@ -738,25 +752,25 @@ const Places = () => {
                                                                     {
                                                                         idActiveMarker == item.id ? (
                                                                             <InfoWindowF
-                                                                            onCloseClick={() => setIdActiveMarker(null)}
-                                                                        >
-                                                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                                                                                <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
-                                                                                    {item.name}
-                                                                                </Link>
-                                                                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                                                                                    <img
-                                                                                        src={item.image || 'default-product-image.jpg'}
-                                                                                        alt={item.name}
-                                                                                        style={{ width: '80px', height: '80px', marginRight: '12px' }}
-                                                                                    />
-                                                                                    <div>
-                                                                                        <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
-                                                                                        <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                                                                onCloseClick={() => setIdActiveMarker(null)}
+                                                                            >
+                                                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                                    <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
+                                                                                        {item.name}
+                                                                                    </Link>
+                                                                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                                                                        <img
+                                                                                            src={item.image || 'default-product-image.jpg'}
+                                                                                            alt={item.name}
+                                                                                            style={{ width: '80px', height: '80px', marginRight: '12px' }}
+                                                                                        />
+                                                                                        <div>
+                                                                                            <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
+                                                                                            <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        </InfoWindowF>
+                                                                            </InfoWindowF>
                                                                         ) : null
                                                                     }
                                                                 </MarkerF>
@@ -779,7 +793,7 @@ const Places = () => {
                             </div>
 
                             <div className="row">
-                                {articles.map((article, i) => (
+                                {articles.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((article, i) => (
                                     <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i} >
                                         <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                                             <div className="card"  >
@@ -809,9 +823,17 @@ const Places = () => {
                                                         </div>
 
                                                     </div>
-                                                    <p className="days">
+                                                    {/* <p className="days">
                                                         {article.historyArticles.length > 0 ?
                                                             <span> {article.historyArticles[0].count} lượt xem</span>
+                                                            :
+                                                            <span>Xem chi tiết</span>
+                                                        }
+                                                    </p> */}
+
+                                                    <p className="days">
+                                                        {article.historyArticles && article.historyArticles.length > 0 ?
+                                                            <span>{article.historyArticles[0].count} lượt xem</span>
                                                             :
                                                             <span>Xem chi tiết</span>
                                                         }
@@ -820,7 +842,7 @@ const Places = () => {
 
                                                     <hr />
                                                     <div>
-                                                        {sessionStorage.getItem('username') ? (
+                                                        {token ? (
                                                             <div className="bottom-area d-flex">
 
 
@@ -880,17 +902,29 @@ const Places = () => {
 
                             <div className="row mt-5">
                                 <div className="col text-center">
-                                    <div className="block-27">
-                                        <ul>
-                                            <li><a href="#">&lt;</a></li>
-                                            <li className="active"><span>1</span></li>
-                                            <li><a href="#">2</a></li>
-                                            <li><a href="#">3</a></li>
-                                            <li><a href="#">4</a></li>
-                                            <li><a href="#">5</a></li>
-                                            <li><a href="#">&gt;</a></li>
+                                    <nav aria-label="Page navigation">
+                                        <ul className="pagination justify-content-center">
+                                            {articles.length > articlesPerPage && (
+                                                <ReactPaginate
+                                                    breakLabel="..."
+                                                    nextLabel={<span>&gt;</span>}
+                                                    onPageChange={handlePageClick}
+                                                    pageRangeDisplayed={5}
+                                                    pageCount={Math.ceil(articles.length / articlesPerPage)}
+                                                    previousLabel={<span>&lt;</span>}
+                                                    renderOnZeroPageCount={null}
+                                                    containerClassName="pagination"
+                                                    activeClassName="active"
+                                                    pageClassName="page-item"
+                                                    pageLinkClassName="page-link"
+                                                    previousClassName="page-item"
+                                                    previousLinkClassName="page-link"
+                                                    nextClassName="page-item"
+                                                    nextLinkClassName="page-link"
+                                                />
+                                            )}
                                         </ul>
-                                    </div>
+                                    </nav>
                                 </div>
                             </div>
                         </div>

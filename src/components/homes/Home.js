@@ -5,8 +5,12 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
-import { showAll } from "../../services/placeServices";
+import {  showAllPlace } from "../../services/placeServices";
 import { showAllId } from "../../services/topicServices";
+import { getCurrentUser } from "../../services/authServices";
+import { likeCreate, listBySearchLike } from "../../services/likeServices";
+import {  listBySearchItineraries } from "../../services/itinerarieServices";
+import { itineraryArticlesCreate } from "../../services/itineraryArticlesServices";
 
 
 const Home = (props) => {
@@ -16,7 +20,15 @@ const Home = (props) => {
     const [userId, setUserId] = useState(0);
 
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
+
     const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        const userInfo = getCurrentUser();
+		if (userInfo && userInfo.USER_ID !== userId) {
+            setUserId(userInfo.USER_ID);
+		  console.log("userId", userInfo.USER_ID);
+		}
+      }
 
     useEffect(() => {
 
@@ -25,6 +37,8 @@ const Home = (props) => {
         fetchInitDataLike();
         fetchInitDataItineraries();
         getListLike4ArticlesByUserId();
+
+      
     }, []);
 
     // tạo hàm xử lí lấy danh sách
@@ -32,8 +46,7 @@ const Home = (props) => {
 
         // Retrieve the object from the storage
 
-
-        const response = await showAll();
+        const response = await showAllPlace();
         if (response.status === 200) {
             const placeData = response.data;
             console.log(placeData);
@@ -49,13 +62,12 @@ const Home = (props) => {
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataTopic = async () => {
-
         // Retrieve the object from the storage
-        const subTopicsId = 0;
-
+       
+        let subTopicsId =0;
         const response = await showAllId(subTopicsId);
-        if (response.ok) {
-            const data = await response.json();
+        if (response.status=== 200) {
+            const data = await response.data;
             console.log(data);
             if (data.length > 0) {
                 setTopic(data);
@@ -63,32 +75,16 @@ const Home = (props) => {
         } else {
             console.error('Error:', response.status);
         }
-
-
     };
+
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataLike = async () => {
-        // Retrieve the object from the storage
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const response = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`,
-            {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                  }
-            }   
-            );
-          
-            if (response.ok) {
-                const data = await response.json();
+        // const userId = 1;
+        if (token) {
+                    const response = await listBySearchLike(userId);
+            if (response.status=== 200) {
+                const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
                     setLike(data);
@@ -96,80 +92,52 @@ const Home = (props) => {
             } else {
                 console.error('Error:', response.status);
             }
-        }
+            }
 
     };
 
        // tạo hàm xử lí lấy danh sách
-       const fetchInitDataItineraries = async () => {
-        const userInfoString = sessionStorage.getItem("userInfo");
-        const userInfoConvertObject = JSON.parse(userInfoString);
-        if (userInfoConvertObject !== null) {
-
-            const idUser = userInfoConvertObject.id;
-            setUserId(idUser);
-
-            const itinerariesResponse = await fetch(`${SERVER_URL}/itineraries/listBySearch?user_id=${idUser}`,
-            {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                  }
-            }   
-            
-            );
-            if (itinerariesResponse.ok) {
-                const itinerariesData = await itinerariesResponse.json();
-                console.log(itinerariesData);
-                if (itinerariesData.length > 0) {
-                    setItinerariesOfUser(itinerariesData);
+    const fetchInitDataItineraries = async () => {
+      
+        if (token) {
+            const response = await listBySearchItineraries(userId);
+            if (response.status=== 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', itinerariesResponse.status);
+                console.error('Error:', response.status);
             }
-        }
+            }
+        
 
     };
     const handleCreate = async (e, idArticles, idItineraries) => {
         e.preventDefault();
-
+        console.log("idArticles, idItineraries", idArticles, idItineraries);
+    
         try {
-            const regObj = {
-                articles: {
-                    id: idArticles
-                },
-                itineraries: {
-                    id: idItineraries
-                },
-                status: 1
-            };
-            console.log(regObj);
-
-            const response = await fetch(`${SERVER_URL}/itineraryArticles/create`, {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                  },
-                body: JSON.stringify(regObj)
-            });
-
-            if (response.ok) {
-                const data = await response.json();
+            const response = await itineraryArticlesCreate(idArticles, idItineraries);
+            if (response.status === 200) {
+                const { data } = response;
                 console.log(data);
-
-                if (data.status == 1) {
+    
+                if (data.status === 1) {
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);
                 }
-            } else if (response.status == 400) {
+            } else if (response.status === 400) {
                 // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
+                toast.error('Bad Request');
+            } else if (response.status === 401) {
                 // Xử lý khi có lỗi 401 (Unauthorized)
+                toast.error('Unauthorized');
             } else {
                 // Xử lý khi có lỗi khác
+                toast.error('Unknown error');
             }
         } catch (err) {
             toast.error('Failed: ' + err.message);
@@ -180,35 +148,15 @@ const Home = (props) => {
       const [likedArticlesId, setLikedArticlesId] = useState([]);
       const handleCreateLike = async (e, idArticles) => {
           e.preventDefault();
-          const userInfoString = sessionStorage.getItem("userInfo");
-          const userInfoConvertObject = JSON.parse(userInfoString);
-          if (userInfoConvertObject !== null) {
-              const idUser = userInfoConvertObject.id;
-              setUserId(idUser);
-  
+          if (token) {
               try {
   
-                  const regObj = {
-                      articles: {
-                          id: idArticles,
-                      },
-                      users: {
-                          id: idUser,
-                      },
-                  };
-                  console.log(regObj);
+                const response = await likeCreate(idArticles,userId);
   
-                  let response = await fetch(`${SERVER_URL}/likes/clickLike`, {
-                      method: "POST",
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                      },
-                      body: JSON.stringify(regObj),
-                  });
+                
   
-                  if (response.ok) {
-                      const data = await response.json();
+                if (response.status === 200) {
+                    const  data  = response.data;
                       console.log(data);
   
                       if (data.status == 1) {
@@ -235,23 +183,11 @@ const Home = (props) => {
       const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
       const getListLike4ArticlesByUserId = async () => {
           // Retrieve the object from the storage
-          const userInfoString = sessionStorage.getItem("userInfo");
-          const userInfoConvertObject = JSON.parse(userInfoString);
-          if (userInfoConvertObject !== null) {
-              const idUser = userInfoConvertObject.id;
-              setUserId(idUser);
+          if (token) {
   
-              const checkResponse = await fetch(`${SERVER_URL}/likes/listBySearch?users_id=${idUser}`,
-              {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                  }
-            }   
-              );
-              if (checkResponse.ok) {
-                  const data = await checkResponse.json();
+                const response = await listBySearchLike(userId);
+                if (response.status=== 200) {
+                    const data = await response.data;
                   console.log(data);
                   if (data.length > 0) {
                       setLikedArticlesByUserId(data);
@@ -265,7 +201,7 @@ const Home = (props) => {
                       setLikedArticlesId(tmpLikedArticlesId);
                   }
               } else {
-                  console.error('Error:', checkResponse.status);
+                  console.error('Error:', response.status);
               }
           }
       };
@@ -433,7 +369,7 @@ const Home = (props) => {
                 </div>
                 <div className="container">
                     <div className="row">
-                        {sessionStorage.getItem('username') ? (
+                        {token ? (
 
                             <div className="row">
                                 {like.map((likes, i) => (
@@ -472,7 +408,7 @@ const Home = (props) => {
 
                                                 <hr />
                                                 <div>
-                                                    {sessionStorage.getItem('username') ? (
+                                                    {token ? (
                                                         <div className="bottom-area d-flex">
                                                             <a
                                                                 onClick={(e) => handleCreateLike(e, likes.articles.id)}
