@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from "../../constants/constants";
+import { userEditPassWord } from "../../services/userServices";
 
 const ForgotPassword = (props) => {
     const navigate = useNavigate();
@@ -34,18 +35,10 @@ const ForgotPassword = (props) => {
         e.preventDefault();
         if (validate()) {
             try {
-                const input = JSON.stringify({
-                    password: newPassword,
-                });
-                const response = await fetch(`${SERVER_URL}/users/editPassword/${userId }`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: input,
-                });
-                if (response.ok) {
-                    const data = await response.json();
+                const response = await userEditPassWord(newPassword,userId);
+                if (response.status === 200) {
+                    const data = await response.data;
+                    console.log(data);
                     if (data.status === 1) {
                         toast.success(data.message);
                         navigate('/login');

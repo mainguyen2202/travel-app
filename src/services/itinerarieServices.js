@@ -36,3 +36,5 @@ export async function itineraryEdit(name,participantCount,content,dateStart,date
     };
     return await api.post(`/itineraries/edit/${itineraryId}`, data);
 }
+
+

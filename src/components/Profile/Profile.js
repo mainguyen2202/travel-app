@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { getCurrentUser } from "../../services/authServices";
+import { showUser, userEdit, userEditPassWord } from "../../services/userServices";
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+// import bcrypt from 'bcrypt';
 
 const Profile = (props) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const usersIdDetail = searchParams.get('users_id');
+    // const usersIdDetail = searchParams.get('users_id');
     const [dataDetail, setdataDetail] = useState([]);
-
-
     const [name, setName] = useState('');
     const [createAt, setCreateAt] = useState('');
     const [roleDetail, setRoleDetail] = useState('');
@@ -18,38 +21,45 @@ const Profile = (props) => {
     const [image, setImage] = useState('');
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
-
     const [oldPassword, setOldPassword] = useState("");
-
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [userId, setUserId] = useState(0);
+    
+    const [PassWord, setPassWord] = useState("");
 
-    const loggedInUser = sessionStorage.getItem("userInfo");
-    const userInfoConvertObject = JSON.parse(loggedInUser);
-    const role = userInfoConvertObject ? userInfoConvertObject.role : 0;
-    const usersId = userInfoConvertObject.id;
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    if (token) {
+        const userInfo = getCurrentUser();
+        if (userInfo && userInfo.USER_ID !== userId) {
+            setUserId(userInfo.USER_ID);
+            console.log("userId", userInfo.USER_ID);
+        }
+    }
     useEffect(() => {
         fetchdataDetailId();
 
-    }, [usersId]);
+    }, [userId]);
 
 
 
     const fetchdataDetailId = async () => {
 
-        console.log(usersId)
-        const response = await fetch(`${SERVER_URL}/users/detail/${usersId}`); // Thay thế "your_api_url" bằng URL của API thực tế của bạn
-        if (response.ok) {
-            const resp = await response.json();
-            setdataDetail(resp);
+        const response = await showUser(userId);
+        if (response.status === 200) {
+            const data = response.data;
+            console.log(data);
 
-            setName(resp.name); // Assign the value to name state variable
-            setCreateAt(resp.createAt); // Assign the value to name state variable
-            setStatus(resp.status); // Assign the value to name state variable
-            setImage(resp.image); // Assign the value to name state variable
-            setRoleDetail(resp.role);
-            setUserName(resp.username);
-            setEmail(resp.email);
+            setdataDetail(data);
+
+            setName(data.name); // Assign the value to name state variable
+            setCreateAt(data.createAt); // Assign the value to name state variable
+            setStatus(data.status); // Assign the value to name state variable
+            setImage(data.image); // Assign the value to name state variable
+            setRoleDetail(data.role);
+            setUserName(data.username);
+            setEmail(data.email);
+            // setPassWord(data.password);
 
 
         }
@@ -59,24 +69,9 @@ const Profile = (props) => {
     const handleEdit = async (e) => {
         e.preventDefault();
         try {
-            const input = JSON.stringify({
-
-                name: name,
-
-                username: userName,
-                email: email
-            })
-            console.log("usersId", usersId);
-            const response = await fetch(`${SERVER_URL}/users/edit/${usersId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: input
-            });
-
-            if (response.ok) {
-                const data = await response.json();
+            const response = await userEdit(name,userName,email,userId);
+            if (response.status === 200) {
+                const data =  response.data;
                 console.log(data);
 
                 if (data.status === 1) {
@@ -99,18 +94,10 @@ const Profile = (props) => {
         e.preventDefault();
         if (validate()) {
             try {
-                const input = JSON.stringify({
-                    password: newPassword,
-                });
-                const response = await fetch(`${SERVER_URL}/users/editPassword/${usersId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: input,
-                });
-                if (response.ok) {
-                    const data = await response.json();
+                const response = await userEditPassWord(newPassword,userId);
+            if (response.status === 200) {
+                const data =  response.data;
+                console.log(data);
                     if (data.status === 1) {
                         toast.success(data.message);
                     } else {
@@ -125,26 +112,40 @@ const Profile = (props) => {
         }
     };
 
+
+
+
     const validate = () => {
         let result = true;
-        if (oldPassword !== dataDetail.password) {
-            result = false;
-            toast.warning('Old password is not valid');
-        }
-        if (newPassword === '' || newPassword === null) {
+      
+        try {
+          // Kiểm tra mật khẩu cũ
+        //   if (!bcrypt.compareSync(oldPassword, dataDetail.password)) {
+        //     result = false;
+        //     toast.warning('Old password is not valid');
+        //   }
+      
+          if (newPassword === '' || newPassword === null) {
             result = false;
             toast.warning('Please enter a new password');
-        }
-        if (confirmPassword === '' || confirmPassword === null) {
+          }
+      
+          if (confirmPassword === '' || confirmPassword === null) {
             result = false;
             toast.warning('Please confirm the new password');
-        }
-        if (newPassword !== confirmPassword) {
+          }
+      
+          if (newPassword !== confirmPassword) {
             result = false;
             toast.warning('New password and confirm password do not match');
+          }
+        } catch (error) {
+          console.log('Error during password validation:', error);
+          result = false;
         }
+      
         return result;
-    };
+      };
 
     const [passwordVisibility, setPasswordVisibility] = useState({
         'old-password': false,
@@ -199,8 +200,8 @@ const Profile = (props) => {
                                 <div class="container-fluid">
 
 
-                                    <div class="row">
-                                        <div class="col-lg-12">
+                            <div class="row">
+                            <div class="col-lg-12">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h4 class="card-title">Tài khoản</h4>
@@ -249,7 +250,7 @@ const Profile = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-12">
+                            <div class="col-lg-12">
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h4 class="card-title">Thay đổi mật khẩu</h4>
@@ -303,7 +304,7 @@ const Profile = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
 

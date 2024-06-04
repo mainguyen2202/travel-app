@@ -11,8 +11,27 @@ export function login(userName, passWord) {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-          },
-        
+        },
+
+        body: JSON.stringify(loginDTO)
+    });
+
+    return response;
+}
+
+export function register(username,  name, email,   password) {
+    const loginDTO = {
+        username: username,
+        name: name,
+        email: email,
+        password: password
+    };
+    const response = fetch(`${SERVER_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+
         body: JSON.stringify(loginDTO)
     });
 

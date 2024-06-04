@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from "../../constants/constants";
+import { register } from "../../services/authServices";
 
 
 const Registration = (props) => {
@@ -34,12 +35,16 @@ const Registration = (props) => {
         };
 
         try {
-            const response = await fetch(`${SERVER_URL}/users/registration`, {
-                method: "POST",
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify(regObj)
-            });
+            // const response = await fetch(`${SERVER_URL}/auth/register`, {
+            //     method: "POST",
+            //     headers: { 'content-type': 'application/json' },
+            //     body: JSON.stringify(regObj)
+            // });
 
+            const response = await register(username,
+                name,
+                email,
+                password);
             console.log(response);
             if (response.ok) {// có dữ liệu trả về
                 if (response.status == 400) {
@@ -49,9 +54,9 @@ const Registration = (props) => {
                 } else if (response.status == 200) {
                     //
                     const data = await response.json();
-                    if (data.status == 1) {
-                        // toast.success(data.message);
+                    if (data !== null) {
                         navigate('/login');
+                        toast.success(data.message);
                     } else {
                         toast.error(data.message); // Hiển thị thông báo lỗi từ API trong giao diện
                     }

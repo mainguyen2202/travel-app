@@ -35,7 +35,7 @@ const Places = () => {
     const [subTopicsId, setSubTopicsId] = useState(0); // giá trị mặc định
 
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
-    const [userId, setUserId] = useState(0);
+   
 
     // START: Get a specific query parameter
     const [searchParams, setSearchParams] = useSearchParams();
@@ -43,7 +43,7 @@ const Places = () => {
     const topicIdSearch = searchParams.get('topic_id') ? parseInt(searchParams.get('topic_id')) : 0;
     const tuKhoaSearch = searchParams.get('keyword') ? searchParams.get('keyword') : '';
     // END: Get a specific query parameter
-
+    const [userId, setUserId] = useState(0);
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
         const userInfo = getCurrentUser();

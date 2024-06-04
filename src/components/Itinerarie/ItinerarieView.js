@@ -6,7 +6,7 @@ import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from "../../constants/constants";
 import Swal from 'sweetalert2';
-
+import ReactPaginate from 'react-paginate';
 import { Fragment } from "react";
 import {
   GoogleMap,
@@ -16,10 +16,12 @@ import {
   useJsApiLoader,
   useLoadScript,
 } from "@react-google-maps/api";
+import { itinerariesDetail } from "../../services/itinerarieServices";
+import { itineraryArticlesDetail, itineraryArticlesEdit, itineraryArticlesListBySearch, itineraryArticlesRemove } from "../../services/itineraryArticlesServices";
 
 const ItinerarieView = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const itinerarieId = searchParams.get('itinerarie_id');
+  const itineraryId = searchParams.get('itinerarie_id');
 
   const [name, setName] = useState('');
   const [participantCount, setParticipantCount] = useState();
@@ -37,19 +39,19 @@ const ItinerarieView = (props) => {
 
   useEffect(() => {
     console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
-    console.log("input", itinerarieId);
-    fetchInitData(itinerarieId, dateStartItineraryArticles);// sử dụng hàm lấy danh sách mới nhất
+    console.log("input", itineraryId);
+    fetchInitData(itineraryId, dateStartItineraryArticles);// sử dụng hàm lấy danh sách mới nhất
 
-    getDetailByItineraryId(itinerarieId);
+    getDetailByItineraryId(itineraryId);
 
 
-  }, [itinerarieId]);
+  }, [itineraryId]);
 
   const getDetailByItineraryId = async (e) => {
     try {
-      const response = await fetch(`${SERVER_URL}/itineraries/detail/${itinerarieId}`);
-      if (response.ok) {
-        const itinerarieData = await response.json();
+      const response = await itinerariesDetail(itineraryId);
+      if (response.status === 200) {
+        const itinerarieData = await response.data;
         setDetailItinerarie(itinerarieData);
 
 
@@ -70,10 +72,9 @@ const ItinerarieView = (props) => {
   const fetchInitData = async (inItinerarieId, inputDateStart) => {
     console.log("list", inItinerarieId, inputDateStart);
 
-    const itineraryArticlesResponse = await fetch(`${SERVER_URL}/itineraryArticles/listBySearch?itineraries_id=${inItinerarieId}&date_start=${inputDateStart}`);
-    console.log(itineraryArticlesResponse);
-    if (itineraryArticlesResponse.ok) {
-      const itineraryArticlesData = await itineraryArticlesResponse.json();
+    const response = await itineraryArticlesListBySearch(inItinerarieId, inputDateStart);
+    if (response.status === 200) {
+      const itineraryArticlesData = await response.data;
       console.log(itineraryArticlesData);
       if (itineraryArticlesData.length > 0) {
         console.log(itineraryArticlesData);
@@ -141,7 +142,7 @@ const ItinerarieView = (props) => {
         // END
       }
     } else {
-      console.error('Error:', itineraryArticlesResponse.status);
+      console.error('Error:', response.status);
     }
   };
 
@@ -152,21 +153,21 @@ const ItinerarieView = (props) => {
     console.log("click dateStart", indateStart);
     setDateStartItineraryArticles(indateStart);
 
-    fetchInitData(itinerarieId, indateStart);
+    fetchInitData(itineraryId, indateStart);
   }
   const findByAllDate = async (e) => {
     e.preventDefault();
-    console.log("click itinerarieId", itinerarieId);
+    console.log("click itinerarieId", itineraryId);
     setDateStartItineraryArticles(""); // Đặt giá trị rỗng cho trường input ngày
 
-    fetchInitData(itinerarieId, "");
+    fetchInitData(itineraryId, "");
   }
 
   const getDetailById = async (e, itineraryArticlesId) => {
     try {
-      const response = await fetch(`${SERVER_URL}/itineraryArticles/detail/${itineraryArticlesId}`);
-      if (response.ok) {
-        const itinerarieData = await response.json();
+      const response = await itineraryArticlesDetail(itineraryArticlesId);
+      if (response.status === 200) {
+        const itinerarieData = await response.data;
 
         setItineraryArticlesId(itinerarieData.id);
         setDateStartByItineraryArticles(itinerarieData.dateStart); // Assign the value to dateStart state variable
@@ -182,18 +183,9 @@ const ItinerarieView = (props) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${SERVER_URL}/itineraryArticles/edit/${itineraryArticlesId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          dateStart: dateStartByItineraryArticles, // Ngày bắt đầu mới
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      const response = await itineraryArticlesEdit(itineraryArticlesId, dateStartByItineraryArticles);
+      if (response.status === 200) {
+        const data = await response.data;
         console.log(data);
         if (data.status == 1) {
           toast.success(data.message);
@@ -225,15 +217,9 @@ const ItinerarieView = (props) => {
       });
 
       if (result.isConfirmed) {
-        const response = await fetch(`${SERVER_URL}/itineraryArticles/remove/${itineraryArticlesId}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const data = await response.json();
+        const response = await itineraryArticlesRemove(itineraryArticlesId);
+        if (response.status === 200) {
+          const data = await response.data;
           console.log(data);
 
           if (data.status === 1) {
@@ -259,6 +245,16 @@ const ItinerarieView = (props) => {
   const closePopup = () => {
     setPopupIsOpen(false);
   };
+
+  // START PAGE
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
+
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+  };
+  // END PAGE
 
   // START: googlemap
   const [markers, setMarkers] = useState([]);// mảng dữ liệu
@@ -498,7 +494,8 @@ const ItinerarieView = (props) => {
               </div>
 
               <div className="row">
-                {itineraryArticles.map((itineraryArticle, i) => (
+                {itineraryArticles.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itineraryArticle, i) => (
+
                   <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
                     <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
                       <div className="card">
@@ -576,17 +573,29 @@ const ItinerarieView = (props) => {
 
               <div className="row mt-5">
                 <div className="col text-center">
-                  <div className="block-27">
-                    <ul>
-                      <li><a href="#">&lt;</a></li>
-                      <li className="active"><span>1</span></li>
-                      <li><a href="#">2</a></li>
-                      <li><a href="#">3</a></li>
-                      <li><a href="#">4</a></li>
-                      <li><a href="#">5</a></li>
-                      <li><a href="#">&gt;</a></li>
+                  <nav aria-label="Page navigation">
+                    <ul className="pagination justify-content-center">
+                      {itineraryArticles.length > articlesPerPage && (
+                        <ReactPaginate
+                          breakLabel="..."
+                          nextLabel={<span>&gt;</span>}
+                          onPageChange={handlePageClick}
+                          pageRangeDisplayed={5}
+                          pageCount={Math.ceil(itineraryArticles.length / articlesPerPage)}
+                          previousLabel={<span>&lt;</span>}
+                          renderOnZeroPageCount={null}
+                          containerClassName="pagination"
+                          activeClassName="active"
+                          pageClassName="page-item"
+                          pageLinkClassName="page-link"
+                          previousClassName="page-item"
+                          previousLinkClassName="page-link"
+                          nextClassName="page-item"
+                          nextLinkClassName="page-link"
+                        />
+                      )}
                     </ul>
-                  </div>
+                  </nav>
                 </div>
               </div>
             </div>
