@@ -2,10 +2,10 @@
 import api from "./api";
 
 export async function listBySearchLike(userId) {
-    return await api.get(`/likes/listBySearch?users_id=${userId}`);
+    return await api.get(`/private/likes/listBySearch?users_id=${userId}`);
 }
 
-export async function likeCreate(idArticles,idUser) {
+export async function likeCreate(idArticles, idUser) {
     const data = {
         articles: {
             id: idArticles,
@@ -14,7 +14,7 @@ export async function likeCreate(idArticles,idUser) {
             id: idUser,
         },
     };
-    return await api.post(`/likes/clickLike`,data);
+    return await api.post(`/private/likes/clickLike`, data);
 }
 
 

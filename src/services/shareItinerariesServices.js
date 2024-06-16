@@ -5,7 +5,7 @@ import api from "./api";
 
 export async function listShareItinerariesUserId(userId) {
 
-    return await api.get(`/shareItineraries/listBySearch?users_id=${userId}`);
+    return await api.get(`/private/shareItineraries/listBySearch?users_id=${userId}`);
 }
 
 
@@ -21,5 +21,5 @@ export async function shareItinerariesUserId(useridShare,itineraryId) {
             id: itineraryId
         }
     };
-    return await api.post(`/shareItineraries/create`,data);
+    return await api.post(`/private/shareItineraries/create`,data);
 }

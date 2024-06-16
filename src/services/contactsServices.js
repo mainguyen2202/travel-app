@@ -15,7 +15,7 @@ export async function contactsCreate(email,name,mess,subject) {
            
         
     };
-    return await api.post(`/contacts/create`,data);
+    return await api.post(`/private/contacts/create`,data);
 }
 
 

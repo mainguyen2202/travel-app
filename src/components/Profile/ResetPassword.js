@@ -16,28 +16,16 @@ const ResetPassword = (props) => {
             email: email
         };
         try {
-            const response = await fetch(`${SERVER_URL}/users/forgotPassword`, {
-                method: "POST",
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify(loginDTO)
-            });
-
-            console.log(response);
-            if (response.ok) {// có dữ liệu trả về
-                if (response.status == 400) {
-                    //
-                } else if (response.status == 401) {
-                    //
-                } else if (response.status == 200) {
-                    //
-                    const resq = await response.json();
-                    if (resq.status == 1) {
-                  
+            const response = await ResetPassword();
+            if (response.status === 200) {
+                const data =  response.data;
+                console.log(data);
+                    if (data.status === 1) {
+                        toast.success(data.message);
                     } else {
-                        toast.error(resq.message); // Hiển thị thông báo lỗi từ API trong giao diện
+                        toast.error(data.message);
                     }
                 }
-            }
         } catch (err) {
             toast.error('Failed: ' + err.message); // Hiển thị thông báo lỗi trong giao diện
         }

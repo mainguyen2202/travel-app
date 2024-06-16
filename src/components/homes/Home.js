@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
-import {  showAllPlace } from "../../services/placeServices";
-import { showAllId } from "../../services/topicServices";
+import { showAllPlace } from "../../services/placeServices";
+import { showTopicsBySubTopicId } from "../../services/topicServices";
 import { getCurrentUser } from "../../services/authServices";
 import { likeCreate, listBySearchLike } from "../../services/likeServices";
-import {  listBySearchItineraries } from "../../services/itinerarieServices";
+import { listBySearchItineraries } from "../../services/itinerarieServices";
 import { itineraryArticlesCreate } from "../../services/itineraryArticlesServices";
 
 
@@ -24,11 +24,11 @@ const Home = (props) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
         const userInfo = getCurrentUser();
-		if (userInfo && userInfo.USER_ID !== userId) {
+        if (userInfo && userInfo.USER_ID !== userId) {
             setUserId(userInfo.USER_ID);
-		  console.log("userId", userInfo.USER_ID);
-		}
-      }
+            console.log("userId", userInfo.USER_ID);
+        }
+    }
 
     useEffect(() => {
 
@@ -38,7 +38,7 @@ const Home = (props) => {
         fetchInitDataItineraries();
         getListLike4ArticlesByUserId();
 
-      
+
     }, []);
 
     // tạo hàm xử lí lấy danh sách
@@ -51,7 +51,8 @@ const Home = (props) => {
             const placeData = response.data;
             console.log(placeData);
             if (placeData.length > 0) {
-                setPlace(placeData);
+                setPlace(placeData.slice(0, 12));
+                // setPlace(placeData);
             }
         } else {
             console.error('Error:', response.status);
@@ -63,10 +64,10 @@ const Home = (props) => {
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataTopic = async () => {
         // Retrieve the object from the storage
-       
-        let subTopicsId =0;
-        const response = await showAllId(subTopicsId);
-        if (response.status=== 200) {
+
+        let subTopicsId = 0;
+        const response = await showTopicsBySubTopicId(subTopicsId);
+        if (response.status === 200) {
             const data = await response.data;
             console.log(data);
             if (data.length > 0) {
@@ -82,8 +83,8 @@ const Home = (props) => {
     const fetchInitDataLike = async () => {
         // const userId = 1;
         if (token) {
-                    const response = await listBySearchLike(userId);
-            if (response.status=== 200) {
+            const response = await listBySearchLike(userId);
+            if (response.status === 200) {
                 const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
@@ -92,16 +93,16 @@ const Home = (props) => {
             } else {
                 console.error('Error:', response.status);
             }
-            }
+        }
 
     };
 
-       // tạo hàm xử lí lấy danh sách
+    // tạo hàm xử lí lấy danh sách
     const fetchInitDataItineraries = async () => {
-      
+
         if (token) {
             const response = await listBySearchItineraries(userId);
-            if (response.status=== 200) {
+            if (response.status === 200) {
                 const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
@@ -110,20 +111,20 @@ const Home = (props) => {
             } else {
                 console.error('Error:', response.status);
             }
-            }
-        
+        }
+
 
     };
     const handleCreate = async (e, idArticles, idItineraries) => {
         e.preventDefault();
         console.log("idArticles, idItineraries", idArticles, idItineraries);
-    
+
         try {
             const response = await itineraryArticlesCreate(idArticles, idItineraries);
             if (response.status === 200) {
                 const { data } = response;
                 console.log(data);
-    
+
                 if (data.status === 1) {
                     toast.success(data.message);
                 } else {
@@ -144,69 +145,69 @@ const Home = (props) => {
         }
     };
 
-      // START LIKE
-      const [likedArticlesId, setLikedArticlesId] = useState([]);
-      const handleCreateLike = async (e, idArticles) => {
-          e.preventDefault();
-          if (token) {
-              try {
-  
-                const response = await likeCreate(idArticles,userId);
-  
-                
-  
+    // START LIKE
+    const [likedArticlesId, setLikedArticlesId] = useState([]);
+    const handleCreateLike = async (e, idArticles) => {
+        e.preventDefault();
+        if (token) {
+            try {
+
+                const response = await likeCreate(idArticles, userId);
+
+
+
                 if (response.status === 200) {
-                    const  data  = response.data;
-                      console.log(data);
-  
-                      if (data.status == 1) {
-                          toast.success(data.message);
-  
-                          await getListLike4ArticlesByUserId();// lấy lại danh sách mới
-  
-                      } else {
-                          toast.error(data.message);
-                      }
-                  } else if (response.status == 400) {
-                      // Handle 400 Bad Request error
-                  } else if (response.status == 401) {
-                      // Handle 401 Unauthorized error
-                  } else {
-                      // Handle other errors
-                  }
-              } catch (err) {
-                  toast.error('Failed: ' + err.message);
-              }
-          }
-      };
-  
-      const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
-      const getListLike4ArticlesByUserId = async () => {
-          // Retrieve the object from the storage
-          if (token) {
-  
-                const response = await listBySearchLike(userId);
-                if (response.status=== 200) {
-                    const data = await response.data;
-                  console.log(data);
-                  if (data.length > 0) {
-                      setLikedArticlesByUserId(data);
-  
-                      let tmpLikedArticlesId = [];
-                      data.map(item => {
-                          if (item.status === 1) {
-                              tmpLikedArticlesId.push(item.articles.id);
-                          }
-                      });
-                      setLikedArticlesId(tmpLikedArticlesId);
-                  }
-              } else {
-                  console.error('Error:', response.status);
-              }
-          }
-      };
-  
-      // END LIKE
+                    const data = response.data;
+                    console.log(data);
+
+                    if (data.status == 1) {
+                        toast.success(data.message);
+
+                        await getListLike4ArticlesByUserId();// lấy lại danh sách mới
+
+                    } else {
+                        toast.error(data.message);
+                    }
+                } else if (response.status == 400) {
+                    // Handle 400 Bad Request error
+                } else if (response.status == 401) {
+                    // Handle 401 Unauthorized error
+                } else {
+                    // Handle other errors
+                }
+            } catch (err) {
+                toast.error('Failed: ' + err.message);
+            }
+        }
+    };
+
+    const [likedArticlesByUserId, setLikedArticlesByUserId] = useState([]);
+    const getListLike4ArticlesByUserId = async () => {
+        // Retrieve the object from the storage
+        if (token) {
+
+            const response = await listBySearchLike(userId);
+            if (response.status === 200) {
+                const data = await response.data;
+                console.log(data);
+                if (data.length > 0) {
+                    setLikedArticlesByUserId(data);
+
+                    let tmpLikedArticlesId = [];
+                    data.map(item => {
+                        if (item.status === 1) {
+                            tmpLikedArticlesId.push(item.articles.id);
+                        }
+                    });
+                    setLikedArticlesId(tmpLikedArticlesId);
+                }
+            } else {
+                console.error('Error:', response.status);
+            }
+        }
+    };
+
+    // END LIKE
 
 
     return (
@@ -374,85 +375,85 @@ const Home = (props) => {
                             <div className="row">
                                 {like.map((likes, i) => (
                                     <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i} >
-                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                        <div className="card"  >
-                                            <Link to={`/detail?article_id=${likes.articles.id}`}>
-                                                <img src={likes.articles.image}
+                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                            <div className="card"  >
+                                                <Link to={`/detail?article_id=${likes.articles.id}`}>
+                                                    <img src={likes.articles.image}
 
-                                                    className="card-img-top card-img-top-mainguyen"alt="..." />
-                                            </Link>
-                                            <div className="card-body">
-                                                <div className="d-flex">
-                                                    <div className="one">
-                                                        <p className="rate">
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star"></i>
-                                                            <i className="icon-star-o"></i>
-                                                        </p>
-                                                        <h3 style={{ color: 'black', height:'100px' }}><a href={`/detail?article_id=${likes.articles.id}`}>{likes.articles.name}</a></h3>
-                                                    </div>
-                                                    <div className="two">
-                                                        <span className="price">{likes.articles.price + "VNĐ"}</span>
-                                                    </div>
-
-                                                </div>
-                                                <p className="days">
-                                                    {likes.articles.historyArticles.length > 0 ?
-                                                        <span> {likes.articles.historyArticles[0].count} lượt xem</span>
-                                                        :
-                                                        <span>Xem chi tiết</span>
-                                                    }
-                                                </p>
-
-                                                <hr />
-                                                <div>
-                                                    {token ? (
-                                                        <div className="bottom-area d-flex">
-                                                            <a
-                                                                onClick={(e) => handleCreateLike(e, likes.articles.id)}
-                                                                className={`like ${likedArticlesId.includes(likes.articles.id) ? 'liked' : ''}`}
-                                                                title="Like"
-                                                                data-toggle="tooltip"
-                                                            >
-                                                                <span className="s18_s">
-                                                                    <i className="material-icons">
-                                                                        {likedArticlesId.includes(likes.articles.id) ? 'favorite' : 'favorite_border'}
-                                                                    </i>
-                                                                </span>
-                                                            </a>
-
-                                                            <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                {itinerariesOfUser.map((itinerary, ii) => (
-                                                                    <Dropdown.Item
-
-                                                                        value={itinerary.id}
-                                                                        key={ii}
-                                                                        onClick={(e) => {
-                                                                            handleCreate(e, likes.articles.id, itinerary.id);
-                                                                        }}
-                                                                    >
-                                                                        {itinerary.name}
-                                                                    </Dropdown.Item>
-                                                                ))}
-                                                            </DropdownButton>
+                                                        className="card-img-top card-img-top-mainguyen" alt="..." />
+                                                </Link>
+                                                <div className="card-body">
+                                                    <div className="d-flex">
+                                                        <div className="one">
+                                                            <p className="rate">
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star-o"></i>
+                                                            </p>
+                                                            <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${likes.articles.id}`}>{likes.articles.name}</a></h3>
                                                         </div>
-                                                    ) : (
-                                                        <div className="bottom-area d-flex">
-                                                          
-                                                            <DropdownButton href="/itinerarie" id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-
-                                                            </DropdownButton>
+                                                        <div className="two">
+                                                            <span className="price">{likes.articles.price + "VNĐ"}</span>
                                                         </div>
 
-                                                    )}
+                                                    </div>
+                                                    <p className="days">
+                                                        {likes.articles.historyArticles.length > 0 ?
+                                                            <span> {likes.articles.historyArticles[0].count} lượt xem</span>
+                                                            :
+                                                            <span>Xem chi tiết</span>
+                                                        }
+                                                    </p>
 
+                                                    <hr />
+                                                    <div>
+                                                        {token ? (
+                                                            <div className="bottom-area d-flex">
+                                                                <a
+                                                                    onClick={(e) => handleCreateLike(e, likes.articles.id)}
+                                                                    className={`like ${likedArticlesId.includes(likes.articles.id) ? 'liked' : ''}`}
+                                                                    title="Like"
+                                                                    data-toggle="tooltip"
+                                                                >
+                                                                    <span className="s18_s">
+                                                                        <i className="material-icons">
+                                                                            {likedArticlesId.includes(likes.articles.id) ? 'favorite' : 'favorite_border'}
+                                                                        </i>
+                                                                    </span>
+                                                                </a>
+
+                                                                <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+                                                                    {itinerariesOfUser.map((itinerary, ii) => (
+                                                                        <Dropdown.Item
+
+                                                                            value={itinerary.id}
+                                                                            key={ii}
+                                                                            onClick={(e) => {
+                                                                                handleCreate(e, likes.articles.id, itinerary.id);
+                                                                            }}
+                                                                        >
+                                                                            {itinerary.name}
+                                                                        </Dropdown.Item>
+                                                                    ))}
+                                                                </DropdownButton>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="bottom-area d-flex">
+
+                                                                <DropdownButton href="/itinerarie" id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
+
+                                                                </DropdownButton>
+                                                            </div>
+
+                                                        )}
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 ))}
                             </div>
                         ) : (
@@ -471,7 +472,7 @@ const Home = (props) => {
 
 
 
-           
+
 
 
         </div>

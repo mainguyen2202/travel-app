@@ -2,7 +2,7 @@
 import api from "./api";
 
 export async function listBySearchItineraries(userId) {
-    return await api.get(`/itineraries/listBySearch?user_id=${userId}`);
+    return await api.get(`/private/itineraries/listBySearch?user_id=${userId}`);
 }
 
 
@@ -13,17 +13,19 @@ export async function itineraryCreate(name,participantCount,content,dateStart,da
         content: content,
         dateStart: dateStart,
         dateEnd: dateEnd,
-        usersId: userId
+        users: {
+            id: userId
+        }
     };
-    return await api.post(`/itineraries/create`, data);
+    return await api.post(`/private/itineraries/create`, data);
 }
 
 export async function itinerariesRemove(itineraryId) {
-    return await api.delete(`/itineraries/remove/${itineraryId}`);
+    return await api.delete(`/private/itineraries/remove/${itineraryId}`);
 }
 
 export async function itinerariesDetail(itineraryId) {
-    return await api.get(`/itineraries/detail/${itineraryId}`);
+    return await api.get(`/private/itineraries/detail/${itineraryId}`);
 }
 
 export async function itineraryEdit(name,participantCount,content,dateStart,dateEnd,itineraryId) {
@@ -34,7 +36,7 @@ export async function itineraryEdit(name,participantCount,content,dateStart,date
         dateStart: dateStart,
         dateEnd: dateEnd
     };
-    return await api.post(`/itineraries/edit/${itineraryId}`, data);
+    return await api.post(`/private/itineraries/edit/${itineraryId}`, data);
 }
 
 

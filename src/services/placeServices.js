@@ -1,6 +1,6 @@
 
 import { ACCESS_TOKEN, SERVER_URL } from "../constants/constants";
-import api from "./api";
+import anonymousApi from "./anonymousApi";
 import axios from 'axios';
 let accessToken = localStorage.getItem(ACCESS_TOKEN);
 
@@ -20,7 +20,7 @@ export function showAllV1() {
 }
 
 export async function showAllPlace() {
-    const response = await api.get(`/places/list`);
+    const response = await anonymousApi.get(`/public/places/list`);
     return response;
 }
 

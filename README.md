@@ -1,4 +1,82 @@
 ```
+INSERT INTO `travels`.`places`
+(`id`, `name`, `status`, `sub_place_id`, `coordinates_id`,`image`,`content`)
+VALUES
+(1, 'Thành phố Hồ Chí Minh', 1, 1, 1, NULL, NULL),
+(2, 'Đà Nẵng', 1, 1, 1, 1, 1, NULL, NULL),
+(3, 'Khánh Hòa', 1, 1, 1, NULL, NULL),
+(4, 'Ninh Thuận', 1, 1, 1, NULL, NULL),
+(5, 'Hải Phòng', 1, 1, 1, NULL, NULL),
+(6, 'Hà Nội', 1, 1, 1, NULL, NULL),
+(7, 'An Giang', 1, 1, 1, NULL, NULL),
+(8, 'Bà Rịa – Vũng Tàu', 1, 1, 1, NULL, NULL),
+(9, 'Bắc Giang', 1, 1, 1, NULL, NULL),
+(10, 'Bắc Kạn', 1, 1, 1, NULL, NULL),
+(11, 'Bạc Liêu', 1, 1, 1, NULL, NULL),
+(12, 'Bắc Ninh', 1, 1, 1, NULL, NULL),
+(13, 'Bến Tre', 1, 1, 1, NULL, NULL),
+(14, 'Bình Định', 1, 1, 1, NULL, NULL),
+(15, 'Bình Dương', 1, 1, 1, NULL, NULL),
+(16, 'Bình Phước', 1, 1, 1, NULL, NULL),
+(17, 'Bình Thuận', 1, 1, 1, NULL, NULL),
+(18, 'Cà Mau', 1, 1, 1, NULL, NULL),
+(19, 'Cần Thơ', 1, 1, 1, NULL, NULL),
+(20, 'Cao Bằng', 1, 1, 1, NULL, NULL),
+(21, 'Đắk Lắk', 1, 1, 1, NULL, NULL),
+(22, 'Đắk Nông', 1, 1, 1, NULL, NULL),
+(23, 'Điện Biên', 1, 1, 1, NULL, NULL),
+(24, 'Đồng Nai', 1, 1, 1, NULL, NULL),
+(25, 'Đồng Tháp', 1, 1, 1, NULL, NULL),
+(26, 'Gia Lai', 1, 1, 1, NULL, NULL),
+(27, 'Hà Giang', 1, 1, 1, NULL, NULL),
+(28, 'Hà Nam', 1, 1, 1, NULL, NULL),
+(29, 'Hà Tĩnh', 1, 1, 1, NULL, NULL),
+(30, 'Hải Dương', 1, 1, 1, NULL, NULL),
+(31, 'Hậu Giang', 1, 1, 1, NULL, NULL),
+(32, 'Hòa Bình', 1, 1, 1, NULL, NULL),
+(33, 'Hưng Yên', 1, 1, 1, NULL, NULL),
+(34, 'Kiên Giang', 1, 1, 1, NULL, NULL),
+(35, 'Kon Tum', 1, 1, 1, NULL, NULL),
+(36, 'Lai Châu', 1, 1, 1, NULL, NULL),
+(37, 'Lâm Đồng', 1, 1, 1, NULL, NULL),
+(38, 'Lạng Sơn', 1, 1, 1, NULL, NULL),
+(39, 'Lào Cai', 1, 1, 1, NULL, NULL),
+(40, 'Long An', 1, 1, 1, NULL, NULL),
+(41, 'Nam Định', 1, 1, 1, NULL, NULL),
+(42, 'Nghệ An', 1, 1, 1, NULL, NULL),
+(43, 'Ninh Bình', 1, 1, 1, NULL, NULL),
+(44, 'Phú Thọ', 1, 1, 1, NULL, NULL),
+(45, 'Phú Yên', 1, 1, 1, NULL, NULL),
+(46, 'Quảng Bình', 1, 1, 1, NULL, NULL),
+(47, 'Quảng Nam', 1, 1, 1, NULL, NULL),
+(48, 'Quảng Ngãi', 1, 1, 1, NULL, NULL),
+(49, 'Quảng Ninh', 1, 1, 1, NULL, NULL),
+(50, 'Quảng Trị', 1, 1, 1, NULL, NULL),
+(51, 'Sóc Trăng', 1, 1, 1, NULL, NULL),
+(52, 'Sơn La', 1, 1, 1, NULL, NULL),
+(53, 'Tây Ninh', 1, 1, 1, NULL, NULL),
+(54, 'Thái Bình', 1, 1, 1, NULL, NULL),
+(55, 'Thái Nguyên', 1, 1, 1, NULL, NULL),
+(56, 'Thanh Hóa', 1, 1, 1, NULL, NULL),
+(57, 'Thừa Thiên Huế', 1, 1, 1, NULL, NULL),
+(58, 'Tiền Giang', 1, 1, 1, NULL, NULL),
+(59, 'Trà Vinh', 1, 1, 1, NULL, NULL),
+(60, 'Tuyên Quang', 1, 1, 1, NULL, NULL),
+(61, 'Vĩnh Long', 1, 1, 1, NULL, NULL),
+(62, 'Vĩnh Phúc', 1, 1, 1, NULL, NULL),
+(63, 'Yên Bái', 1, 1, 1, NULL, NULL);
+
+
+
+
+
+
+
+
+
+
+
+
 Success! Created travel-app at D:\DH20DT\HK8\TieuLuan\Travel\Client\travel-app
 Inside that directory, you can run several commands:
 

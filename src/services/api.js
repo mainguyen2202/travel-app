@@ -2,7 +2,6 @@ import axios from 'axios';
 import { ACCESS_TOKEN, REFRESH_TOKEN, SERVER_URL } from '../constants/constants';
 
 // Xử lí tập trung khi muốn giao tiếp với server
-
 const api = axios.create({
     baseURL: SERVER_URL,
 });
@@ -47,9 +46,11 @@ api.interceptors.response.use(
                 return axios(originalRequest);
             } catch (error) {
                 // Handle refresh token error or redirect to login
+                console.error('error', error);
             }
         }
-        return Promise.reject(error);
+        return { status: 204, message : error.message};
+        // return Promise.reject(error);
     }
 );
 

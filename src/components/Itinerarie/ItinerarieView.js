@@ -19,6 +19,9 @@ import {
 import { itinerariesDetail } from "../../services/itinerarieServices";
 import { itineraryArticlesDetail, itineraryArticlesEdit, itineraryArticlesListBySearch, itineraryArticlesRemove } from "../../services/itineraryArticlesServices";
 
+import DataTable from "react-data-table-component";
+import SortIcon from "@material-ui/icons/ArrowDownward";
+import DataTableExtensions from "react-data-table-component-extensions";
 const ItinerarieView = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const itineraryId = searchParams.get('itinerarie_id');
@@ -36,14 +39,13 @@ const ItinerarieView = (props) => {
   const [dateStartItineraryArticles, setDateStartItineraryArticles] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceParticipantCount, setTotalPriceParticipantCount] = useState(0);
-
+  const [data, setData] = useState([]);
   useEffect(() => {
     console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
     console.log("input", itineraryId);
     fetchInitData(itineraryId, dateStartItineraryArticles);// sử dụng hàm lấy danh sách mới nhất
 
     getDetailByItineraryId(itineraryId);
-
 
   }, [itineraryId]);
 
@@ -68,6 +70,7 @@ const ItinerarieView = (props) => {
     }
   };
 
+
   // tạo hàm xử lí lấy danh sách
   const fetchInitData = async (inItinerarieId, inputDateStart) => {
     console.log("list", inItinerarieId, inputDateStart);
@@ -79,6 +82,7 @@ const ItinerarieView = (props) => {
       if (itineraryArticlesData.length > 0) {
         console.log(itineraryArticlesData);
         setItineraryArticles(itineraryArticlesData);
+        setData(itineraryArticlesData);
         // START: map
         console.log("GPSlocaction", userLocation);
 
@@ -246,6 +250,56 @@ const ItinerarieView = (props) => {
     setPopupIsOpen(false);
   };
 
+  // Print
+
+
+
+
+  const columns = [
+    {
+      name: "Id",
+      selector: "id"
+      // sortable: true
+    },
+    {
+      name: "Tên địa điểm",
+      selector: "articles.name",
+      sortable: true
+    },
+    {
+      name: "Giá",
+      selector: "articles.price",
+      sortable: true
+    },
+    {
+      name: "Trạng thái",
+      selector: "status",
+      sortable: true,
+      cell: (row) => (
+        <div
+          style={{
+            padding: "5px 10px",
+            borderRadius: "4px",
+            backgroundColor: row.status === 1 ? "#d1f7c4" : "#ffcdd2",
+            color: row.status === 1 ? "#2e7d32" : "#c62828",
+            fontWeight: "bold",
+            display: "inline-block"
+          }}
+        >
+          {row.status === 1 ? "Hoạt động" : "Không hoạt động"}
+        </div>
+      )
+    }
+
+  ];
+
+  const tableData = {
+    columns,
+    data,
+  };
+
+  // Print
+
   // START PAGE
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -401,6 +455,7 @@ const ItinerarieView = (props) => {
         <div className="container">
           <div className="row">
 
+
             <div className="col-lg-3 sidebar order-md-first ftco-animate">
               <div className="sidebar-wrap ftco-animate">
                 <div className="container">
@@ -445,12 +500,37 @@ const ItinerarieView = (props) => {
                     <label htmlFor="dateStartItineraryArticles" className="form-label">Lọc theo ngày:</label>
                     <input type="date" id="dateStartItineraryArticles" className="form-control" min={dateStart} max={dateEnd} value={dateStartItineraryArticles} onChange={e => findByDate(e, e.target.value)} />
                   </div>
+                  <DataTableExtensions {...tableData} 
+
+> 
+
+  <DataTable
+    columns={columns}
+    data={data}
+    noHeader
+    defaultSortField="id"
+    sortIcon={<SortIcon />}
+    defaultSortAsc={true}
+    pagination
+    highlightOnHover
+    dense
+  />
+</DataTableExtensions>
                 </div>
               </div>
             </div>
 
             <div className="col-lg-9">
+
+           
+                 
+             
+
+
+
               <div className="reservation-form mainguyen">
+
+
                 <div className="row">
                   <div id="map">
                     <Fragment>

@@ -77,7 +77,8 @@ const Itinerarie = (props) => {
                 const response = await itineraryCreate(name, participantCount, content, dateStart, dateEnd, userId);
                 if (response.status === 200) {
                     const data = await response.data;
-                    console.log(data);
+                    toast.success(data.message);    
+                    // console.log(data);
                     if (data.status == 1) {
                         toast.success(data.message);
                        

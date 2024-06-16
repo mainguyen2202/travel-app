@@ -2,7 +2,7 @@
 import api from "./api";
 
 export async function showAllHistoryArticles() {
-    const response = await api.get(`/historyArticles/list`);
+    const response = await api.get(`/public/historyArticles/list`);
     return response;
 }
 
@@ -12,7 +12,7 @@ export async function clickView(idArticles) {
             id: idArticles,
         },
     };
-    return await api.post(`/historyArticles/clickView`,data);
+    return await api.post(`/public/historyArticles/clickView`,data);
 }
 
 

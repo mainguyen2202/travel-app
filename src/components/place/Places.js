@@ -14,7 +14,7 @@ import {
     useJsApiLoader,
 } from "@react-google-maps/api";
 import { showAllPlace } from '../../services/placeServices';
-import { showAllId, showAllSubId, showAllTopic } from '../../services/topicServices';
+import { showTopicsBySubTopicId, showAllTopic } from '../../services/topicServices';
 import { articlesListPlaceIdSubtopicId, getSearchResults, showAllArticlesListDate } from '../../services/articlesServices';
 import { listBySearchItineraries } from '../../services/itinerarieServices';
 import { itineraryArticlesCreate } from '../../services/itineraryArticlesServices';
@@ -208,7 +208,7 @@ const Places = () => {
     };
 
     const getSubTopicsByTopicId = async (inTopicId) => {
-        const response = await showAllSubId(inTopicId);
+        const response = await showTopicsBySubTopicId(inTopicId);// TODO mainguyen
         if (response.status === 200) {
             const data = await response.data;
             console.log(data);
