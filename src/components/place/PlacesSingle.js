@@ -45,7 +45,6 @@ const PlacesSingle = (props) => {
     }
 
     useEffect(() => {
-        console.log("-------------------");
         if (articleId != 0) {
             handleClickView(articleId);
         } else {
@@ -77,15 +76,13 @@ const PlacesSingle = (props) => {
 
     const handleClickView = async (articleId) => {
         try {
-            console.log("--------1-----------");
-
             const response = await clickView(articleId);
             if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
 
                 if (data.status == 1) {
-                    toast.success(data.message);
+                    // toast.success(data.message);
                 } else {
                     // console.log(data.message);
                     // toast.error(data.message);

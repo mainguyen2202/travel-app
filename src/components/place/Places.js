@@ -72,8 +72,6 @@ const Places = () => {
     // }, []);
 
     useEffect(() => {
-        console.log("--------abc-----------");
-
         console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
         fetchData();
 

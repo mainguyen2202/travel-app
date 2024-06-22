@@ -218,13 +218,24 @@ a:not([href]):not([tabindex]) {
   font-weight: bold;
 }
 /*  card bài viết */
-.truncate-3-lines {
+/* .truncate-3-lines {
   display: -webkit-box;
   overflow: hidden;
-  -webkit-line-clamp: 2 !important;
+  -webkit-line-clamp: 3 !important;
   -webkit-box-orient: vertical;
   line-height: 1.2em;
-  height: 2em !important;
+  height: 3em !important;
+} */
+.truncate-3-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3!important;
+  -webkit-box-orient: vertical;
+  overflow: hidden; /*Ẩn bất kỳ nội dung bị tràn ra ngoài phạm vi được định.*/
+  text-overflow: ellipsis; /*Thêm dấu "..." vào cuối văn bản nếu bị cắt ngắn.*/
+  line-height: 1.2;
+  height: 3.6em!important; /* 3 lines * 1.2em line-height */
+  color: #F9BE37; /* Màu của dấu 3 chấm */
+
 }
 
 /* nav */
@@ -237,6 +248,7 @@ a:not([href]):not([tabindex]) {
   height: 2px;
   background-color: white;
   transition: width 0.3s ease;
+
 }
 
 .nav-link-custom:hover {

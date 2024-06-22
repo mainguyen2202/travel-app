@@ -167,7 +167,7 @@ const Login = () => {
                                     </p>
                                     <p className="d-flex my-3 justify-content-center-login">
                                         Bạn chưa có tài khoản?
-                                        <a href="/register"> Đăng ký </a>
+                                        <a href="/registration"> Đăng ký </a>
                                     </p>
                                 </div>
                             </div>

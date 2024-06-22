@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from "../../constants/constants";
-import { userEditPassWord } from "../../services/userServices";
+import { apiResetPassWord } from "../../services/userServices";
 
 const ForgotPassword = (props) => {
     const navigate = useNavigate();
@@ -13,6 +13,7 @@ const ForgotPassword = (props) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const encodedUserId = searchParams.get('token').slice('unique_token'.length);
+    const token = searchParams.get('token');
 
     let userId;
     try {
@@ -22,20 +23,15 @@ const ForgotPassword = (props) => {
         userId = null; // Nếu giải mã hoặc chuyển đổi thất bại
     }
 
-
     useEffect(() => {
-       
     }, []);
 
-
-
- 
 
     const ProceedThayDoiMatKhau = async (e) => {        
         e.preventDefault();
         if (validate()) {
             try {
-                const response = await userEditPassWord(newPassword,userId);
+                const response = await apiResetPassWord(token, newPassword);
                 if (response.status === 200) {
                     const data = await response.data;
                     console.log(data);
@@ -74,7 +70,7 @@ const ForgotPassword = (props) => {
 
     const [passwordVisibility, setPasswordVisibility] = useState({
             'new-password': false,
-        'confirm-password': false,
+            'confirm-password': false,
     });
 
     const togglePasswordVisibility = (inputId) => {

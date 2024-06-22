@@ -254,3 +254,9 @@ https://www.bezkoder.com/docker-compose-react-nodejs-mysql/
 
 # When to use dangerouslySetInnerHTML in React?
 https://refine.dev/blog/use-react-dangerouslysetinnerhtml/#when-to-use-dangerouslysetinnerhtml
+
+# reactjs useeffect double loading
+
+https://www.geeksforgeeks.org/how-to-fix-react-useeffect-running-twice/
+
+https://stackoverflow.com/questions/70491774/usenavigate-may-be-used-only-in-the-context-of-a-router-component

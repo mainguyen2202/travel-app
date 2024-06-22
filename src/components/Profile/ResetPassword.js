@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from "../../constants/constants";
-import { apiResetPassword } from "../../services/userServices";
+import { apiForgotPassword } from "../../services/userServices";
 
 const ResetPassword = (props) => {
 
@@ -17,7 +17,7 @@ const ResetPassword = (props) => {
             email: email
         };
         try {
-            const response = await apiResetPassword(loginDTO);
+            const response = await apiForgotPassword(loginDTO);
             if (response.status === 200) {
                 const data =  response.data;
                 console.log(data);

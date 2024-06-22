@@ -58,13 +58,13 @@ const Contact = (props) => {
 
   const isInputValid = () => {
     if (!name) {
-      toast.warning('Please enter Username');
+      toast.warning('Please enter Họ và Tên');
       return false;
     } else if (!subject) {
-      toast.warning('Please enter Fullname');
+      toast.warning('Please enter Chủ đề');
       return false;
     } else if (!mess) {
-      toast.warning('Please enter Password');
+      toast.warning('Please enter Nội dung');
       return false;
     } else if (!email) {
       toast.warning('Please enter Email');
@@ -73,10 +73,8 @@ const Contact = (props) => {
       toast.warning('Please enter a valid email');
       return false;
     }
-
     return true;
   };
-
 
   return (
     <div>

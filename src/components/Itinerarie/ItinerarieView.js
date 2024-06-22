@@ -38,6 +38,7 @@ const ItinerarieView = (props) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceParticipantCount, setTotalPriceParticipantCount] = useState(0);
   const [data, setData] = useState([]);
+
   useEffect(() => {
     console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
     console.log("input", itineraryId);
@@ -320,50 +321,116 @@ const ItinerarieView = (props) => {
   const [userLocation, setUserLocation] = useState(null);
 
   // define the function that finds the users geolocation
-  const getUserLocation = () => {
-    console.log("getUserLocation");
-    // if geolocation is supported by the users browser
-    if (navigator.geolocation) {
-      // get the current users location
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // save the geolocation coordinates in two variables
-          const { latitude, longitude } = position.coords;
-          if (userLocation == null) {
-            markers.push(
-              {
+
+
+  const getUserLocation = async () => {
+    console.log("get User Location");
+    try {
+      // 'granted': Người dùng đã cấp quyền truy cập vị trí.
+      // 'denied': Người dùng đã từ chối quyền truy cập vị trí.
+      // 'prompt': Trình duyệt chưa yêu cầu người dùng cấp quyền và đang chờ người dùng phản hồi.
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+
+      if (permission.state === 'granted') {
+        // Lấy vị trí của người dùng
+        navigator.geolocation.watchPosition(
+          (position) => {
+            // save the geolocation coordinates in two variables
+            const { latitude, longitude } = position.coords;
+            if (userLocation == null) {
+              markers.push({
                 id: -1,
                 name: "Vị trí của tôi",
-                position: {
-                  lat: parseFloat(latitude),
-                  lng: parseFloat(longitude)
-                },
+                position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
                 icon: "",
-              }
-            );
-            setMarkers(markers);
-            console.log("GPSmarkers", markers);
-          }
-          // gán phần tử đầu tiên làm vị trí trung tâm của bản đồ
-          // update the value of userlocation variable
-          setUserLocation({ lat: latitude, lng: longitude });
-          console.log("GPSlocaction", userLocation);
-        },
-        // if there was an error getting the users location
-        (error) => {
-          console.error('Error getting user location:', error);
-        }
-      );
-    }
-    // if geolocation is not supported by the users browser
-    else {
-      console.error('Geolocation is not supported by this browser.');
+              });
+              setMarkers(markers);
+              console.log("GPSmarkers", markers);
+            }
+            // gán phần tử đầu tiên làm vị trí trung tâm của bản đồ
+            // update the value of userlocation variable
+            setUserLocation({ lat: latitude, lng: longitude });
+            console.log("GPSlocaction", userLocation);
+          },
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              console.error('permission denied ');
+            } else {
+              console.error('Error getting user location:', error);
+            }
+          },
+          { enableHighAccuracy: true }
+        );
+      } else if (permission.state === 'prompt') {
+        // Hiển thị thông báo yêu cầu quyền truy cập vị trí
+        await showLocationPermissionPrompt();
+      } else if (permission.state === 'denied') {
+        // Hiển thị thông báo khi người dùng từ chối quyền truy cập vị trí
+        // Location permission is denied
+        await showLocationPermissionDeniedMessage();
+      }
+    } catch (error) {
+      console.error('Error getting user location:', error);
     }
   };
+
+  async function showLocationPermissionPrompt() {
+    try {
+      console.log("Permission Prompt");
+      // Hiển thị popup yêu cầu người dùng cấp quyền truy cập vị trí
+      const result = await Swal.fire({
+        title: 'Cần quyền truy cập vị trí',
+        text: "Để sử dụng tính năng này, vui lòng cấp quyền truy cập vị trí của bạn.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Cấp quyền'
+      });
+      // Sau khi người dùng cấp quyền, thực hiện các hành động cần thiết
+      // yes : permission.state === 'granted'
+      // no : permission.state === 'denied'
+      if (result.isConfirmed) {
+        // Request location permission
+        await navigator.geolocation.getCurrentPosition(
+          () => {
+            // Location permission granted
+            window.location.reload();
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error showing location permission prompt:', error);
+    }
+  }
+
+  async function showLocationPermissionDeniedMessage() {
+    try {
+      await Swal.fire({
+        title: 'Bạn đang từ chối quyền truy cập vị trí',
+        text: "Vui lòng cấp quyền truy cập vị trí để sử dụng tính năng này.",
+        icon: 'error',
+        confirmButtonText: 'Mở Settings'
+      });
+
+      // Open the browser settings to allow the user to grant permission
+      // window.open('chrome://settings/content/location', '_blank');
+      // Open the browser's location permission settings page
+      window.open('https://www.google.com/search?q=how+to+change+location+permissions+in+my+browser', '_blank');
+    } catch (error) {
+      console.error('Error showing location permission denied message:', error);
+    }
+  }
+
   if (!isLoaded) {
     // tìm kiếm vị trí của tôi
+    // Tìm kiếm vị trí của người dùng
+    console.log("get GPS");
     getUserLocation();
-    return
+    return;
   }
   // */
   // END: googlemap
@@ -435,8 +502,6 @@ const ItinerarieView = (props) => {
       <section className="ftco-section">
         <div className="container">
           <div className="row">
-
-
             <div class="col-lg-3 sidebar order-md-first ftco-animate">
               <div class="sidebar-wrap ftco-animate">
                 <div class="container">
@@ -491,7 +556,7 @@ const ItinerarieView = (props) => {
 
 
 
-         
+
 
 
                   <div class="form-group">

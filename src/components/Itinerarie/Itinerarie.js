@@ -593,7 +593,7 @@ const Itinerarie = (props) => {
                                                                                 <div className="bottom-area d-flex">
                                                                                     <a
                                                                                         className="edit"
-                                                                                        title="Edit"
+                                                                                        title="Chỉnh sửa"
                                                                                         data-toggle="modal"
                                                                                         data-target="#exampleModalEdit"
                                                                                         onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
@@ -610,7 +610,7 @@ const Itinerarie = (props) => {
                                                                                     </a>
                                                                                     <a
                                                                                         className="share"
-                                                                                        title="chia sẻ"
+                                                                                        title="Chia sẻ"
                                                                                         data-toggle="modal"
                                                                                         data-target="#exampleModalShare"
                                                                                         onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
@@ -685,6 +685,7 @@ const Itinerarie = (props) => {
                                                                                 >
                                                                                     {itinerary.name}
                                                                                 </Link>
+                                                                                <hr />
                                                                             </h3>
                                                                             <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
                                                                             <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
