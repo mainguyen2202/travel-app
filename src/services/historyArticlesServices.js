@@ -6,10 +6,10 @@ export async function showAllHistoryArticles() {
     return response;
 }
 
-export async function clickView(idArticles) {
+export async function clickView(articleId) {
     const data = {
         articles: {
-            id: idArticles,
+            id: articleId,
         },
     };
     return await api.post(`/public/historyArticles/clickView`,data);

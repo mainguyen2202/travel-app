@@ -33,7 +33,6 @@ const markers = [
 
 const MyGoogleMap = (props) => {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
     // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   });

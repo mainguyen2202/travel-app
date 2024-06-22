@@ -29,21 +29,19 @@ const Footer = (props) => {
 										<li className="py-2 d-block"><a href="/places">Địa điểm</a></li>
 										<li className="py-2 d-block"><a href="/itinerarie">Kế Hoạch</a></li>
 										<li className="py-2 d-block"><a href="/like">Yêu Thích</a></li>
-										<li className="py-2 d-block"><a href="/blog">Tin tức</a></li>
 										<li className="py-2 d-block"><a href="/contact">Liên Hệ</a></li>
 
-										<li className="py-2 d-block"><a href="/map">Map</a></li>
 									</ul>
                         </div>
                     </div>
              
                     <div className="col-md">
                         <div className="ftco-footer-widget mb-4">
-                            <h2 className="ftco-heading-2">Have a Questions?</h2>
+                            <h2 className="ftco-heading-2">Thông tin liên hệ</h2>
                             <div className="block-23 mb-3">
                                 <ul>
                                     <li><span className="icon icon-map-marker"></span><span className="text">VQCR+GP6, Khu Phố 6, Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam</span></li>
-                                    <li><a href="#"><span className="icon icon-phone"></span><span className="text">0788012345</span></a></li>
+                                    <li><a href="#"><span className="icon icon-phone"></span><span className="text">0788013946</span></a></li>
                                     <li><a href="#"><span className="icon icon-envelope"></span><span className="text">trucmainguyen02@gmail.com</span></a></li>
                                 </ul>
                             </div>

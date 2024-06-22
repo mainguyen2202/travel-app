@@ -16,8 +16,8 @@ import { clickView } from '../../services/historyArticlesServices';
 import { itineraryArticlesCreate } from '../../services/itineraryArticlesServices';
 import { listBySearchItineraries } from '../../services/itinerarieServices';
 import { likeCreate, listBySearchLike } from '../../services/likeServices';
-import { feedbacksCreate, listBySearchFeedbacks } from '../../services/feedbacksServices';
-
+import { apiFeedbacksHeart, feedbacksCreate, listBySearchFeedbacks } from '../../services/feedbacksServices';
+import { FaUserCircle } from 'react-icons/fa';
 const PlacesSingle = (props) => {
     const navigate = useNavigate();
 
@@ -45,6 +45,7 @@ const PlacesSingle = (props) => {
     }
 
     useEffect(() => {
+        console.log("-------------------");
         if (articleId != 0) {
             handleClickView(articleId);
         } else {
@@ -54,7 +55,7 @@ const PlacesSingle = (props) => {
         fetchData();
         fetchInitDataItineraries();
         fetchInitDataFeedbacks();
-        fetchDataArticlesBySearch();
+        // fetchDataArticlesBySearch();
         getListLike4ArticlesByUserId();
     }, []);
 
@@ -67,24 +68,27 @@ const PlacesSingle = (props) => {
 
             setData(data);
             const placesIda = data.places.id;
+            const topicssIda = data.topics.id;
             setPlacesId(placesIda);
+            fetchDataArticlesBySearch(placesIda, topicssIda);
         }
 
     };
 
-    const handleClickView = async (idArticles) => {
+    const handleClickView = async (articleId) => {
         try {
+            console.log("--------1-----------");
 
-            const response = await clickView(idArticles);
+            const response = await clickView(articleId);
             if (response.status === 200) {
                 const data = response.data;
                 console.log(data);
 
                 if (data.status == 1) {
-                    // toast.success(data.message);
+                    toast.success(data.message);
                 } else {
-                    console.log(data.message);
-                    toast.error(data.message);
+                    // console.log(data.message);
+                    // toast.error(data.message);
                 }
 
             } else if (response.status == 400) {
@@ -202,7 +206,7 @@ const PlacesSingle = (props) => {
                     setLikedArticlesId(tmpLikedArticlesId);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
     };
@@ -222,7 +226,7 @@ const PlacesSingle = (props) => {
                 setFeedbacksOfArticleId(data);
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
     }
@@ -233,15 +237,17 @@ const PlacesSingle = (props) => {
         // const tmpHeart = parseInt(heart);
         console.log("tmpHeart", heart, "tmpHeart", articleId);
 
-        const response = await handleFeedbacksHeart(heart,articleId);
+        const response = await apiFeedbacksHeart(heart, articleId);
         if (response.status === 200) {
             const data = await response.data;
             console.log("handleFeedbacksHeart", data);
             if (data.length > 0) {
                 setFeedbacksOfArticleId(data);
+            } else {
+                setFeedbacksOfArticleId([]);
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
     }
@@ -250,7 +256,7 @@ const PlacesSingle = (props) => {
         if (token) {
             try {
 
-                const response = await feedbacksCreate(articleId, userId,currentValue,review);
+                const response = await feedbacksCreate(articleId, userId, currentValue, review);
 
 
 
@@ -278,22 +284,23 @@ const PlacesSingle = (props) => {
     };
 
     // tạo hàm xử lí lấy danh sách
-    const fetchDataArticlesBySearch = async () => {
+    const fetchDataArticlesBySearch = async (inPlaceId, inSubtopicId) => {
         // Retrieve the object from the storage
 
-        console.log("placesId =", placesId);
-        let subtopicId = 8;
-        console.log("subtopicId =", subtopicId);
 
-        const response = await articlesListPlaceIdSubtopicId(placesId, subtopicId);
+
+        const response = await articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId);
         if (response.status === 200) {
             const data = response.data;
             console.log("fetchDataArticlesBySearch", data);
             if (data.length > 0) {
-                setArticlesPlacesId(data);
+
+                const topArticles = data.slice(0, 4);
+                setArticlesPlacesId(topArticles);
+                // setArticlesPlacesId(data);
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
     }
@@ -393,33 +400,30 @@ const PlacesSingle = (props) => {
                                                 </span>
                                             </a>
 
-                                            <form action="#">
+                                            {/* <form action="#"> */}
 
-                                                <div className="fields col-lg-3  ">
+                                            <div className="fields col-lg-3  ">
 
-                                                    <div className="form-group">
-                                                        <div className="select-wrap one-third">
-                                                            <h3 className="heading mb-4">Kế hoạch</h3>
-                                                            <select
-                                                                name=""
-                                                                id=""
-                                                                className="form-control"
-                                                                placeholder="Tìm kiếm theo từ khóa"
-                                                                onClick={(e) => {
-                                                                    handleCreateItineraries(e, articleId, e.target.value);
-                                                                }}
-                                                            >
-                                                                {itinerariesOfUser.map((itinerary, ii) => (
-                                                                    <option value={itinerary.id} key={ii} >
-                                                                        {itinerary.name}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
+                                                <div className="select-wrap one-third">
+                                                    <h3 className="heading mb-4">Kế hoạch</h3>
+                                                    <select style={{ fontSize: '15px' }}
+                                                        name=""
+                                                        id=""
+                                                        className="form-control"
+                                                        placeholder="Tìm kiếm theo từ khóa"
+                                                        onChange={(e) => handleCreateItineraries(e, articleId, e.target.value)}
+                                                    >
+                                                        <option value="">Chọn một kế hoạch</option>
+                                                        {itinerariesOfUser.map((itinerary, ii) => (
+                                                            <option value={itinerary.id} key={ii}>
+                                                                {itinerary.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                            </form>
+
+                                            </div>
+                                            {/* </form> */}
                                         </div>
 
                                     ) : (
@@ -434,36 +438,26 @@ const PlacesSingle = (props) => {
 
                                     {/* </div> */}
                                 </div>
+
+
                                 <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
-                                    {/* <div className="reservation-form" > */}
-                                    {/* <h2>{data.name}</h2> */}
-                                    <div className="row">
 
-                                        <div id="map">
-                                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12469.776493332698!2d-80.14036379941481!3d25.907788681148624!2m3!1f357.26927939317244!2f20.870722720054623!3f0!3m2!1i1024!2i768!4f35!3m3!1m2!1s0x88d9add4b4ac788f%3A0xe77469d09480fcdb!2sSunny%20Isles%20Beach!5e1!3m2!1sen!2sth!4v1642869952544!5m2!1sen!2sth" width="100%" height="450px" frameBorder="0"
-                                                allowFullScreen=""
-                                            >
-                                            </iframe>
-                                        </div>
-
+                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <h1 className="boldText">{data.name}</h1>
                                     </div>
-                                    {/* </div> */}
-                                </div>
-
-
-                                <div className="col-md-12 hotel-single mt-4 mb-5 ftco-animate">
-
-                                    <span>Our Best hotels &amp; Rooms</span>
-                                    <h2>{data.name}</h2>
-                                    <p>{data.content}</p>
-
+                                    {/* <p>{data.content}</p> */}
+                                    <div dangerouslySetInnerHTML={{ __html: data.content }} />
                                 </div>
 
                                 <div className="col-md-12 hotel-single ftco-animate mb-5 mt-4">
                                     <h4 className="mb-4">Đi tham quan</h4>
                                     <div className="block-16">
+                                        {/* <figure >
+                                            <img src={data.image} alt="Image placeholder" className="img-fluid" style={{with:'1200px'}} />
+                                            <a href={data.title} className="play-button popup-vimeo" target="blank"><span className="icon-play"></span></a>
+                                        </figure> */}
                                         <figure>
-                                            <img src={data.image} alt="Image placeholder" className="img-fluid" />
+                                            <img src={data.image} alt="Image placeholder" className="img-fluid image-width" />
                                             <a href={data.title} className="play-button popup-vimeo" target="blank"><span className="icon-play"></span></a>
                                         </figure>
                                     </div>
@@ -541,8 +535,12 @@ const PlacesSingle = (props) => {
 
 
                                                         <li className="comment">
-                                                            <div className="vcard bio">
+                                                            {/* <div className="vcard bio">
                                                                 <img src="images/person_1.jpg" alt="Image placeholder" />
+                                                            </div> */}
+
+                                                            <div className="vcard bio">
+                                                                <FaUserCircle size={64} style={{ color: '#ccc' }} />
                                                             </div>
                                                             <div className="comment-body">
                                                                 <h3>{feedbacksOfUsers.users.name}</h3>
@@ -557,10 +555,9 @@ const PlacesSingle = (props) => {
 
                                                                 <div className="meta">{feedbacksOfUsers.creatAt}</div>
                                                                 <p>{feedbacksOfUsers.review}</p>
-                                                                <p><a href="#" className="reply">Reply</a></p>
                                                             </div>
 
-                                                          
+
 
                                                         </li>
 
@@ -632,7 +629,7 @@ const PlacesSingle = (props) => {
                                                                 </div>
 
 
-                                                              
+
 
                                                             </form>
                                                         </div>
@@ -654,99 +651,123 @@ const PlacesSingle = (props) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="col-md-12 hotel-single ftco-animate mb-5 mt-5">
-                                    <h4 className="mb-4">Related Hotels</h4>
+                                <div 
+                                className="col-md-12 hotel-single ftco-animate mb-5 mt-5" 
+                             
+                                >
+                                    <h4 className="mb-4">Bài viết liên quan</h4>
+
+
 
                                     <div className="row">
-
-                                        {articlesPlacesId.map((articlesPlacesIds, i) => (
-
-
-                                            <div className="col-md-3" key={i}>
-                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                                    <div className="card">
-                                                        <Link to={`/detail?article_id=${articlesPlacesIds.id}`}>
-                                                            <img src={articlesPlacesIds.image} className="card-img-top card-img-top-mainguyen" style={{ height: '170px' }} alt="..." />
-                                                        </Link>
-                                                        <div className="card-body">
-                                                            <div className="d-flex">
-                                                                <div className="one">
-                                                                    <p className="rate">
-                                                                        <i className="icon-star"></i>
-                                                                        <i className="icon-star"></i>
-                                                                        <i className="icon-star"></i>
-                                                                        <i className="icon-star"></i>
-                                                                        <i className="icon-star-o"></i>
-                                                                    </p>
-                                                                    <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${articlesPlacesIds.id}`}>{articlesPlacesIds.name}</a></h3>
-
+                                    {articlesPlacesId.slice(0, 3).map((likes, i) => (
+                                            <div className="col-md-4 mb-4" key={i}>
+                                                <div className="card h-100 shadow-sm">
+                                                    <Link to={`/detail?article_id=${likes.id}`}>
+                                                        <img
+                                                            src={likes.image}
+                                                            className="card-img-top"
+                                                            alt="..."
+                                                        />
+                                                    </Link>
+                                                    <div className="card-body">
+                                                        <div className="d-flex justify-content-between">
+                                                            <div className="one">
+                                                                <h3
+                                                                    className="truncate-3-lines"
+                                                                >
+                                                                    <Link to={`/detail?article_id=${likes.id}`}>
+                                                                        {likes.name}
+                                                                    </Link>
+                                                                </h3>
+                                                                <p className="card-text">
+                                                                    {likes.historyArticles.length > 0 ? (
+                                                                        <span>{likes.historyArticles[0].count} lượt xem</span>
+                                                                    ) : (
+                                                                        <span>Xem chi tiết</span>
+                                                                    )}
+                                                                </p>
+                                                            </div>
+                                                            <div className="two">
+                                                                <p className="price">
+                                                                    {new Intl.NumberFormat('vi-VN', {
+                                                                        style: 'currency',
+                                                                        currency: 'VND',
+                                                                    }).format(likes.price)}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <hr />
+                                                        <div >
+                                                            {token ? (
+                                                                <div className="d-flex justify-content-between">
+                                                                    <a
+                                                                        onClick={(e) => handleCreateLike(e, likes.id)}
+                                                                        className={`like ${likedArticlesId.includes(likes.id) ? 'liked' : ''}`}
+                                                                        title="Like"
+                                                                        data-toggle="tooltip"
+                                                                    >
+                                                                        <span className="s18_s">
+                                                                            <i className="material-icons">
+                                                                                {likedArticlesId.includes(likes.id) ? 'favorite' : 'favorite_border'}
+                                                                            </i>
+                                                                        </span>
+                                                                    </a>
+                                                                    <DropdownButton
+                                                                        id={`dropdown-basic-button-${likes.id}`}
+                                                                        title="Kế hoạch"
+                                                                        // variant="outline-secondary"
+                                                                        className="ml-auto"
+                                                                    >
+                                                                        {itinerariesOfUser.map((itinerary, ii) => (
+                                                                            <Dropdown.Item
+                                                                                value={itinerary.id}
+                                                                                key={ii}
+                                                                                onClick={(e) => {
+                                                                                    handleCreateItineraries(e, likes.id, itinerary.id);
+                                                                                }}
+                                                                            >
+                                                                                {itinerary.name}
+                                                                            </Dropdown.Item>
+                                                                        ))}
+                                                                    </DropdownButton>
                                                                 </div>
-                                                                <div className="two"></div>
-                                                                <span className="price">{articlesPlacesIds.price + "VNĐ"}</span>
-                                                            </div>
-                                                            <p className="days">
-                                                                {articlesPlacesIds.historyArticles.length > 0 ?
-                                                                    <span> {articlesPlacesIds.historyArticles[0].count} lượt xem</span>
-                                                                    :
-                                                                    <span>Xem chi tiết</span>
-                                                                }
-                                                            </p>
-                                                            <hr />
-                                                            <div>
-                                                                {sessionStorage.getItem('username') ? (
-                                                                    <div className="bottom-area d-flex">
-
-                                                                        <a
-                                                                            onClick={(e) => handleCreateLike(e, articlesPlacesIds.id)}
-                                                                            className={`like ${likedArticlesId.includes(articlesPlacesIds.id) ? 'liked' : ''}`}
-                                                                            title="Like"
-                                                                            data-toggle="tooltip"
-                                                                        >
-                                                                            <span className="s18_s">
-                                                                                <i className="material-icons">
-                                                                                    {likedArticlesId.includes(articlesPlacesIds.id) ? 'favorite' : 'favorite_border'}
-                                                                                </i>
-                                                                            </span>
-                                                                        </a>
-
-                                                                        <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                            {itinerariesOfUser.map((itinerary, ii) => (
-                                                                                <Dropdown.Item
-
-                                                                                    value={itinerary.id}
-                                                                                    key={ii}
-                                                                                    onClick={(e) => {
-                                                                                        handleCreateItineraries(e, articlesPlacesIds.id, itinerary.id);
-                                                                                    }}
-                                                                                >
-                                                                                    {itinerary.name}
-                                                                                </Dropdown.Item>
-                                                                            ))}
-                                                                        </DropdownButton>
+                                                            ) : (
+                                                                <div >
+                                                                   
+                                                                    <div>
+                                                                        <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
                                                                     </div>
-                                                                ) : (
-                                                                    <div className="bottom-area d-flex">
-                                                                        <div>
-                                                                            <a href="/itinerarie" className="btn btn-primary btn-lg btn-block btn-kehoach">Kế hoạch</a>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
+                                                                </div>
+                                                            )}
 
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        ))}
+                                    
+                                ))}
 
-                                    </div>
+{articlesPlacesId.length > 3 && (
+    <div className="col-12 text-center">
+      <Link to="/places" className="btn btn-primary btn-lg">
+       Xem thêm
+      </Link>
+    </div>
+  )}
                                 </div>
 
+
+
+
                             </div>
+
                         </div>
                     </div>
-                </div >
+                </div>
+        </div >
             </section >
+            
 
 
         </div >

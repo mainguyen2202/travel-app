@@ -4,7 +4,6 @@ import { REACT_APP_GOOGLE_MAPS_KEY } from "../constants/constants";
 
 const Map = ({ selectedLocation }) => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
     // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
   });
   const mapRef = React.useRef();

@@ -9,9 +9,11 @@ docker build -t travel-app:latest .
 docker run -p 3000:3000 travel-app:latest
 docker run -d -p 3000:3000 --name travel-app travel-app:latest
 
+docker-compose up -d --build
 # Build image
 docker compose build
 
 # Chạy container
 docker compose up -d
 
+https://github.com/brandonwie/practice-dockerize-reactjs

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SERVER_URL } from "../../constants/constants";
+import { apiResetPassword } from "../../services/userServices";
 
 const ResetPassword = (props) => {
 
@@ -16,7 +17,7 @@ const ResetPassword = (props) => {
             email: email
         };
         try {
-            const response = await ResetPassword();
+            const response = await apiResetPassword(loginDTO);
             if (response.status === 200) {
                 const data =  response.data;
                 console.log(data);
@@ -59,12 +60,6 @@ const ResetPassword = (props) => {
                                 <div className="card-body p-5 text-center">
 
                                     <h3 className="mb-5">Quên mật khẩu</h3>
-
-
-
-
-
-
 
 
                                     <form className="frm_password" novalidate>

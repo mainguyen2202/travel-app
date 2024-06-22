@@ -2,8 +2,8 @@
 import anonymousApi from "./anonymousApi";
 import api from "./api";
 
-export async function articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId) {
-    return await api.get(`/public/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}`);
+export async function articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId, inPlaceIds='') {
+    return await api.get(`/public/articles/list?places_id=${inPlaceId}&topics_id=${inSubtopicId}&places_ids=${inPlaceIds}`);
 }
 
 export async function showAllArticlesListDate() {

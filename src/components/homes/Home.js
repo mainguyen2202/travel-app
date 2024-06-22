@@ -18,6 +18,7 @@ const Home = (props) => {
     const [topic, setTopic] = useState([]);
     const [like, setLike] = useState([]);
     const [userId, setUserId] = useState(0);
+    const [shownLikes, setShownLikes] = useState(6);
 
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
 
@@ -55,7 +56,7 @@ const Home = (props) => {
                 // setPlace(placeData);
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
 
@@ -74,7 +75,7 @@ const Home = (props) => {
                 setTopic(data);
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
     };
 
@@ -88,10 +89,11 @@ const Home = (props) => {
                 const data = await response.data;
                 console.log(data);
                 if (data.length > 0) {
-                    setLike(data);
+                        setLike(data);
+                        
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
@@ -109,7 +111,7 @@ const Home = (props) => {
                     setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
@@ -202,7 +204,7 @@ const Home = (props) => {
                     setLikedArticlesId(tmpLikedArticlesId);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
     };
@@ -368,105 +370,107 @@ const Home = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="container">
-                    <div className="row">
-                        {token ? (
-
-                            <div className="row">
-                                {like.map((likes, i) => (
-                                    <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i} >
-                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                            <div className="card"  >
-                                                <Link to={`/detail?article_id=${likes.articles.id}`}>
-                                                    <img src={likes.articles.image}
-
-                                                        className="card-img-top card-img-top-mainguyen" alt="..." />
-                                                </Link>
-                                                <div className="card-body">
-                                                    <div className="d-flex">
-                                                        <div className="one">
-                                                            <p className="rate">
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star"></i>
-                                                                <i className="icon-star-o"></i>
-                                                            </p>
-                                                            <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${likes.articles.id}`}>{likes.articles.name}</a></h3>
-                                                        </div>
-                                                        <div className="two">
-                                                            <span className="price">{likes.articles.price + "VNĐ"}</span>
-                                                        </div>
-
-                                                    </div>
-                                                    <p className="days">
-                                                        {likes.articles.historyArticles.length > 0 ?
-                                                            <span> {likes.articles.historyArticles[0].count} lượt xem</span>
-                                                            :
-                                                            <span>Xem chi tiết</span>
-                                                        }
-                                                    </p>
-
-                                                    <hr />
-                                                    <div>
-                                                        {token ? (
-                                                            <div className="bottom-area d-flex">
-                                                                <a
-                                                                    onClick={(e) => handleCreateLike(e, likes.articles.id)}
-                                                                    className={`like ${likedArticlesId.includes(likes.articles.id) ? 'liked' : ''}`}
-                                                                    title="Like"
-                                                                    data-toggle="tooltip"
-                                                                >
-                                                                    <span className="s18_s">
-                                                                        <i className="material-icons">
-                                                                            {likedArticlesId.includes(likes.articles.id) ? 'favorite' : 'favorite_border'}
-                                                                        </i>
-                                                                    </span>
-                                                                </a>
-
-                                                                <DropdownButton id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-                                                                    {itinerariesOfUser.map((itinerary, ii) => (
-                                                                        <Dropdown.Item
-
-                                                                            value={itinerary.id}
-                                                                            key={ii}
-                                                                            onClick={(e) => {
-                                                                                handleCreate(e, likes.articles.id, itinerary.id);
-                                                                            }}
-                                                                        >
-                                                                            {itinerary.name}
-                                                                        </Dropdown.Item>
-                                                                    ))}
-                                                                </DropdownButton>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="bottom-area d-flex">
-
-                                                                <DropdownButton href="/itinerarie" id="dropdown-basic-button" className="ml-auto" title="Kế hoạch">
-
-                                                                </DropdownButton>
-                                                            </div>
-
-                                                        )}
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                <div 
+                // className="col-md-12 hotel-single ftco-animate mb-5 mt-5" 
+                className="container my-5 "
+                >
+                  <div className="row">
+      {token ? (
+        <div className="row">
+          {like.slice(0, shownLikes).map((likes, i) => (
+            <div className="col-md-4 mb-4" key={i}>
+              <div className="card h-100 shadow-sm">
+                <Link to={`/detail?article_id=${likes.articles.id}`}>
+                  <img
+                    src={likes.articles.image}
+                    className="card-img-top"
+                    alt="..."
+                  />
+                </Link>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between">
+                    <div className="one">
+                      <h3 className="truncate-3-lines">
+                        <Link to={`/detail?article_id=${likes.articles.id}`}>
+                          {likes.articles.name}
+                        </Link>
+                      </h3>
+                      <p className="card-text">
+                        {likes.articles.historyArticles.length > 0 ? (
+                          <span>{likes.articles.historyArticles[0].count} lượt xem</span>
                         ) : (
-                            <div>
-                                <p>Đăng nhập để thấy địa điểm yêu thích</p>
-                            </div>
+                          <span>Xem chi tiết</span>
                         )}
-
-
-
-
+                      </p>
                     </div>
+                    <div className="two">
+                      <p className="price">
+                        {new Intl.NumberFormat('vi-VN', {
+                          style: 'currency',
+                          currency: 'VND',
+                        }).format(likes.articles.price)}
+                      </p>
+                    </div>
+                  </div>
+                  <hr />
+                  <div className="d-flex justify-content-between">
+                    <a
+                      onClick={(e) => handleCreateLike(e, likes.articles.id)}
+                      className={`like ${likedArticlesId.includes(likes.articles.id) ? 'liked' : ''}`}
+                      title="Like"
+                      data-toggle="tooltip"
+                    >
+                      <span className="s18_s">
+                        <i className="material-icons">
+                          {likedArticlesId.includes(likes.articles.id) ? 'favorite' : 'favorite_border'}
+                        </i>
+                      </span>
+                    </a>
+                    <DropdownButton
+                      id={`dropdown-basic-button-${likes.articles.id}`}
+                      title="Kế hoạch"
+                      className="ml-auto"
+                    >
+                      {itinerariesOfUser.map((itinerary, ii) => (
+                        <Dropdown.Item
+                          value={itinerary.id}
+                          key={ii}
+                          onClick={(e) => {
+                            handleCreate(e, likes.articles.id, itinerary.id);
+                          }}
+                        >
+                          {itinerary.name}
+                        </Dropdown.Item>
+                      ))}
+                    </DropdownButton>
+                  </div>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="col-12">
+          <p className="text-center">Đăng nhập để thấy địa điểm yêu thích</p>
+        </div>
+      )}
+      {like.length > shownLikes && (
+        <div className="col-12 text-center mt-4">
+          {/* <button
+            className="btn btn-primary mr-2"
+            onClick={() => setShownLikes(shownLikes + 6)}
+          >
+            Xem thêm
+          </button> */}
+          <Link to="/like"  className="btn btn-primary mr-2">
+            Xem thêm
+          </Link>
+        </div>
+      )}
+    </div>
+                </div>
+
+
             </section>
 
 

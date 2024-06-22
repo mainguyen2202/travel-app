@@ -1,9 +1,9 @@
 import api from "./api";
 import anonymousApi from "./anonymousApi";
 
-export async function ResetPassword( ){
+export async function apiResetPassword(loginDTO ){
    
-    return await anonymousApi.post(`public/users/forgotPassword`);
+    return await anonymousApi.post(`public/users/forgotPassword`,loginDTO);
 }
 
 export async function checkUserName(username ){

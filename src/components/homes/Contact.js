@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast, ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
-import ReactPaginate from 'react-paginate';
+
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { contactsCreate } from "../../services/contactsServices";
@@ -105,13 +105,13 @@ const Contact = (props) => {
               <p><span>Địa chỉ:</span>VQCR+GP6, Khu Phố 6, Thủ Đức, Thành phố Hồ Chí Minh, Việt Nam</p>
             </div>
             <div className="col-md-3">
-              <p><span>Số điện thoại:</span> <a href="tel://1234567920">0 1235 2355 98</a></p>
+              <p><span>Số điện thoại:</span> <a href="tel://1234567920">0788013946</a></p>
             </div>
             <div className="col-md-3">
-              <p><span>Email:</span> <a href="mailto:info@yoursite.com">travels.com</a></p>
+              <p><span>Email:</span> <a href="20130321@st.hcmuaf.edu.vn">20130321@st.hcmuaf.edu.vn</a></p>
             </div>
             <div className="col-md-3">
-              <p><span>Website</span> <a href="#">yoursite.com</a></p>
+              <p><span>Website</span> <a href="#">travels.com</a></p>
             </div>
           </div>
           <div className="row block-9">

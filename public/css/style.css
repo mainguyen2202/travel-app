@@ -7268,7 +7268,7 @@ a.text-dark:hover, a.text-dark:focus {
     border: 1px solid #dee2e6 !important; } }
 
 body {
-  font-family: "Poppins", Arial, sans-serif;
+  font-family: "Roboto", Arial, sans-serif;
   background: #fff;
   font-size: 16px;
   line-height: 1.8;
@@ -7476,7 +7476,7 @@ h1, h2, h3, h4, h5,
 .slider-text {
   color: #fff; }
   .slider-text h1 {
-    font-family: "Abril Fatface", cursive;
+    font-family: "Roboto", cursive;
     font-size: 80px;
     color: #fff;
     line-height: 1;
@@ -7961,7 +7961,7 @@ h1, h2, h3, h4, h5,
     background: #fff;
     padding: 20px; }
     .destination-entry .text h3 {
-      font-family: "Abril Fatface", cursive;
+      font-family: "Roboto", cursive;
       margin-bottom: 0; }
 
 .single-slider .owl-nav {
@@ -8020,10 +8020,10 @@ h1, h2, h3, h4, h5,
 
 .hotel-single h2 {
   font-size: 34px;
-  font-family: "Abril Fatface", cursive; }
+  font-family: "Roboto", cursive; }
 
 .hotel-single h4 {
-  font-family: "Abril Fatface", cursive;
+  font-family: "Roboto", cursive;
   font-size: 28px; }
 
 .hotel-single .loc {
@@ -8433,7 +8433,7 @@ textarea.form-control {
 .heading-section h2 {
   font-size: 40px;
   font-weight: normal;
-  font-family: "Abril Fatface", cursive; }
+  font-family: "Roboto", cursive; }
   @media (max-width: 767.98px) {
     .heading-section h2 {
       font-size: 28px; } }

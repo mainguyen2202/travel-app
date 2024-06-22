@@ -19,9 +19,7 @@ import {
 import { itinerariesDetail } from "../../services/itinerarieServices";
 import { itineraryArticlesDetail, itineraryArticlesEdit, itineraryArticlesListBySearch, itineraryArticlesRemove } from "../../services/itineraryArticlesServices";
 
-import DataTable from "react-data-table-component";
-import SortIcon from "@material-ui/icons/ArrowDownward";
-import DataTableExtensions from "react-data-table-component-extensions";
+
 const ItinerarieView = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const itineraryId = searchParams.get('itinerarie_id');
@@ -146,7 +144,7 @@ const ItinerarieView = (props) => {
         // END
       }
     } else {
-      console.error('Error:', response.status);
+      console.error('Error:', response);
     }
   };
 
@@ -159,13 +157,24 @@ const ItinerarieView = (props) => {
 
     fetchInitData(itineraryId, indateStart);
   }
-  const findByAllDate = async (e) => {
-    e.preventDefault();
+  const findByAllDate = async () => {
+    // e.preventDefault();
     console.log("click itinerarieId", itineraryId);
     setDateStartItineraryArticles(""); // Đặt giá trị rỗng cho trường input ngày
-
     fetchInitData(itineraryId, "");
+
   }
+
+  const [showAllDates, setShowAllDates] = useState(false);
+
+  const handleShowAllDates = () => {
+    setShowAllDates(!showAllDates);
+    if (!showAllDates) {
+      findByAllDate();
+    } else {
+
+    }
+  };
 
   const getDetailById = async (e, itineraryArticlesId) => {
     try {
@@ -255,55 +264,26 @@ const ItinerarieView = (props) => {
 
 
 
-  const columns = [
-    {
-      name: "Id",
-      selector: "id"
-      // sortable: true
-    },
-    {
-      name: "Tên địa điểm",
-      selector: "articles.name",
-      sortable: true
-    },
-    {
-      name: "Giá",
-      selector: "articles.price",
-      sortable: true
-    },
-    {
-      name: "Trạng thái",
-      selector: "status",
-      sortable: true,
-      cell: (row) => (
-        <div
-          style={{
-            padding: "5px 10px",
-            borderRadius: "4px",
-            backgroundColor: row.status === 1 ? "#d1f7c4" : "#ffcdd2",
-            color: row.status === 1 ? "#2e7d32" : "#c62828",
-            fontWeight: "bold",
-            display: "inline-block"
-          }}
-        >
-          {row.status === 1 ? "Hoạt động" : "Không hoạt động"}
-        </div>
-      )
-    }
-
-  ];
-
-  const tableData = {
-    columns,
-    data,
-  };
 
   // Print
+
+  // Định nghĩa hàm formatDate
+  function formatDate(dateString) {
+    if (!dateString) return null;
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', options);
+  }
+
+  function formatVndCurrency(amount) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+  }
 
   // START PAGE
 
   const [currentPage, setCurrentPage] = useState(0);
-  const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
+  const articlesPerPage = 6; // số lượng likes hiển thị trên mỗi trang
 
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
@@ -319,8 +299,8 @@ const ItinerarieView = (props) => {
 
   const [myDirections, setMyDirections] = useState(null);
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
-    // googleMapsApiKey: 'AIzaSyAbThV6ttKtmZfS0MzamJKiwo7d6JXrIu8-mai',
+    // googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
+    // googleMapsApiKey: 'AIzaSyAbThV6ttKtmZfS0MzamJKiwo7d6JXrIu8',
     // googleMapsApiKey:'AIzaSyD7bAY6_F5ZzXkGoCSybQXSwKF_SATQQlQ-mai',
     // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
@@ -357,7 +337,8 @@ const ItinerarieView = (props) => {
                 position: {
                   lat: parseFloat(latitude),
                   lng: parseFloat(longitude)
-                }
+                },
+                icon: "",
               }
             );
             setMarkers(markers);
@@ -456,82 +437,83 @@ const ItinerarieView = (props) => {
           <div className="row">
 
 
-            <div className="col-lg-3 sidebar order-md-first ftco-animate">
-              <div className="sidebar-wrap ftco-animate">
-                <div className="container">
-                  <div className="mb-4">
-                    <h3 className="mb-3">Thông tin kế hoạch</h3>
-                    <div className="form-group">
-                      <label htmlFor="name" className="form-label">Tên kế hoạch</label>
-                      <input value={name} className="form-control" placeholder="Tên kế hoạch" disabled />
+            <div class="col-lg-3 sidebar order-md-first ftco-animate">
+              <div class="sidebar-wrap ftco-animate">
+                <div class="container">
+                  <div class="mb-4">
+                    <h3 class="mb-3 font-weight-bold">Thông tin kế hoạch</h3>
+                    <div class="form-group">
+                      <label for="name" class="form-label font-weight-bold">Tên kế hoạch</label>
+                      <input value={name} class="form-control" placeholder="Tên kế hoạch" disabled />
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="participantCount" className="form-label">Số lượng người tham gia</label>
-                      <input value={participantCount} className="form-control" placeholder="Số lượng người tham gia" disabled />
+                    <div class="form-group">
+                      <label for="participantCount" class="form-label font-weight-bold">Số lượng người tham gia</label>
+                      <input value={participantCount} class="form-control" placeholder="Số lượng người tham gia" disabled />
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
-                      <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required disabled />
+                    <div class="form-group">
+                      <label for="dateStart" class="form-label font-weight-bold">Ngày bắt đầu:</label>
+                      <input type="date" id="dateStart" class="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required disabled />
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
-                      <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required disabled />
+                    <div class="form-group">
+                      <label for="dateEnd" class="form-label font-weight-bold">Ngày kết thúc:</label>
+                      <input type="date" id="dateEnd" class="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required disabled />
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="content" className="form-label">Ghi chú</label>
-                      <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Notes" disabled />
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <h3 className="mb-3">Thông tin tài chính</h3>
-                    <div className="form-group">
-                      <label htmlFor="totalPrice" className="form-label">Tổng tiền trên 1 người</label>
-                      <input value={totalPrice + "đ"} className="form-control" placeholder="Tổng tiền trên 1 người" disabled />
-                    </div>
-                    <div className="form-group">
-                      <label htmlFor="totalPriceParticipantCount" className="form-label">Tổng tiền</label>
-                      <input value={totalPriceParticipantCount + "đ"} className="form-control" placeholder="Tổng tiền" disabled />
+                    <div class="form-group">
+                      <label for="content" class="form-label font-weight-bold">Ghi chú</label>
+                      <textarea value={content} onChange={e => setContent(e.target.value)} class="form-control" placeholder="Ghi chú" disabled />
                     </div>
                   </div>
-                  <div className="text-center">
-                    <button type="button" className="btn btn-primary" onClick={findByAllDate}>Xem tất cả</button>
+                  <div class="mb-4">
+                    <h3 class="mb-3 font-weight-bold">Thông tin tài chính</h3>
+                    <div class="form-group">
+                      <label for="totalPrice" class="form-label font-weight-bold">Tổng tiền trên 1 người</label>
+                      <input value={formatVndCurrency(totalPrice)} class="form-control" placeholder="Tổng tiền trên 1 người" disabled />
+                    </div>
+                    <div class="form-group">
+                      <label for="totalPriceParticipantCount" class="form-label font-weight-bold">Tổng tiền</label>
+                      <input value={formatVndCurrency(totalPriceParticipantCount)} class="form-control" placeholder="Tổng tiền" disabled />
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label htmlFor="dateStartItineraryArticles" className="form-label">Lọc theo ngày:</label>
-                    <input type="date" id="dateStartItineraryArticles" className="form-control" min={dateStart} max={dateEnd} value={dateStartItineraryArticles} onChange={e => findByDate(e, e.target.value)} />
-                  </div>
-                  <DataTableExtensions {...tableData} 
 
-> 
+                  <div class="text-center mb-4">
+                    <div class="custom-control custom-checkbox d-flex align-items-center">
+                      <input type="checkbox"
+                        class="custom-control-input"
+                        id="showAllDates"
+                        checked={showAllDates}
+                        onChange={handleShowAllDates} />
+                      <label
+                        class="custom-control-label font-weight-bold mx-2"
+                        for="showAllDates"> Xem tất cả các ngày </label>
+                    </div>
+                  </div>
 
-  <DataTable
-    columns={columns}
-    data={data}
-    noHeader
-    defaultSortField="id"
-    sortIcon={<SortIcon />}
-    defaultSortAsc={true}
-    pagination
-    highlightOnHover
-    dense
-  />
-</DataTableExtensions>
+
+
+
+         
+
+
+                  <div class="form-group">
+                    <label for="dateStartItineraryArticles" class="form-label font-weight-bold">Lọc theo ngày:</label>
+                    <input type="date" id="dateStartItineraryArticles" class="form-control" min={dateStart} max={dateEnd} value={dateStartItineraryArticles} onChange={e => findByDate(e, e.target.value)} />
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="col-lg-9">
 
-           
-                 
-             
+
+
+
 
 
 
               <div className="reservation-form mainguyen">
 
 
-                <div className="row">
+                <div className="row" style={{ height: '450px' }}>
                   <div id="map">
                     <Fragment>
                       <div className="container">
@@ -541,7 +523,7 @@ const ItinerarieView = (props) => {
                               center={userLocation}
                               zoom={12}
                               onClick={() => setIdActiveMarker(null)}
-                              mapContainerStyle={{ width: "100%", height: "90vh" }}
+                              mapContainerStyle={{ width: "100%", height: "40vh" }}
                             // zoomControl={true}
                             // streetViewControl={false}
                             // mapTypeControl={false}
@@ -552,6 +534,7 @@ const ItinerarieView = (props) => {
                                   key={item.id}
                                   position={item.position}
                                   onClick={() => handleActiveMarker(item.id, item.position)}
+                                // icon={item.id == -1 ? "http://labs.google.com/ridefinder/images/mm_20_yellow.png" : ""}
                                 >
                                   {idActiveMarker === item.id && (
                                     <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
@@ -583,14 +566,48 @@ const ItinerarieView = (props) => {
                           <img src={itineraryArticle.articles.image} className="card-img-top" alt="..." />
                         </Link>
                         <div className="card-body">
-                          <div className="d-flex">
+
+
+                          <div className="d-flex justify-content-between">
                             <div className="one">
-                              <h3><a href="">{itineraryArticle.articles.name}</a></h3>
-                              <h3><a href="">{itineraryArticle.articles.price + "VNĐ/ Khách"}</a></h3>
-                              <b>{itineraryArticle.dateStart || '-'}</b>
+                              {/* <p className="rate"> 
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star"></i>
+                                                                <i className="icon-star-o"></i>
+                                                            </p> */}
+                              <h3
+                                className="truncate-3-lines"
+                              >
+                                <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>
+                                  {itineraryArticle.articles.name}
+                                </Link>
+                              </h3>
+                              <p className="card-text">
+                                {itineraryArticle.articles.historyArticles && itineraryArticle.articles.historyArticles.length > 0 ?
+                                  <span>{itineraryArticle.articles.historyArticles[0].count} lượt xem</span>
+
+
+                                  :
+                                  <span>Xem chi tiết</span>
+                                }
+                              </p>
+                              <p className="card-text">
+                                <b>{formatDate(itineraryArticle.dateStart) || '-'}</b>
+                              </p>
                             </div>
-                            <div className="two"></div>
+                            <div className="two">
+                              <p className="price">
+                                {new Intl.NumberFormat('vi-VN', {
+                                  style: 'currency',
+                                  currency: 'VND',
+                                }).format(itineraryArticle.articles.price)}
+                              </p>
+                            </div>
                           </div>
+
+
                           <hr />
                           <div>
                             <div className="bottom-area d-flex">
@@ -623,8 +640,8 @@ const ItinerarieView = (props) => {
                                           <input type="date" id="dateStart" className="form-control" min={dateStart} max={dateEnd} value={dateStartByItineraryArticles !== null ? dateStartByItineraryArticles : dateStart} onChange={e => setDateStartByItineraryArticles(e.target.value)} />
                                         </div>
                                         <div className="modal-footer">
-                                          <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
-                                          <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Gửi</button>
+                                          <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                          <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Gửi</button>
                                         </div>
                                       </form>
 

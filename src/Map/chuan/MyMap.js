@@ -24,7 +24,6 @@ const center = { lat:10.745264322662383, lng:  106.72938947534102 }
 const MyMapComponent = (props) => {
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
     // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   })

@@ -116,82 +116,47 @@ const Registration = (props) => {
                                 style={{ borderRadius: '1rem' }}
                             >
                                 <div className="card-body p-5 text-center">
-
                                     <h3 className="mb-5">Đăng ký</h3>
-                                    {/* <div className="form-outline mb-4">
-                                        <input type="email" id="typeEmailX-2" className="form-control form-control-lg" placeholder="Name" />
-                                    </div> */}
-
-
-
                                     <form className="container" onSubmit={handleRegister}>
-                                        {/* <div className="card"> */}
-
-                                        {/* <div className="card-body"> */}
-
-
-
                                         <div className="row">
-                                            <div className="col-lg-12">
+                                            <div className="col-lg-12 mb-4">
                                                 <div className="form-group">
-                                                    <p className="textlabel3" >    Tên đăng nhập</p>
-                                                    <input value={username} onChange={e => usernamechange(e.target.value)} className="form-control" placeholder="Tên đăng nhập" ></input>
+                                                    <label htmlFor="username" className="form-label">Tên đăng nhập</label>
+                                                    <input id="username" value={username} onChange={e => usernamechange(e.target.value)} className="form-control" placeholder="Tên đăng nhập" />
                                                 </div>
                                             </div>
-                                            <div className="col-lg-12">
+                                            <div className="col-lg-12 mb-4">
                                                 <div className="form-group">
-                                                    <p className="textlabel" >Họ và tên</p>
-
-                                                    <input value={name} onChange={e => namechange(e.target.value)} className="form-control" placeholder="Họ và tên" ></input>
+                                                    <label htmlFor="name" className="form-label">Họ và tên</label>
+                                                    <input id="name" value={name} onChange={e => namechange(e.target.value)} className="form-control" placeholder="Họ và tên" />
                                                 </div>
                                             </div>
-                                            <div className="col-lg-12">
+                                            <div className="col-lg-6 mb-4">
                                                 <div className="form-group">
-
-                                                    <p className="textlabel" >Mật khẩu </p>
-                                                    <input value={password} onChange={e => passwordchange(e.target.value)} type="password" className="form-control" placeholder="Mật khẩu"></input>
-                                                </div>
-                                                <div className="form-group">
-                                                    <p className="textlabel1" >Nhập lại mật khẩu</p>
-
-                                                    <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="form-control" placeholder="Nhập lại mật khẩu"></input>
+                                                    <label htmlFor="password" className="form-label">Mật khẩu</label>
+                                                    <input id="password" value={password} onChange={e => passwordchange(e.target.value)} type="password" className="form-control" placeholder="Mật khẩu" />
                                                 </div>
                                             </div>
-
-                                            <div className="col-lg-12">
+                                            <div className="col-lg-6 mb-4">
                                                 <div className="form-group">
-                                                    <p className="textlabel2" >Email</p>
-
-                                                    <input value={email} onChange={e => emailchange(e.target.value)} className="form-control" placeholder="Email"></input>
+                                                    <label htmlFor="confirmPassword" className="form-label">Nhập lại mật khẩu</label>
+                                                    <input id="confirmPassword" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="form-control" placeholder="Nhập lại mật khẩu" />
                                                 </div>
                                             </div>
-
-
-
-
+                                            <div className="col-lg-12 mb-4">
+                                                <div className="form-group">
+                                                    <label htmlFor="email" className="form-label">Email</label>
+                                                    <input id="email" value={email} onChange={e => emailchange(e.target.value)} className="form-control" placeholder="Email" />
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        {/* </div> */}
-                                        {/* <div className="card-footer"> */}
-                                        <button type="submit" className="btn btn-primary btn-lg btn-block">Đăng ký</button> |
-                                        {/* <Link to={'/login'} className="btn btn-danger btn-lg btn-block">Đóng</Link> */}
-                                        {/* </div> */}
-                                        {/* </div> */}
+                                        <button type="submit" className="btn btn-primary btn-lg btn-block">Đăng ký</button>
                                     </form>
-                                  
                                     <hr />
                                     <p className="d-flex my-3 justify-content-center-login">
                                         Bạn đã có sẵn một tài khoản?
                                         <a href="/login"> Đăng nhập </a>
                                     </p>
-
-
-
-
-
-
-
-
                                 </div>
                             </div>
                         </div>

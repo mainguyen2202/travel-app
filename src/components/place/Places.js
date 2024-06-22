@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN } from "../../constants/constants";
 import ReactPaginate from 'react-paginate';
 import { Fragment } from "react";
 import {
@@ -22,20 +22,27 @@ import { getCurrentUser } from '../../services/authServices';
 import { likeCreate, listBySearchLike } from '../../services/likeServices';
 import { showAllHistoryArticles } from '../../services/historyArticlesServices';
 
+
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+const animatedComponents = makeAnimated();
+
 const Places = () => {
     const [topics, setTopics] = useState([]);
     const [subTopics, setSubTopics] = useState([]);
     const [showNatureSelect, setShowNatureSelect] = useState(false);// giá trị mặc đinh là true hoặc false
 
-    const [places, setPlaces] = useState([]);
     const [articles, setArticles] = useState([]);
 
-    const [placesId, setPlacesId] = useState(0); // giá trị mặc định
+    // const [places, setPlaces] = useState([]);
+    // const [placesId, setPlacesId] = useState(0); // giá trị mặc định
+    const [places, setPlaces] = useState([]);
+    const [placesId, setPlacesId] = useState(0);
     const [topicsId, setTopicsId] = useState(0); // giá trị mặc định
     const [subTopicsId, setSubTopicsId] = useState(0); // giá trị mặc định
 
     const [itinerariesOfUser, setItinerariesOfUser] = useState([]); // giá trị mặc định
-   
+
 
     // START: Get a specific query parameter
     const [searchParams, setSearchParams] = useSearchParams();
@@ -65,10 +72,12 @@ const Places = () => {
     // }, []);
 
     useEffect(() => {
+        console.log("--------abc-----------");
+
         console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
         fetchData();
-    }, []);
 
+    }, []);
 
     const fetchData = async () => {
 
@@ -103,7 +112,6 @@ const Places = () => {
 
         } else {
             await fetchInitDataPlaces();
-
             await getArticlesBySearch(placesId, subTopicsId);
 
             await fetchInitDataTopics();
@@ -114,34 +122,50 @@ const Places = () => {
         // await fetchInitDataDescDate();
     };
 
-
-
     const timkiem = async () => {
         // Lấy từ khóa tìm kiếm từ URL search params
         const searchKeyword = searchParams.get("keyword");
-      
+
         if (searchKeyword !== null) {
-          try {
-            // Gọi hàm lấy kết quả tìm kiếm
-            const response = await getSearchResults(searchKeyword);
-      
-            // Cập nhật danh sách bài viết vào state
-            if (response.status === 200) {
-                const data = response.data;
-                console.log("timkiem", data);
-                if (data.length > 0) {
-                    setArticles(data);// làm việc 
-                }
-            } else {
-                console.error('Error:', response.status);
-            };
+            try {
+                // Gọi hàm lấy kết quả tìm kiếm
+                const response = await getSearchResults(searchKeyword);
+
+                // Cập nhật danh sách bài viết vào state
+                if (response.status === 200) {
+                    const data = response.data;
+                    console.log("timkiem", data);
+                    if (data.length > 0) {
+                        setArticles(data);// làm việc 
+                     
+                    }
+                } else {
+                    console.error('Error:', response);
+                };
 
 
-          } catch (error) {
-            console.error('Error handling search:', error);
-          }
+            } catch (error) {
+                console.error('Error handling search:', error);
+            }
         }
-      };
+    };
+
+    // const fetchInitDataPlaces = async () => {
+    //     const placeResponse = await showAllPlace();
+    //     if (placeresponse.status === 200) {
+    //         const placesData = placeResponse.data;
+    //         console.log(placesData);
+    //         if (placesData.length > 0) {
+    //             setPlacesId(placesData[0].id);
+    //         }
+    //         setPlaces(placesData);
+    //     } else {
+    //         console.error('Error:', placeresponse);
+    //     }
+    // };
+
+
+
 
 
     // tạo hàm xử lí lấy danh sách
@@ -152,14 +176,58 @@ const Places = () => {
             const placesData = response.data;
             console.log(placesData);
             if (placesData.length > 0) {
-                let tmpPlaceId = placesData[0].id;
+                setPlacesId(placesData[0].id);
+                // let tmpPlaceId = placesData[0].id;
                 // setPlacesId(tmpPlaceId);
             }
             setPlaces(placesData);
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
     };
+
+    const placeOptions = places.map((place) => ({
+        value: place.id,
+        label: place.name,
+    }));
+
+
+
+
+    const [selectedOptions, setSelectedOptions] = useState([]);
+
+    const handleSelectChangePlaces = (options) => {
+        console.log(options.length);
+        if (options.length === 0 && placeOptions.length > 0) {
+            // Nếu người dùng xóa option được chọn mặc định, gán lại option mặc định
+            // setSelectedOptions([placeOptions[0]]);
+            // setPlacesId(placeOptions[0].value);
+            // getArticlesBySearch(placeOptions[0].value, subTopicsId);
+            // Quay về lấy tất cả
+            setSelectedOptions([]);
+            setPlacesId();
+            getArticlesBySearch(0, subTopicsId, '');
+        } else if (options.length > 0) {
+            // setSelectedOptions(options);
+            // const lastSelectedOption = options[options.length - 1];
+            // setPlacesId(lastSelectedOption.value);
+            // getArticlesBySearch(lastSelectedOption.value, subTopicsId);
+            setSelectedOptions(options);
+            const placesIds = options.map(option => option.value).join(',');
+            setPlacesId(placesIds);
+            getArticlesBySearch(0, subTopicsId, placesIds);
+        }
+    };
+
+
+    /*
+      const handleSelectChangePlaces = (e, inPlacesId) => {
+        const tmpPlacesId = parseInt(inPlacesId);
+        setPlacesId(tmpPlacesId);// giá trị placesId vẫn sai khi thoát func thì mới đúng
+        console.log("when click place placeid=", tmpPlacesId, "subtopicId=", subTopicsId);
+        getArticlesBySearch(tmpPlacesId, subTopicsId); // gọi api
+    };
+    */
 
     const fetchInitDataTopics = async () => {
 
@@ -186,17 +254,8 @@ const Places = () => {
                 }
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
-    };
-
-
-    const handleSelectChangePlaces = (e, inPlacesId) => {
-        const tmpPlacesId = parseInt(inPlacesId);
-        setPlacesId(tmpPlacesId);// giá trị placesId vẫn sai khi thoát func thì mới đúng
-        console.log("when click place placeid=", tmpPlacesId, "subtopicId=", subTopicsId);
-
-        getArticlesBySearch(tmpPlacesId, subTopicsId); // gọi api
     };
 
     const handleSelectChangeTopics = async (e, inTopicId) => {
@@ -227,7 +286,7 @@ const Places = () => {
                 }
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
     };
 
@@ -240,9 +299,10 @@ const Places = () => {
     };
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ
-    async function getArticlesBySearch(inPlaceId, inSubtopicId) {
+    async function getArticlesBySearch(inPlaceId, inSubtopicId, inPlaceIdsMulti='') {
         console.log("getAPI placeId=", inPlaceId, "subtopicId=", inSubtopicId);
-        const response = await articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId);
+        const response = await articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId, inPlaceIdsMulti);
+
         if (response.status === 200) {
             const data = response.data;
             console.log(data);
@@ -273,18 +333,12 @@ const Places = () => {
 
 
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
 
 
     }
-
-
-
-
-
-
 
     const fetchInitDataHistoryArticles = async () => {
 
@@ -294,21 +348,25 @@ const Places = () => {
             console.log(data);
             if (data.length > 0) {
                 // setPlace(data);
-                let dataItem = data.map(item => ({
-                    id: item.articles.id,
-                    name: item.articles.name,
-                    title: item.articles.title,
-                    price: item.articles.price,
-                    image: item.articles.image,
-                    createAt: item.articles.createAt,
-                    content: item.articles.content,
-                    status: item.articles.status
+                // let dataItem = data.map(item => ({
+                //     id: item.articles.id,
+                //     name: item.articles.name,
+                //     title: item.articles.title,
+                //     price: item.articles.price,
+                //     image: item.articles.image,
+                //     createAt: item.articles.createAt,
+                //     content: item.articles.content,
+                //     status: item.articles.status,
 
+                // }));
+
+                const dataItem = data.map(item => ({
+                    ...item.articles            //sử dụng toán tử spread ...item.articles để gán tất cả các thuộc tính của item.articles vào một đối tượng mới.
                 }));
                 setArticles(dataItem);// làm việc 
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
 
@@ -328,7 +386,7 @@ const Places = () => {
                 setArticles(data);// làm việc 
             }
         } else {
-            console.error('Error:', response.status);
+            console.error('Error:', response);
         }
 
 
@@ -347,7 +405,7 @@ const Places = () => {
                     setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
@@ -388,6 +446,41 @@ const Places = () => {
 
     // START LIKE
 
+
+    // check box
+
+
+    const [isLikeChecked, setIsLikeChecked] = useState(false);
+    const [isFeatureChecked, setIsFeatureChecked] = useState(false);
+    const [isNewestChecked, setIsNewestChecked] = useState(false);
+    const handleLikeCheckboxChange = () => {
+        setIsLikeChecked(!isLikeChecked);
+        if (!isLikeChecked) {
+            fetchInitDataLike();
+        } else {
+            // Xử lý khi checkbox được uncheck
+        }
+    };
+
+    const handleFeatureCheckboxChange = () => {
+        setIsFeatureChecked(!isFeatureChecked);
+        if (!isFeatureChecked) {
+            fetchInitDataHistoryArticles();
+        } else {
+            // Xử lý khi checkbox được uncheck
+        }
+    };
+
+    const handleNewestCheckboxChange = () => {
+        setIsNewestChecked(!isNewestChecked);
+        if (!isNewestChecked) {
+            fetchInitDataDescDate();
+        } else {
+            // Xử lý khi checkbox được uncheck
+        }
+    };
+    // check
+
     // danh sách địa điểm yêu thích nhất
     // tạo hàm xử lí lấy danh sách
 
@@ -402,23 +495,25 @@ const Places = () => {
                 if (data.length > 0) {
                     // setLike(data);
 
-                    let dataItem = data.map(item => ({
-                        id: item.articles.id,
-                        name: item.articles.name,
-                        title: item.articles.title,
-                        price: item.articles.price,
-                        image: item.articles.image,
-                        createAt: item.articles.createAt,
-                        content: item.articles.content,
-                        status: item.articles.status,
+                    // let dataItem = data.map(item => ({
+                    //     id: item.articles.id,
+                    //     name: item.articles.name,
+                    //     title: item.articles.title,
+                    //     price: item.articles.price,
+                    //     image: item.articles.image,
+                    //     createAt: item.articles.createAt,
+                    //     content: item.articles.content,
+                    //     status: item.articles.status,
+                    // }));
 
-
+                    const dataItem = data.map(item => ({
+                        ...item.articles            //sử dụng toán tử spread ...item.articles để gán tất cả các thuộc tính của item.articles vào một đối tượng mới.
                     }));
                     setArticles(dataItem);// làm việc 
 
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
@@ -480,7 +575,7 @@ const Places = () => {
                     setLikedArticlesId(tmpLikedArticlesId);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
     };
@@ -490,21 +585,20 @@ const Places = () => {
     // START PAGE
 
     const [currentPage, setCurrentPage] = useState(0);
-    const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
+    const articlesPerPage = 6; // số lượng likes hiển thị trên mỗi trang
 
     const handlePageClick = (event) => {
         setCurrentPage(event.selected);
     };
 
-    
+
     // END PAGE
 
 
     // START: googlemap
     const [markers, setMarkers] = useState([]);// mảng dữ liệu
     const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8-mai',
-        // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
         libraries: ['places'],
     });
     const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
@@ -574,158 +668,131 @@ const Places = () => {
                 <div className="container">
                     <div className="row">
 
-
-                        <div className="col-lg-3 sidebar order-md-first ftco-animate ">
+                        <div className="col-lg-3 sidebar order-md-first ftco-animate">
                             <div className="sidebar-wrap ftco-animate">
-                                <h3 className="heading mb-4">Điểm đến</h3>
-                                <form action="#" className="card1">
-                                    <div className="fields">
-                                        {/* <div className="form-group">
-                                            <input type="text" className="form-control" placeholder="Destination, City" />
-                                        </div> */}
-                                        <div className="form-group">
+                                <h3 className="heading mb-4">Trải nghiệm</h3>
+
+                                <div className="fields">
+
+                                    <div className="select-wrap one-third">
+                                        <div className="icon">
+                                            <span className="ion-ios-arrow-down"></span>
+                                        </div>
+                                        <select
+                                            name="topics"
+                                            id=""
+                                            className="form-control"
+                                            placeholder="Keyword search"
+                                            onChange={(e) => handleSelectChangeTopics(e, e.target.value)}
+                                        >
+                                            {topics.map((topic, i) => (
+                                                <option
+                                                    value={topic.id}
+                                                    key={i}
+                                                    selected={topic.id === topicsId ? true : false}
+                                                >
+                                                    {topic.title}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                {showNatureSelect && (
+                                    <div>
+                                        {/* <form action="#" className="card1"> */}
+                                        <div className="fields">
+
                                             <div className="select-wrap one-third">
-                                                <div className="icon"><span className="ion-ios-arrow-down"></span></div>
+                                                <div className="icon">
+                                                    <span className="ion-ios-arrow-down"></span>
+                                                </div>
                                                 <select
-                                                    name="places"
+                                                    name="topics"
                                                     id=""
                                                     className="form-control"
                                                     placeholder="Keyword search"
-                                                    onChange={
-                                                        (e) => {
-                                                            handleSelectChangePlaces(e, e.target.value);
-                                                        }
-                                                    }
+                                                    onChange={(e) => handleSelectChangeSubTopics(e, e.target.value)}
                                                 >
-                                                    {places.map((place, i) => (
-                                                        <option value={place.id} key={i} selected={place.id === placesId ? true : false}>
-                                                            {place.name}
+                                                    {subTopics.map((topic, i) => (
+                                                        <option value={topic.id} key={i}>
+                                                            {topic.title}
                                                         </option>
                                                     ))}
-
                                                 </select>
                                             </div>
-                                        </div>
 
+                                        </div>
+                                        {/* </form> */}
                                     </div>
-                                </form>
-                                <div>
-                                    <h3 className="heading mb-4">Trải nghiệm</h3>
-                                    <form action="#" className="card1">
-                                        <div className="fields">
-                                            <div className="form-group">
-                                                <div className="select-wrap one-third">
-                                                    <div className="icon">
-                                                        <span className="ion-ios-arrow-down"></span>
-                                                    </div>
-                                                    <select
-                                                        name="topics"
-                                                        id=""
-                                                        className="form-control"
-                                                        placeholder="Keyword search"
-                                                        onChange={
-                                                            (e) => {
-                                                                handleSelectChangeTopics(e, e.target.value);
-                                                            }
-                                                        }
-                                                    >
-                                                        {topics.map((topic, i) => (
-                                                            <option value={topic.id} key={i} selected={topic.id === topicsId ? true : false}>
-                                                                {topic.title}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                                )}
 
-
-                                    {showNatureSelect && (
-                                        <div>
-                                            <form action="#" className="card1">
-                                                <div className="fields">
-                                                    <div className="form-group">
-                                                        <div className="select-wrap one-third">
-                                                            <div className="icon">
-                                                                <span className="ion-ios-arrow-down"></span>
-                                                            </div>
-                                                            <select
-                                                                name="topics"
-                                                                id=""
-                                                                className="form-control"
-                                                                placeholder="Keyword search"
-                                                                onChange={
-                                                                    (e) => {
-                                                                        handleSelectChangeSubTopics(e, e.target.value);
-                                                                    }
-                                                                }
-                                                            >
-                                                                {subTopics.map((topic, i) => (
-                                                                    <option value={topic.id} key={i}>
-                                                                        {topic.title}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    )}
-                                </div>
                                 <h3 className="heading mb-4">Lựa chọn</h3>
-                                <div className="d-flex gap-3">
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-secondary"
-                                        onClick={fetchInitDataLike}
-                                    >
-                                        Yêu thích
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-secondary"
-                                        onClick={fetchInitDataHistoryArticles}
-                                    >
-                                        Nổi Bật
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-secondary"
-                                        onClick={fetchInitDataDescDate}
-                                    >
-                                        Mới nhất
-                                    </button>
+                                <div className="option-container">
+                                    <div className="option-item">
+                                        <input
+                                            type="checkbox"
+                                            id="like-checkbox"
+                                            className="option-checkbox"
+                                            checked={isLikeChecked}
+                                            onChange={handleLikeCheckboxChange}
+                                        />
+                                        <label htmlFor="like-checkbox" className="option-label">
+                                            Yêu thích
+                                        </label>
+                                    </div>
+                                    <div className="option-item">
+                                        <input
+                                            type="checkbox"
+                                            id="feature-checkbox"
+                                            className="option-checkbox"
+                                            checked={isFeatureChecked}
+                                            onChange={handleFeatureCheckboxChange}
+                                        />
+                                        <label htmlFor="feature-checkbox" className="option-label">
+                                            Nổi Bật
+                                        </label>
+                                    </div>
+                                    <div className="option-item">
+                                        <input
+                                            type="checkbox"
+                                            id="newest-checkbox"
+                                            className="option-checkbox"
+                                            checked={isNewestChecked}
+                                            onChange={handleNewestCheckboxChange}
+                                        />
+                                        <label htmlFor="newest-checkbox" className="option-label">
+                                            Mới nhất
+                                        </label>
+                                    </div>
                                 </div>
-
 
                             </div>
-
-
                         </div>
 
                         <div className="col-lg-9" >
 
-                            <div className="reservation-form mainguyen" >
-                                {/* <div className="container"> */}
-                                <div className="row">
-                                    {/* <div className="col-lg-12"> */}
 
-                                    <div id="map">
+                            <div className="reservation-form " >
+                                <div className="container">
+                                    <div className="row" style={{ height: '450px' }}>
+                                        {/* <div className="col-lg-12"> */}
+
+                                        <div id="map" >
 
 
-                                        <Fragment>
-                                            <div className="container">
-                                                <div style={{ height: "90vh", width: "100%" }}>
-                                                    {isLoaded ? (
-                                                        <GoogleMap
-                                                            center={userLocation}
-                                                            zoom={10}
-                                                            onClick={() => setIdActiveMarker(null)}
-                                                            mapContainerStyle={{ width: "100%", height: "90vh" }}
-                                                        >
-                                                            {/* {
+                                            <Fragment>
+                                                <div className="container">
+                                                    <div >
+                                                        {isLoaded ? (
+                                                            <GoogleMap
+                                                                center={userLocation}
+                                                                zoom={10}
+                                                                onClick={() => setIdActiveMarker(null)}
+                                                                mapContainerStyle={{ width: "100%", height: "40vh" }}
+                                                            >
+                                                                {/* {
                                                                 userLocation !== null ? (
                                                                     <MarkerF
                                                                         key={0}
@@ -739,59 +806,92 @@ const Places = () => {
                                                                 ) : null
                                                             } */}
 
-                                                            {markers.map((item) => (
-                                                                <MarkerF
-                                                                    key={item.id}
-                                                                    position={item.position}
-                                                                    onClick={() => handleActiveMarker(item.id)}
-                                                                // icon={{
-                                                                //   url:"https://t4.ftcdn.net/jpg/02/85/33/21/360_F_285332150_qyJdRevcRDaqVluZrUp8ee4H2KezU9CA.jpg",
-                                                                //   scaledSize: { width: 50, height: 50 }
-                                                                // }}
-                                                                >
-                                                                    {
-                                                                        idActiveMarker == item.id ? (
-                                                                            <InfoWindowF
-                                                                                onCloseClick={() => setIdActiveMarker(null)}
-                                                                            >
-                                                                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                                                                                    <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
-                                                                                        {item.name}
-                                                                                    </Link>
-                                                                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                                                                                        <img
-                                                                                            src={item.image || 'default-product-image.jpg'}
-                                                                                            alt={item.name}
-                                                                                            style={{ width: '80px', height: '80px', marginRight: '12px' }}
-                                                                                        />
-                                                                                        <div>
-                                                                                            <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
-                                                                                            <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                                                {markers.map((item) => (
+                                                                    <MarkerF
+                                                                        key={item.id}
+                                                                        position={item.position}
+                                                                        onClick={() => handleActiveMarker(item.id)}
+                                                                    // icon={{
+                                                                    //   url:"https://t4.ftcdn.net/jpg/02/85/33/21/360_F_285332150_qyJdRevcRDaqVluZrUp8ee4H2KezU9CA.jpg",
+                                                                    //   scaledSize: { width: 50, height: 50 }
+                                                                    // }}
+                                                                    >
+                                                                        {
+                                                                            idActiveMarker == item.id ? (
+                                                                                <InfoWindowF
+                                                                                    onCloseClick={() => setIdActiveMarker(null)}
+                                                                                >
+                                                                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                                                                        <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
+                                                                                            {item.name}
+                                                                                        </Link>
+                                                                                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                                                                            <img
+                                                                                                src={item.image || 'default-product-image.jpg'}
+                                                                                                alt={item.name}
+                                                                                                style={{ width: '80px', height: '80px', marginRight: '12px' }}
+                                                                                            />
+                                                                                            <div>
+                                                                                                <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
+                                                                                                <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                                                                            </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </InfoWindowF>
-                                                                        ) : null
-                                                                    }
-                                                                </MarkerF>
-                                                            ))}
-                                                        </GoogleMap>
-                                                    ) : null}
+                                                                                </InfoWindowF>
+                                                                            ) : null
+                                                                        }
+                                                                    </MarkerF>
+                                                                ))}
+                                                            </GoogleMap>
+                                                        ) : null}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Fragment>
+                                            </Fragment>
 
 
 
 
+
+                                        </div>
+                                        {/* </div> */}
 
                                     </div>
-                                    {/* </div> */}
+
 
                                 </div>
-                                {/* </div> */}
                             </div>
 
+                            <div className="row" style={{ marginBottom: '30px' }}>
+                                <div className="row" style={{ marginRight: '30px' }}>
+                                    <h3 className="heading mb-4">Điểm đến</h3>
+                                </div>
+                                {/* <Select
+                                    className="form-control"
+                                    placeholder="Keyword search"
+                                    options={placeOptions}
+                                    value={placeOptions.find((option) => option.value === placesId)}
+                                    onChange={handleSelectChangePlaces}
+                                    components={animatedComponents}
+
+                                    
+                                   
+                                /> */}
+
+                                <div className="row" >
+                                    <Select
+                                        // className="form-control"
+                                        placeholder="Tìm kiếm hoặc chọn"
+                                        closeMenuOnSelect={false}
+                                        components={animatedComponents}
+                                        value={selectedOptions}
+                                        onChange={handleSelectChangePlaces}
+                                        isMulti
+                                        options={placeOptions}
+                                    />
+
+                                </div>
+
+                            </div>
                             <div className="row">
                                 {articles.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((article, i) => (
                                     <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i} >
@@ -805,39 +905,43 @@ const Places = () => {
 
 
                                                 <div className="card-body">
-                                                    <div className="d-flex">
+
+
+                                                    <div className="d-flex justify-content-between">
                                                         <div className="one">
-                                                            <p className="rate">
+                                                            {/* <p className="rate"> 
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star-o"></i>
+                                                            </p> */}
+                                                            <h3
+                                                                className="truncate-3-lines"
+                                                            >
+                                                                <Link to={`/detail?article_id=${article.id}`}>
+                                                                    {article.name}
+                                                                </Link>
+                                                            </h3>
+                                                            <p className="card-text">
+                                                                {article.historyArticles && article.historyArticles.length > 0 ?
+                                                                    <span>{article.historyArticles[0].count} lượt xem</span>
+
+
+                                                                    :
+                                                                    <span>Xem chi tiết</span>
+                                                                }
                                                             </p>
-                                                            <h3 style={{ color: 'black', height: '100px' }}><a href={`/detail?article_id=${article.id}`}>{article.name}</a></h3>
-
-
                                                         </div>
                                                         <div className="two">
-                                                            <span className="price">{article.price + "VNĐ"}</span>
+                                                            <p className="price">
+                                                                {new Intl.NumberFormat('vi-VN', {
+                                                                    style: 'currency',
+                                                                    currency: 'VND',
+                                                                }).format(article.price)}
+                                                            </p>
                                                         </div>
-
                                                     </div>
-                                                    {/* <p className="days">
-                                                        {article.historyArticles.length > 0 ?
-                                                            <span> {article.historyArticles[0].count} lượt xem</span>
-                                                            :
-                                                            <span>Xem chi tiết</span>
-                                                        }
-                                                    </p> */}
-
-                                                    <p className="days">
-                                                        {article.historyArticles && article.historyArticles.length > 0 ?
-                                                            <span>{article.historyArticles[0].count} lượt xem</span>
-                                                            :
-                                                            <span>Xem chi tiết</span>
-                                                        }
-                                                    </p>
 
 
                                                     <hr />

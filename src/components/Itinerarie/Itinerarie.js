@@ -10,7 +10,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
 import { getCurrentUser } from "../../services/authServices";
 import { itinerariesDetail, itinerariesRemove, itineraryCreate, itineraryEdit, listBySearchItineraries } from "../../services/itinerarieServices";
-import {  listShareItinerariesUserId, shareItinerariesUserId } from "../../services/shareItinerariesServices";
+import { listShareItinerariesUserId, shareItinerariesUserId } from "../../services/shareItinerariesServices";
 import { checkUserName } from "../../services/userServices";
 
 
@@ -56,7 +56,7 @@ const Itinerarie = (props) => {
                     setItinerariesOfUser(data);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
@@ -77,15 +77,19 @@ const Itinerarie = (props) => {
                 const response = await itineraryCreate(name, participantCount, content, dateStart, dateEnd, userId);
                 if (response.status === 200) {
                     const data = await response.data;
-                    toast.success(data.message);    
+                    toast.success(data.message);
                     // console.log(data);
                     if (data.status == 1) {
                         toast.success(data.message);
-                       
+
                         // Cập nhật danh sách itineraries bằng cách thêm itinerary mới
                         // setItinerariesOfUser([...itinerariesOfUser, data.data]);
-
-                        setPopupIsOpen(false);
+                          // Add data-dismiss="modal" to the "Lưu" button
+                    const saveButton = document.querySelector('#exampleModal .btn-primary:last-child');
+                    saveButton.setAttribute('data-dismiss', 'modal');
+                     // Refresh the page
+                     window.location.reload();
+                       
                         return;
                     }
 
@@ -109,6 +113,17 @@ const Itinerarie = (props) => {
         if (!name) {
             toast.warning('Please enter name');
             return false;
+        }
+        // Validate content
+        if (!content || content.trim() === '') {
+            toast.warning('Vui lòng nhập nội dung lịch trình.');
+            return;
+        }
+
+        // Validate dateStart and dateEnd
+        if (!dateStart || !dateEnd || dateStart > dateEnd) {
+            toast.warning('Ngày bắt đầu phải trước ngày kết thúc.');
+            return;
         }
         return true;
     };
@@ -213,6 +228,10 @@ const Itinerarie = (props) => {
                         return itinerary;
                     });
                     setItinerariesOfUser(updatedItineraries);
+                    const saveButton = document.querySelector('#exampleModal .btn-primary:last-child');
+                    saveButton.setAttribute('data-dismiss', 'modal');
+                     // Refresh the page
+                     window.location.reload();
                 } else {
                     toast.error(data.message);
                 }
@@ -230,18 +249,18 @@ const Itinerarie = (props) => {
         if (!validate()) {
             return;
         }
-    
+
         try {
             const responseCheck = await checkUserName(username);
             if (responseCheck.status === 200) {
                 const dataCheck = await responseCheck.data;
                 const useridShare = dataCheck.id;
-    
+
                 const response = await shareItinerariesUserId(useridShare, itineraryId);
                 if (response.status === 200) {
                     const dataShere = response.data;
                     console.log(dataShere);
-    
+
                     if (dataShere.status == 1) {
                         toast.success(dataShere.message);
                     } else {
@@ -254,7 +273,7 @@ const Itinerarie = (props) => {
             toast.error('Failed to share itinerary.');
         }
     };
- 
+
     const validate = () => {
         let result = true;
         if (username == '' || username == null) {
@@ -288,7 +307,7 @@ const Itinerarie = (props) => {
                         dateStart: item.itineraries.dateStart,
                         dateEnd: item.itineraries.dateEnd,
                         content: item.itineraries.content,
-                        usersName: item.users.name
+                        usersName: item.itineraries.users.name
 
 
 
@@ -296,22 +315,30 @@ const Itinerarie = (props) => {
                     setItinerariesShareOfUser(dataItem);
                 }
             } else {
-                console.error('Error:', response.status);
+                console.error('Error:', response);
             }
         }
 
     };
 
-       // START PAGE
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
-       const [currentPage, setCurrentPage] = useState(0);
-       const articlesPerPage = 2; // số lượng likes hiển thị trên mỗi trang
-   
-       const handlePageClick = (event) => {
-           setCurrentPage(event.selected);
-       };
-       // END PAGE
-   
+    // START PAGE
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const articlesPerPage = 6; // số lượng likes hiển thị trên mỗi trang
+
+    const handlePageClick = (event) => {
+        setCurrentPage(event.selected);
+    };
+    // END PAGE
+
     return (
         <div>
             <div className="hero-wrap js-fullheight" style={{ height: '300px', backgroundImage: `url('./images/bg_1.jpg')` }}>
@@ -331,10 +358,15 @@ const Itinerarie = (props) => {
 
                 <div className="container">
                     <div className="col-sm-12 hotel-single ftco-animate mb-5 mt-4">
-                        <h2 className="mb-5">Lập kế hoạch</h2>
+                        {/* <h1 className="mb-5">Lập kế hoạch</h1> */}
                         <div className="row" style={{ marginBottom: '2%' }}>
                             <div className="col-sm-1">
-                                <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
+                                {token &&(
+
+                                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal" >Tạo</button>
+                                )
+
+                                }
 
                                 {/* modal tạo */}
                                 <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -369,19 +401,37 @@ const Itinerarie = (props) => {
                                                     </div>
                                                     <div className="mb-3">
                                                         <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
-                                                        <input type="date" id="dateStart" className="form-control" value={dateStart} onChange={e => setDateStart(e.target.value)} required />
+                                                        <input
+                                                            type="date"
+                                                            id="dateStart"
+                                                            className="form-control"
+                                                            value={dateStart}
+                                                            onChange={(e) => setDateStart(e.target.value)}
+                                                            min={getCurrentDate()}
+                                                            required
+                                                        />
                                                     </div>
-                                                    <div className="mb-3 mt-4">
-                                                        <label htmlFor="dateEnd" className="form-label">Ngày kết thúc:</label>
-                                                        <input type="date" id="dateEnd" className="form-control" value={dateEnd} onChange={e => setDateEnd(e.target.value)} required />
+                                                    <div className="mb-3">
+                                                        <label htmlFor="dateStart" className="form-label">Ngày kết thúc:</label>
+                                                        <input
+                                                            type="date"
+                                                            id="dateStart"
+                                                            className="form-control"
+                                                            value={dateEnd}
+                                                            onChange={(e) => setDateEnd(e.target.value)}
+                                                            min={getCurrentDate()}
+                                                            required
+                                                        />
                                                     </div>
+                                                   
                                                     <div className="mb-3">
                                                         <label htmlFor="exampleFormControlTextarea1" className="form-label">Ghi chú</label>
                                                         <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
                                                     </div>
                                                     <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Close</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => { handleCreate(e); }}>Lưu</button>
+                                                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => { handleCreate(e); }}>Lưu</button>
+                                                       
                                                     </div>
                                                 </form>
 
@@ -434,8 +484,8 @@ const Itinerarie = (props) => {
                                                         <textarea value={content} onChange={e => setContent(e.target.value)} className="form-control" placeholder="Ghi chú" />
                                                     </div>
                                                     <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => { handleEdit(e, itinerarieId); }}>Gửi</button>
+                                                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => { handleEdit(e, itinerarieId); }}>Cập nhật</button>
                                                     </div>
                                                 </form>
 
@@ -471,8 +521,8 @@ const Itinerarie = (props) => {
 
 
                                                     <div className="modal-footer">
-                                                        <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
-                                                        <button type="submit" className="btn btn-primary" onClick={(e) => handleShare(e, itinerarieId)} >Gửi</button>
+                                                        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                                        <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => handleShare(e, itinerarieId)} >Gửi</button>
                                                     </div>
                                                 </form>
 
@@ -506,192 +556,190 @@ const Itinerarie = (props) => {
                             className="mb-3"
                         >
                             <Tab eventKey="home" title="Kế hoạch cá nhân">
-                                {!token ? (
-                                    <p>Vui lòng đăng nhập để xem các kế hoạch cá nhân</p>
-                                ) : (
-                                    <div>
-                                    <div className="row">
-                                        {itinerariesOfUser.length > 0 ? (
-                                           
-                                            
-                                                itinerariesOfUser.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itinerary, i) => (
-                                
-                                                <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
-                                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="d-flex">
-                                                                    <div className="one">
-                                                                        <h3   >
-                                                                            <Link
-                                                                                to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
-                                                                                className="view"
-                                                                                title="View"
-                                                                                data-toggle="tooltip"
-
-
-                                                                            >
-                                                                                {itinerary.name}
-                                                                            </Link>
-                                                                        </h3>
-
-                                                                        <hr />
-                                                                        <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
-                                                                        <p>{'Số lượng: ' + itinerary.participantCount + ' người'}</p>
-                                                                        <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <hr />
-                                                                <div>
-                                                                    <div className="bottom-area d-flex">
-                                                                        <a
-                                                                            className="edit"
-                                                                            title="Edit"
-                                                                            data-toggle="modal"
-                                                                            data-target="#exampleModalEdit"
-                                                                            onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
-                                                                        >
-                                                                            <i className="material-icons">&#xE254;</i>
-                                                                        </a>
-                                                                        <a
-                                                                            className="delete"
-                                                                            title="Xóa"
-                                                                            data-toggle="tooltip"
-                                                                            onClick={(e) => handleRemove(e, itinerary.id)}
-                                                                        >
-                                                                            <i className="material-icons">&#xE872;</i>
-                                                                        </a>
-                                                                        <a
-                                                                            className="share"
-                                                                            data-toggle="modal"
-                                                                            data-target="#exampleModalShare"
-                                                                            onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
-                                                                        >
-                                                                            <i className="material-icons">&#xE80D;</i>
-                                                                        </a>
+                                <div>
+                                    {!token ? (
+                                        <p>Vui lòng đăng nhập để xem các kế hoạch cá nhân</p>
+                                    ) : (
+                                        <div>
+                                            <div className="row">
+                                                {itinerariesOfUser.length > 0 ? (
+                                                    itinerariesOfUser
+                                                        .slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage)
+                                                        .map((itinerary, i) => (
+                                                            <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                                <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                                    <div className="card">
+                                                                        <div className="card-body">
+                                                                            <div className="d-flex">
+                                                                                <div className="one">
+                                                                                    <h3 className="truncate-3-lines">
+                                                                                        <Link
+                                                                                            to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
+                                                                                            className="view"
+                                                                                            title="View"
+                                                                                            data-toggle="tooltip"
+                                                                                        >
+                                                                                            {itinerary.name}
+                                                                                        </Link>
+                                                                                    </h3>
+                                                                                    <hr />
+                                                                                    <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
+                                                                                    <p>{'Số lượng: ' + itinerary.participantCount + ' người'}</p>
+                                                                                    <p className="truncate-3-lines">{itinerary.content + '.'}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr />
+                                                                            <div>
+                                                                                <div className="bottom-area d-flex">
+                                                                                    <a
+                                                                                        className="edit"
+                                                                                        title="Edit"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#exampleModalEdit"
+                                                                                        onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
+                                                                                    >
+                                                                                        <i className="material-icons">&#xE254;</i>
+                                                                                    </a>
+                                                                                    <a
+                                                                                        className="delete"
+                                                                                        title="Xóa"
+                                                                                        data-toggle="tooltip"
+                                                                                        onClick={(e) => handleRemove(e, itinerary.id)}
+                                                                                    >
+                                                                                        <i className="material-icons">&#xE872;</i>
+                                                                                    </a>
+                                                                                    <a
+                                                                                        className="share"
+                                                                                        title="chia sẻ"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#exampleModalShare"
+                                                                                        onClick={(e) => getDetailByItineraryId(e, itinerary.id)}
+                                                                                    >
+                                                                                        <i className="material-icons">&#xE80D;</i>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        ))
+                                                ) : (
+                                                    <div className="col-12 text-center">
+                                                        <h3>Hãy tạo kế hoạch</h3>
                                                     </div>
-                                                </div>
-                                               
-                                            ))
-                                        ) : (
-                                            <div className="col-12 text-center">
-                                                <h3>Hãy tạo kế hoạch</h3>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                     <div className="row mt-5">
-                                     <div className="col text-center">
-                                         <nav aria-label="Page navigation">
-                                             <ul className="pagination justify-content-center">
-                                                 {itinerariesOfUser.length > articlesPerPage && (
-                                                     <ReactPaginate
-                                                         breakLabel="..."
-                                                         nextLabel={<span>&gt;</span>}
-                                                         onPageChange={handlePageClick}
-                                                         pageRangeDisplayed={5}
-                                                         pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
-                                                         previousLabel={<span>&lt;</span>}
-                                                         renderOnZeroPageCount={null}
-                                                         containerClassName="pagination"
-                                                         activeClassName="active"
-                                                         pageClassName="page-item"
-                                                         pageLinkClassName="page-link"
-                                                         previousClassName="page-item"
-                                                         previousLinkClassName="page-link"
-                                                         nextClassName="page-item"
-                                                         nextLinkClassName="page-link"
-                                                     />
-                                                 )}
-                                             </ul>
-                                         </nav>
-                                     </div>
-                                 </div>
-                                 </div>
-                                )}
+                                            <div className="row mt-5">
+                                                <div className="col text-center">
+                                                    <nav aria-label="Page navigation">
+                                                        <ul className="pagination justify-content-center">
+                                                            {itinerariesOfUser.length > articlesPerPage && (
+                                                                <ReactPaginate
+                                                                    breakLabel="..."
+                                                                    nextLabel={<span>&gt;</span>}
+                                                                    onPageChange={handlePageClick}
+                                                                    pageRangeDisplayed={5}
+                                                                    pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
+                                                                    previousLabel={<span>&lt;</span>}
+                                                                    renderOnZeroPageCount={null}
+                                                                    containerClassName="pagination"
+                                                                    activeClassName="active"
+                                                                    pageClassName="page-item"
+                                                                    pageLinkClassName="page-link"
+                                                                    previousClassName="page-item"
+                                                                    previousLinkClassName="page-link"
+                                                                    nextClassName="page-item"
+                                                                    nextLinkClassName="page-link"
+                                                                />
+                                                            )}
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </Tab>
                             <Tab eventKey="profile" title="Kế hoạch được chia sẻ">
                                 {!token ? (
                                     <p>Vui lòng đăng nhập để xem các kế hoạch được chia sẻ</p>
                                 ) : (
                                     <div>
-                                    <div className="row">
-                                        {itinerariesShareOfUser.length > 0 ? (
+                                        <div className="row">
+                                            {itinerariesShareOfUser.length > 0 ? (
                                                 itinerariesShareOfUser.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itinerary, i) => (
-                                
-                                                <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
-                                                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="d-flex">
-                                                                    <div className="one">
-                                                                        <h3 style={{ height: '70px' }}>
-                                                                            <Link
-                                                                                to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
-                                                                                className="view"
-                                                                                title="View"
-                                                                                data-toggle="tooltip"
-                                                                            >
-                                                                                {itinerary.name}
-                                                                            </Link>
-                                                                        </h3>
-                                                                        <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
-                                                                        <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
-                                                                        <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
-                                                                        <p style={{ height: '100px' }}>{itinerary.content + '.'}</p>
+
+                                                    <div className="col-sm col-md-6 col-lg-3 ftco-animate" key={i}>
+                                                        <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                                                            <div className="card">
+                                                                <div className="card-body">
+                                                                    <div className="d-flex">
+                                                                        <div className="one">
+                                                                            <h3 className="truncate-3-lines">
+                                                                                <Link
+                                                                                    to={`/itinerarieView?itinerarie_id=${itinerary.id}`}
+                                                                                    className="view"
+                                                                                    title="View"
+                                                                                    data-toggle="tooltip"
+                                                                                >
+                                                                                    {itinerary.name}
+                                                                                </Link>
+                                                                            </h3>
+                                                                            <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
+                                                                            <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
+                                                                            <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
+                                                                            <p className="truncate-3-lines">{itinerary.content + '.'}</p>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
+                                                ))
+                                            ) : (
+                                                <div className="col-12 text-center">
+                                                    <h3>Chưa được chia sẻ</h3>
                                                 </div>
-                                            ))
-                                        ) : (
-                                            <div className="col-12 text-center">
-                                                <h3>Chưa được chia sẻ</h3>
+                                            )}
+                                        </div>
+                                        <div className="row mt-5">
+                                            <div className="col text-center">
+                                                <nav aria-label="Page navigation">
+                                                    <ul className="pagination justify-content-center">
+                                                        {itinerariesOfUser.length > articlesPerPage && (
+                                                            <ReactPaginate
+                                                                breakLabel="..."
+                                                                nextLabel={<span>&gt;</span>}
+                                                                onPageChange={handlePageClick}
+                                                                pageRangeDisplayed={5}
+                                                                pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
+                                                                previousLabel={<span>&lt;</span>}
+                                                                renderOnZeroPageCount={null}
+                                                                containerClassName="pagination"
+                                                                activeClassName="active"
+                                                                pageClassName="page-item"
+                                                                pageLinkClassName="page-link"
+                                                                previousClassName="page-item"
+                                                                previousLinkClassName="page-link"
+                                                                nextClassName="page-item"
+                                                                nextLinkClassName="page-link"
+                                                            />
+                                                        )}
+                                                    </ul>
+                                                </nav>
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
-                                      <div className="row mt-5">
-                                      <div className="col text-center">
-                                          <nav aria-label="Page navigation">
-                                              <ul className="pagination justify-content-center">
-                                                  {itinerariesOfUser.length > articlesPerPage && (
-                                                      <ReactPaginate
-                                                          breakLabel="..."
-                                                          nextLabel={<span>&gt;</span>}
-                                                          onPageChange={handlePageClick}
-                                                          pageRangeDisplayed={5}
-                                                          pageCount={Math.ceil(itinerariesOfUser.length / articlesPerPage)}
-                                                          previousLabel={<span>&lt;</span>}
-                                                          renderOnZeroPageCount={null}
-                                                          containerClassName="pagination"
-                                                          activeClassName="active"
-                                                          pageClassName="page-item"
-                                                          pageLinkClassName="page-link"
-                                                          previousClassName="page-item"
-                                                          previousLinkClassName="page-link"
-                                                          nextClassName="page-item"
-                                                          nextLinkClassName="page-link"
-                                                      />
-                                                  )}
-                                              </ul>
-                                          </nav>
-                                      </div>
-                                  </div>
-                                  </div>
 
-                                    
+
                                 )}
                             </Tab>
                         </Tabs>
 
 
-                        
-                       
+
+
 
 
                     </div>

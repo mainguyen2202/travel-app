@@ -251,3 +251,6 @@ https://stackoverflow.com/questions/63691203/how-do-i-make-a-react-app-in-docker
 https://medium.com/@alialreza98/integrating-docker-with-a-react-js-application-for-both-development-and-production-part-2-bbc32f22f07d
 
 https://www.bezkoder.com/docker-compose-react-nodejs-mysql/
+
+# When to use dangerouslySetInnerHTML in React?
+https://refine.dev/blog/use-react-dangerouslysetinnerhtml/#when-to-use-dangerouslysetinnerhtml

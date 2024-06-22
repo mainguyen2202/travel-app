@@ -6,7 +6,7 @@ export async function listBySearchFeedbacks(articleId) {
     return await api.get(`/public/feedbacks/listBySearch?articles_id=${articleId}`);
 }
 
-export async function handleFeedbacksHeart(heart,articleId) {
+export async function apiFeedbacksHeart(heart,articleId) {
     return await api.get(`/public/feedbacks/listByHeart?heart=${heart}&articles_id=${articleId}`);
 }
 
