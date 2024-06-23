@@ -1,10 +1,10 @@
 import React from "react";
 import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
-import { REACT_APP_GOOGLE_MAPS_KEY } from "../constants/constants";
 
 const Map = ({ selectedLocation }) => {
   const { isLoaded, loadError } = useLoadScript({
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    libraries: ['places'],
   });
   const mapRef = React.useRef();
   const onMapLoad = React.useCallback((map) => {

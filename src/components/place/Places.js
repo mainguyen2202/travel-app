@@ -61,20 +61,8 @@ const Places = () => {
     }
 
     // hàm khởi tạo ban đầu
-    // useEffect(() => {
-    //     console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
-    //     fetchInitData();// sử dụng hàm lấy danh sách
-    //     fetchInitDataLike();
-    //     fetchInitDataDescDate();
-
-    //     timkiem();
-
-    // }, []);
-
     useEffect(() => {
-        console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
         fetchData();
-
     }, []);
 
     const fetchData = async () => {

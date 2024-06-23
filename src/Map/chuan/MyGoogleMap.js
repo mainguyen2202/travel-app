@@ -33,7 +33,7 @@ const markers = [
 
 const MyGoogleMap = (props) => {
   const { isLoaded } = useJsApiLoader({
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   });
   const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn

@@ -23,6 +23,7 @@ import Profile from './components/Profile/Profile';
 import ResetPassword from './components/Profile/ResetPassword';
 import { ACCESS_TOKEN } from "./constants/constants";
 import { getCurrentUser } from "./services/authServices";
+import MyMapComponent from "./Map/chuan/MyMap";
 
 
 function App() {
@@ -76,8 +77,7 @@ function App() {
 						<Route path="forgotPassword" element={<ForgotPassword />} />
 						<Route path="resetPassword" element={<ResetPassword />} />
 
-
-
+						<Route path="mymap" element={<MyMapComponent />} />
 
 
 					</Routes>

@@ -40,7 +40,6 @@ const ItinerarieView = (props) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
     console.log("input", itineraryId);
     fetchInitData(itineraryId, dateStartItineraryArticles);// sử dụng hàm lấy danh sách mới nhất
 
@@ -300,10 +299,7 @@ const ItinerarieView = (props) => {
 
   const [myDirections, setMyDirections] = useState(null);
   const { isLoaded } = useLoadScript({
-    // googleMapsApiKey: 'AIzaSyBteHKcrWBm8HhuQwy0wxYmFbKDJNcAYU8',
-    // googleMapsApiKey: 'AIzaSyAbThV6ttKtmZfS0MzamJKiwo7d6JXrIu8',
-    // googleMapsApiKey:'AIzaSyD7bAY6_F5ZzXkGoCSybQXSwKF_SATQQlQ-mai',
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   });
   const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
@@ -324,7 +320,7 @@ const ItinerarieView = (props) => {
 
 
   const getUserLocation = async () => {
-    console.log("get User Location");
+    console.log("get user location");
     try {
       // 'granted': Người dùng đã cấp quyền truy cập vị trí.
       // 'denied': Người dùng đã từ chối quyền truy cập vị trí.
@@ -332,35 +328,43 @@ const ItinerarieView = (props) => {
       const permission = await navigator.permissions.query({ name: 'geolocation' });
 
       if (permission.state === 'granted') {
-        // Lấy vị trí của người dùng
-        navigator.geolocation.watchPosition(
-          (position) => {
-            // save the geolocation coordinates in two variables
-            const { latitude, longitude } = position.coords;
-            if (userLocation == null) {
-              markers.push({
-                id: -1,
-                name: "Vị trí của tôi",
-                position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
-                icon: "",
-              });
-              setMarkers(markers);
-              console.log("GPSmarkers", markers);
-            }
-            // gán phần tử đầu tiên làm vị trí trung tâm của bản đồ
-            // update the value of userlocation variable
-            setUserLocation({ lat: latitude, lng: longitude });
-            console.log("GPSlocaction", userLocation);
-          },
-          (error) => {
-            if (error.code === error.PERMISSION_DENIED) {
-              console.error('permission denied ');
-            } else {
-              console.error('Error getting user location:', error);
-            }
-          },
-          { enableHighAccuracy: true }
-        );
+        // if geolocation is supported by the users browser
+        if (navigator.geolocation) {
+          // get the current users location
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              // save the geolocation coordinates in two variables
+              const { latitude, longitude } = position.coords;
+              if (userLocation == null) {
+                markers.push({
+                  id: -1,
+                  name: "Vị trí của tôi",
+                  position: { lat: parseFloat(latitude), lng: parseFloat(longitude) },
+                  icon: "",
+                });
+                setMarkers(markers);
+                console.log("GPSmarkers", markers);
+              }
+              // gán phần tử đầu tiên làm vị trí trung tâm của bản đồ
+              // update the value of userlocation variable
+              setUserLocation({ lat: latitude, lng: longitude });
+              console.log("GPSlocaction", userLocation);
+            },
+            // if there was an error getting the users location
+            (error) => {
+              if (error.code === error.PERMISSION_DENIED) {
+                console.error('permission denied ');
+              } else {
+                console.error('Error getting user location:', error);
+              }
+            },
+            { enableHighAccuracy: true }
+          );
+        }
+        // if geolocation is not supported by the users browser
+        else {
+          console.error('Geolocation is not supported by this browser.');
+        }
       } else if (permission.state === 'prompt') {
         // Hiển thị thông báo yêu cầu quyền truy cập vị trí
         await showLocationPermissionPrompt();

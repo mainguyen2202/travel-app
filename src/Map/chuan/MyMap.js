@@ -1,3 +1,5 @@
+import React, { useEffect, useState, useRef } from "react";
+
 import {
   Box,
   Button,
@@ -9,6 +11,7 @@ import {
   SkeletonText,
   Text,
 } from '@chakra-ui/react'
+
 import { FaLocationArrow, FaTimes } from 'react-icons/fa'
 
 import {
@@ -18,13 +21,12 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from '@react-google-maps/api'
-import { useRef, useState } from 'react'
 
 const center = { lat:10.745264322662383, lng:  106.72938947534102 }
 const MyMapComponent = (props) => {
 
   const { isLoaded } = useJsApiLoader({
-    // googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   })
 
