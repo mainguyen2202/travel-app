@@ -13,14 +13,53 @@ import {
   InfoWindowF,
   DirectionsRenderer,
   MarkerF,
+  Circle,
+  Polyline,
+  PinElement,
+  MarkerClusterer,
   useJsApiLoader,
   useLoadScript,
 } from "@react-google-maps/api";
+
 import { itinerariesDetail } from "../../services/itinerarieServices";
 import { itineraryArticlesDetail, itineraryArticlesEdit, itineraryArticlesListBySearch, itineraryArticlesRemove } from "../../services/itineraryArticlesServices";
 
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  SkeletonText,
+  Text,
+} from '@chakra-ui/react'
+import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
 
 const ItinerarieView = (props) => {
+  const [map, setMap] = useState(null);
+  const [polyline, setPolyline] = useState(null);
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
+    libraries: ['places'],
+  });
+
+  const animateCircle = (line) => {
+    let count = 0;
+
+    const interval = setInterval(() => {
+      count = (count + 1) % 200;
+
+      const icons = line.get('icons');
+      icons[0].offset = `${count / 2}%`;
+      line.set('icons', icons);
+    }, 20);
+
+    return () => clearInterval(interval);
+  };
+
   const [searchParams, setSearchParams] = useSearchParams();
   const itineraryId = searchParams.get('itinerarie_id');
 
@@ -30,6 +69,7 @@ const ItinerarieView = (props) => {
   const [dateStart, setDateStart] = useState('');
   const [dateEnd, setDateEnd] = useState('');
   const [detailItinerarie, setDetailItinerarie] = useState([]);
+  const [totalDistance, setTotalDistance] = useState(0);
   const [itineraryArticles, setItineraryArticles] = useState([]);
   const [popupIsOpen, setPopupIsOpen] = useState(true);
   const [itineraryArticlesId, setItineraryArticlesId] = useState(-1);
@@ -45,7 +85,8 @@ const ItinerarieView = (props) => {
 
     getDetailByItineraryId(itineraryId);
 
-  }, [itineraryId]);
+  }, [itineraryId, isLoaded, map]);
+
 
   const getDetailByItineraryId = async (e) => {
     try {
@@ -70,82 +111,154 @@ const ItinerarieView = (props) => {
 
 
   // tạo hàm xử lí lấy danh sách
-  const fetchInitData = async (inItinerarieId, inputDateStart) => {
+  const fetchInitData = async (inItinerarieId, inputDateStart, GPS = null) => {
     console.log("list", inItinerarieId, inputDateStart);
+    console.log("[GPSlocaction]", userLocation);
+    console.log("#GPSlocaction#", GPS);
 
-    const response = await itineraryArticlesListBySearch(inItinerarieId, inputDateStart);
-    if (response.status === 200) {
-      const itineraryArticlesData = await response.data;
-      console.log(itineraryArticlesData);
-      if (itineraryArticlesData.length > 0) {
-        console.log(itineraryArticlesData);
-        setItineraryArticles(itineraryArticlesData);
-        setData(itineraryArticlesData);
-        // START: map
-        console.log("GPSlocaction", userLocation);
+    if (userLocation !== null && GPS === null) {
+      GPS = userLocation;
+    }
 
-        let ltsMarkers = [];
-        if (userLocation) {
-          // Khi nhấn tìm kiếm thì cần xóa hết dữ liệu ở marker và khởi tạo lại điểm vị trí của tôi
-          ltsMarkers.push({
-            id: -1,
-            name: "Vị trí của tôi",
-            position: {
-              lat: parseFloat(userLocation.lat),
-              lng: parseFloat(userLocation.lng)
+    if (GPS !== null) {
+      const response = await itineraryArticlesListBySearch(inItinerarieId, inputDateStart, GPS.lat, GPS.lng);
+      if (response.status === 200) {
+        const { data } = response;
+        console.log(data);
+
+        if (data.status === 1) {
+          //   toast.success(data.message);
+
+          const itineraryArticlesData = data.Item;
+          const totalDistance = data.totalDistance;
+
+          console.log(itineraryArticlesData);
+          console.log("Tổng độ dài Đường đi", totalDistance);
+          if (itineraryArticlesData.length > 0) {
+            console.log(itineraryArticlesData);
+            setItineraryArticles(itineraryArticlesData);
+            setData(itineraryArticlesData);
+            setTotalDistance(totalDistance);
+            // START: map
+
+            let ltsMarkers = [];
+            if (userLocation) {
+              // Khi nhấn tìm kiếm thì cần xóa hết dữ liệu ở marker và khởi tạo lại điểm vị trí của tôi
+              ltsMarkers.push({
+                id: -1,
+                name: "Vị trí của tôi",
+                position: {
+                  lat: parseFloat(userLocation.lat),
+                  lng: parseFloat(userLocation.lng)
+                }
+              });
+            } else {
+              ltsMarkers = [];
+              console.log("[markers]", markers);
+              markers.map(item => {
+                if (item.id == -1) {
+                  ltsMarkers.push(item);// Khi lần đầu thì sẽ có 1 giá trị (vị trí của tôi)
+                }
+              });
             }
-          });
-        } else {
-          ltsMarkers = [];// Khi lần đầu thì sẽ có 1 giá trị (vị trí của tôi)
-          markers.map(item => {
-            if (item.id == -1) {
-              ltsMarkers.push(item);
-            }
-          });
-        }
 
-        itineraryArticlesData.map(item => {
-          ltsMarkers.push(
-            {
-              id: item.id,
-              name: item.articles.name,
-              position: {
-                lat: parseFloat(item.articles.latitude),
-                lng: parseFloat(item.articles.longitude)
+            itineraryArticlesData.map(item => {
+              if (item.id !== -1) {
+                ltsMarkers.push(
+                  {
+                    id: item.id,
+                    name: item.articles.name,
+                    position: {
+                      lat: parseFloat(item.articles.latitude),
+                      lng: parseFloat(item.articles.longitude)
+                    },
+                    title: item.articles.title,
+                    price: item.articles.price,
+                    image: item.articles.image,
+                    createAt: item.articles.createAt,
+                    content: item.articles.content,
+                    status: item.articles.status,
+                    count: item.articles.historyArticles?.length > 0 ? item.articles.historyArticles[0].count : 0
+                  }
+                );
               }
             }
-          );
+            );
+            setMarkers(ltsMarkers);
+            console.log("GPSmarkers", ltsMarkers, markers);
+            // END: map
+
+            // Tính tổng giá (price) của các phần tử trong mảng itineraryArticlesData.articles.price
+            // Sử dụng phương thức map để tạo mảng mới chỉ chứa giá (price)
+            const prices = itineraryArticlesData.map(item => item.articles.price);
+
+            console.log(prices); // In ra mảng giá
+
+            // Tính tổng giá của các phần tử trong mảng prices
+            const totalPrice = prices.reduce((accumulator, price) => accumulator + price, 0);
+
+            console.log("Tổng giá trên 1 người:", totalPrice); // In ra tổng giá
+            setTotalPrice(totalPrice);
+
+            itineraryArticlesData.forEach(item => {
+              if (item.id !== -1) {
+                const participantCount = item.itineraries.participantCount;
+                console.log("participantCount: " + participantCount);
+                const itemTotalPrice = totalPrice * participantCount;
+                setTotalPriceParticipantCount(itemTotalPrice);
+              }
+            });
+
+            if (isLoaded && map) {
+              console.log("-------------START--------------");
+              const lineSymbol = {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                strokeColor: '#393'
+              };
+
+              let ltsPolylines = [];
+              ltsMarkers.map(item => {
+                if (item.id !== -1) {
+                  ltsPolylines.push(
+                    {
+                      lat: item.position.lat,
+                      lng: item.position.lng
+                    }
+                  );
+                }
+              }
+              );
+
+              const polylineOptions = {
+                path: ltsPolylines,
+                icons: [
+                  {
+                    icon: lineSymbol,
+                    offset: '100%'
+                  }
+                ],
+                map: map
+              };
+
+              const newPolyline = new window.google.maps.Polyline(polylineOptions);
+              setPolyline(newPolyline);
+
+              // animateCircle(newPolyline);
+              console.log("-------------END--------------");
+            }
+            // END
+          }
+        } else {
+          console.error('Error:', response);
         }
-        );
-        setMarkers(ltsMarkers);
-        console.log("GPSmarkers", ltsMarkers, markers);
-        // END: map
-
-
-
-        // Tính tổng giá (price) của các phần tử trong mảng itineraryArticlesData.articles.price
-        // Sử dụng phương thức map để tạo mảng mới chỉ chứa giá (price)
-        const prices = itineraryArticlesData.map(item => item.articles.price);
-
-        console.log(prices); // In ra mảng giá
-
-        // Tính tổng giá của các phần tử trong mảng prices
-        const totalPrice = prices.reduce((accumulator, price) => accumulator + price, 0);
-
-        console.log("Tổng giá trên 1 người:", totalPrice); // In ra tổng giá
-        setTotalPrice(totalPrice);
-
-        itineraryArticlesData.forEach(item => {
-          const participantCount = item.itineraries.participantCount;
-          console.log("participantCount: " + participantCount);
-          const itemTotalPrice = totalPrice * participantCount;
-          setTotalPriceParticipantCount(itemTotalPrice);
-        });
-        // END
+      } else {
+        toast.error(data.message);
       }
-    } else {
-      console.error('Error:', response);
+
+
     }
+
   };
 
 
@@ -292,18 +405,10 @@ const ItinerarieView = (props) => {
 
   // START: googlemap
   const [markers, setMarkers] = useState([]);// mảng dữ liệu
-  const [distanceValue, setDistanceValue] = useState(0);
-  const [durationValue, setDurationValue] = useState(0);
-  const [distanceText, setDistanceText] = useState(0);
-  const [durationText, setDurationText] = useState(0);
-
+  const [directionsInfo, setDirectionsInfo] = useState(null);
   const [myDirections, setMyDirections] = useState(null);
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
-    libraries: ['places'],
-  });
-  const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
 
+  const [idActiveMarker, setIdActiveMarker] = useState(null);// tham số lưu thông tin key của vị trí đang click chọn
   const handleActiveMarker = (inIdMarker, inPositionMarker) => {
     console.log("id", inIdMarker, idActiveMarker);
     if (inIdMarker == idActiveMarker) {
@@ -314,11 +419,39 @@ const ItinerarieView = (props) => {
   };
 
   // /*
+  // css 4 cycle map
+  const defaultOptions = {
+    strokeOpacity: 0.5,
+    strokeWeight: 2,
+    clickable: false,
+    draggable: false,
+    editable: false,
+    visible: true,
+  };
+  const closeOptions = {
+    ...defaultOptions,
+    zIndex: 3,
+    fillOpacity: 0.05,
+    strokeColor: "#8BC34A",
+    fillColor: "#8BC34A",
+  };
+  const middleOptions = {
+    ...defaultOptions,
+    zIndex: 2,
+    fillOpacity: 0.05,
+    strokeColor: "#FBC02D",
+    fillColor: "#FBC02D",
+  };
+  const farOptions = {
+    ...defaultOptions,
+    zIndex: 1,
+    fillOpacity: 0.05,
+    strokeColor: "#FF5252",
+    fillColor: "#FF5252",
+  };
+
   const [userLocation, setUserLocation] = useState(null);
-
   // define the function that finds the users geolocation
-
-
   const getUserLocation = async () => {
     console.log("get user location");
     try {
@@ -347,8 +480,11 @@ const ItinerarieView = (props) => {
               }
               // gán phần tử đầu tiên làm vị trí trung tâm của bản đồ
               // update the value of userlocation variable
-              setUserLocation({ lat: latitude, lng: longitude });
-              console.log("GPSlocaction", userLocation);
+              let GPS = { lat: latitude, lng: longitude };
+              setUserLocation(GPS);
+              console.log("<GPSlocaction>", userLocation);
+              console.log("{GPSlocaction}", GPS);
+              fetchInitData(itineraryId, dateStartItineraryArticles, GPS);// TODO : QUAN TRỌNG
             },
             // if there was an error getting the users location
             (error) => {
@@ -442,44 +578,49 @@ const ItinerarieView = (props) => {
   // START: direction map
   // /*
   const google = window.google;
-
-  const commutesPerYear = 260 * 2;
-  const litresPerKM = 10 / 100; //10 lít trên 100km
-  const gasLitreCost = 1.5; // chi phí săn
-  const litreCostKM = litresPerKM * gasLitreCost;
-  const secondsPerDay = 60 * 60 * 24; // khoảng thời gian
-
+  const litresPerKM = 1 / 10; //1 lít chạy được 10km
+  const gasLitreCost = 25000; // 25k / 1 lít xăng
+  const litreCostKM = litresPerKM * gasLitreCost;// chi phí
   const fetchDirections = (destination) => {
     if (!userLocation) return;
 
+    const selectedMode = document.getElementById("mode").value;// 
     const directionsService = new google.maps.DirectionsService();
 
     // const origin = { lat: 40.756795, lng: -73.954298 };
     // const destination = { lat: 41.756795, lng: -78.954298 };
 
     // Gọi API của Google Map tìm đường đi
+    // https://developers.google.com/maps/documentation/javascript/examples/directions-travel-modes
+    // WALKING | DRIVING | BICYCLING | TRANSIT
     directionsService.route(
       {
         origin: userLocation,
         destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING
+        // travelMode: google.maps.TravelMode.DRIVING
+        travelMode: selectedMode
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
           setMyDirections(result);
-          console.log("fetchDirections", result);
-          setDistanceValue(result.routes[0].legs[0].distance.value);
-          setDurationValue(result.routes[0].legs[0].duration.value);
+          console.log("API Directions", result);
 
+          let leg = result.routes[0].legs[0];
+          // Tính chi phí di chuyển
           const cost = Math.floor(
-            (setDistanceValue / 1000) * litreCostKM * commutesPerYear
+            (leg.distance.value / 100) * litreCostKM
           );
-
-          setDistanceText(result.routes[0].legs[0].distance.text);
-          setDurationText(result.routes[0].legs[0].duration.text);
-
-          // Tính tổng giá của các phần tử trong mảng prices
-
+          let resultDirectionsInfo = {
+            distance: result.routes[0].legs[0].distance.value,// khoáng cách tính theo xe hơi
+            duration: result.routes[0].legs[0].duration.value,// thời gian tính theo xe hơi
+            distance_txt: result.routes[0].legs[0].distance.text,
+            duration_txt: result.routes[0].legs[0].duration.text,
+            start_address: result.routes[0].legs[0].start_address,
+            end_address: result.routes[0].legs[0].end_address,
+            cost: cost,
+            unit: 'VNĐ',
+          };
+          setDirectionsInfo(resultDirectionsInfo);
         } else {
           console.error(`error fetching directions ${result}`);
         }
@@ -581,8 +722,17 @@ const ItinerarieView = (props) => {
 
               <div className="reservation-form mainguyen">
 
-
-                <div className="row" style={{ height: '450px' }}>
+                <div className="row" style={{ height: '550px' }}>
+                  {/* Google Map Box */}
+                  <div id="floating-panel">
+                    <b>Mode of Travel: </b>
+                    <select id="mode">
+                      <option value="DRIVING">Driving</option>
+                      <option value="WALKING">Walking</option>
+                      <option value="BICYCLING">Bicycling</option>
+                      <option value="TRANSIT">Transit</option>
+                    </select>
+                  </div>
                   <div id="map">
                     <Fragment>
                       <div className="container">
@@ -592,28 +742,100 @@ const ItinerarieView = (props) => {
                               center={userLocation}
                               zoom={12}
                               onClick={() => setIdActiveMarker(null)}
-                              mapContainerStyle={{ width: "100%", height: "40vh" }}
+                              mapContainerStyle={{ width: "100%", height: "50vh" }}
+                              onLoad={(map) => setMap(map)}
                             // zoomControl={true}
                             // streetViewControl={false}
                             // mapTypeControl={false}
                             // fullscreenControl={true}
                             >
+
+
                               {markers.map((item) => (
-                                <MarkerF
-                                  key={item.id}
-                                  position={item.position}
-                                  onClick={() => handleActiveMarker(item.id, item.position)}
-                                // icon={item.id == -1 ? "http://labs.google.com/ridefinder/images/mm_20_yellow.png" : ""}
-                                >
-                                  {idActiveMarker === item.id && (
-                                    <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
-                                      <div>
-                                        <p>{item.name}</p>
-                                      </div>
-                                    </InfoWindowF>
-                                  )}
-                                </MarkerF>
-                              ))}
+                                (item.id == -1) ? (
+                                  <MarkerF
+                                    key={item.id}
+                                    position={item.position}
+                                    onClick={() => handleActiveMarker(item.id, item.position)}
+                                    icon={{
+                                      // url: "https://i.imgur.com/FpHIBa7.png",
+                                      url: "https://i.pngimg.me/thumb/f/720/comdlpng6964730.jpg",
+                                      scaledSize: new window.google.maps.Size(36, 36)
+                                    }}
+                                  >
+                                    {idActiveMarker === item.id && (
+                                      <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
+                                        <div>
+                                          <p>{item.name}</p>
+                                        </div>
+                                      </InfoWindowF>
+                                    )}
+                                  </MarkerF>
+                                ) : (
+                                  <MarkerF
+                                    key={item.id}
+                                    position={item.position}
+                                    onClick={() => handleActiveMarker(item.id, item.position)}
+                                  >
+                                    {idActiveMarker === item.id && (
+
+                                      <InfoWindowF
+                                        onCloseClick={() => setIdActiveMarker(null)}
+                                      >
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                          <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
+                                            {item.name}
+                                          </Link>
+                                          <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                            <img
+                                              src={item.image || 'default-product-image.jpg'}
+                                              alt={item.name}
+                                              style={{ width: '80px', height: '80px', marginRight: '12px' }}
+                                            />
+                                            <div>
+                                              <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
+                                              <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </InfoWindowF>
+                                    )}
+                                  </MarkerF>
+                                )
+                              ))
+                              }
+
+                              <Circle center={userLocation} radius={4500} options={closeOptions} />
+                              <Circle center={userLocation} radius={6000} options={middleOptions} />
+                              <Circle center={userLocation} radius={7500} options={farOptions} />
+
+
+                              <Polyline
+                                path={markers.map((item) => ({
+                                  lat: item.position.lat,
+                                  lng: item.position.lng,
+                                }))}
+                                options={{
+                                  strokeColor: "#ff2649",
+                                  strokeOpacity: 0.8,
+                                  strokeWeight: 2,
+                                  icons: [
+                                    {
+                                      icon: {
+                                        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                                        scale: 3,
+                                        strokeColor: "#ff2649",
+                                        strokeWeight: 2,
+                                      },
+                                      offset: "0",
+                                      repeat: "20px",
+                                      animation: google.maps.Animation.BOUNCE,
+                                    },
+                                  ],
+                                }}
+                              />
+
+                              {/* {polyline && <Polyline options={polyline.getOptions()} />} */}
 
                               <DirectionsRenderer directions={myDirections} />
                             </GoogleMap>
@@ -622,118 +844,159 @@ const ItinerarieView = (props) => {
                       </div>
                     </Fragment>
                   </div>
+                  <Flex
+                    position='relative'
+                    flexDirection='column'
+                    alignItems='center'
+                    h='100%'
+                    w='100%'
+                  >
+                    <Box position='absolute' left={0} top={0} h='100%' w='100%'>
+                    </Box>
+
+                    <Box
+                      p={4}
+                      borderRadius='lg'
+                      m={4}
+                      bgColor='white'
+                      shadow='base'
+                      minW='container.md'
+                      zIndex='1'
+                    >
+                      {totalDistance !== 0 && (
+                        <HStack spacing={4} mt={4} justifyContent='space-left'>
+                          <Text>Tổng độ dài dự tính: {totalDistance} </Text>
+                        </HStack>
+                      )}
+                      {directionsInfo !== null && (
+                        <HStack spacing={4} mt={4} justifyContent='space-between'>
+                          <Text>Địa điểm đi: {directionsInfo.start_address} </Text>
+                          <Text>Địa điểm đến: {directionsInfo.end_address} </Text>
+                          <Text>Quảng đường: {directionsInfo.distance_txt} </Text>
+                          <Text>Thời gian: {directionsInfo.duration_txt} </Text>
+                          <Text>Chi phí: {directionsInfo.cost} {directionsInfo.unit} </Text>
+                        </HStack>
+                      )}
+                    </Box>
+                  </Flex>
                 </div>
               </div>
 
               <div className="row">
                 {itineraryArticles.slice(currentPage * articlesPerPage, (currentPage + 1) * articlesPerPage).map((itineraryArticle, i) => (
 
-                  <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
-                    <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
-                      <div className="card">
-                        <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>
-                          <img src={itineraryArticle.articles.image} className="card-img-top" alt="..." />
-                        </Link>
-                        <div className="card-body">
+                  (itineraryArticle.id !== -1) ? (
+
+                    <div className="col-sm col-md-6 col-lg-4 ftco-animate" key={i}>
+                      <div className="destination" style={{ boxShadow: '0px 2px 10px #d9d9d9' }}>
+                        <div className="card">
+                          <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>
+                            <img src={itineraryArticle.articles.image} className="card-img-top" alt="..." />
+                          </Link>
+                          <div className="card-body">
 
 
-                          <div className="d-flex justify-content-between">
-                            <div className="one">
-                              {/* <p className="rate"> 
+                            <div className="d-flex justify-content-between">
+                              <div className="one">
+                                {/* <p className="rate"> 
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star"></i>
                                                                 <i className="icon-star-o"></i>
                                                             </p> */}
-                              <h3
-                                className="truncate-3-lines"
-                              >
-                                <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>
-                                  {itineraryArticle.articles.name}
-                                </Link>
-                              </h3>
-                              <p className="card-text">
-                                {itineraryArticle.articles.historyArticles && itineraryArticle.articles.historyArticles.length > 0 ?
-                                  <span>{itineraryArticle.articles.historyArticles[0].count} lượt xem</span>
+                                <h3
+                                  className="truncate-3-lines"
+                                >
+                                  <Link to={`/detail?article_id=${itineraryArticle.articles.id}`}>
+                                    {itineraryArticle.articles.name}
+                                  </Link>
+                                </h3>
+                                <p className="card-text">
+                                  {itineraryArticle.articles.historyArticles && itineraryArticle.articles.historyArticles.length > 0 ?
+                                    <span>{itineraryArticle.articles.historyArticles[0].count} lượt xem</span>
 
 
-                                  :
-                                  <span>Xem chi tiết</span>
-                                }
-                              </p>
-                              <p className="card-text">
-                                <b>{formatDate(itineraryArticle.dateStart) || '-'}</b>
-                              </p>
+                                    :
+                                    <span>Xem chi tiết</span>
+                                  }
+                                </p>
+                                <p className="card-text">
+                                  <b>{formatDate(itineraryArticle.dateStart) || '-'}</b>
+                                </p>
+                              </div>
+                              <div className="two">
+                                <p className="price">
+                                  {new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND',
+                                  }).format(itineraryArticle.articles.price)}
+                                </p>
+                              </div>
                             </div>
-                            <div className="two">
-                              <p className="price">
-                                {new Intl.NumberFormat('vi-VN', {
-                                  style: 'currency',
-                                  currency: 'VND',
-                                }).format(itineraryArticle.articles.price)}
-                              </p>
-                            </div>
-                          </div>
 
 
-                          <hr />
-                          <div>
-                            <div className="bottom-area d-flex">
-                              <a href="/Like" className="like" title="Thích" data-toggle="tooltip">
-                                <span className="s18_s"><i className="material-icons">favorite_border</i></span>
-                              </a>
+                            <hr />
+                            <div>
+                              <div className="bottom-area d-flex">
+                                <a href="/Like" className="like" title="Thích" data-toggle="tooltip">
+                                  <span className="s18_s"><i className="material-icons">favorite_border</i></span>
+                                </a>
 
-                              <a
-                                className="edit"
-                                title="Edit"
-                                data-toggle="modal"
-                                data-target="#exampleModalEdit"
-                                onClick={(e) => getDetailById(e, itineraryArticle.id)}
-                              >
-                                <i className="material-icons">&#xE254;</i>
-                              </a>
-                              <div className="modal fade" id="exampleModalEdit" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                <div className="modal-dialog modal-dialog-centered" role="document">
-                                  <div className="modal-content">
-                                    <div className="modal-header">
-                                      <h5 className="modal-title" id="exampleModalLongTitle">Cập nhật ngày</h5>
-                                      <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closePopup}>
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                    </div>
-                                    <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
-                                      <form className="container">
-                                        <div className="mb-3">
-                                          <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
-                                          <input type="date" id="dateStart" className="form-control" min={dateStart} max={dateEnd} value={dateStartByItineraryArticles !== null ? dateStartByItineraryArticles : dateStart} onChange={e => setDateStartByItineraryArticles(e.target.value)} />
-                                        </div>
-                                        <div className="modal-footer">
-                                          <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
-                                          <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Gửi</button>
-                                        </div>
-                                      </form>
+                                <a
+                                  className="edit"
+                                  title="Edit"
+                                  data-toggle="modal"
+                                  data-target="#exampleModalEdit"
+                                  onClick={(e) => getDetailById(e, itineraryArticle.id)}
+                                >
+                                  <i className="material-icons">&#xE254;</i>
+                                </a>
+                                <div className="modal fade" id="exampleModalEdit" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                  <div className="modal-dialog modal-dialog-centered" role="document">
+                                    <div className="modal-content">
+                                      <div className="modal-header">
+                                        <h5 className="modal-title" id="exampleModalLongTitle">Cập nhật ngày</h5>
+                                        <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={closePopup}>
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div className={`modal-body ${popupIsOpen ? 'active' : ''}`}>
+                                        <form className="container">
+                                          <div className="mb-3">
+                                            <label htmlFor="dateStart" className="form-label">Ngày bắt đầu:</label>
+                                            <input type="date" id="dateStart" className="form-control" min={dateStart} max={dateEnd} value={dateStartByItineraryArticles !== null ? dateStartByItineraryArticles : dateStart} onChange={e => setDateStartByItineraryArticles(e.target.value)} />
+                                          </div>
+                                          <div className="modal-footer">
+                                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={closePopup}>Đóng</button>
+                                            <button type="submit" className="btn btn-primary" data-dismiss="modal" onClick={(e) => { handleEdit(e, itineraryArticlesId); }}>Gửi</button>
+                                          </div>
+                                        </form>
 
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
+
+
+
+                                <a
+                                  className="Remove"
+                                  title="Remove"
+                                  onClick={(e) => handleRemove(e, itineraryArticle.id)}
+                                >
+                                  <i className="material-icons">&#xE872;</i>
+                                </a>
                               </div>
-
-
-
-                              <a
-                                className="Remove"
-                                title="Remove"
-                                onClick={(e) => handleRemove(e, itineraryArticle.id)}
-                              >
-                                <i className="material-icons">&#xE872;</i>
-                              </a>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+
+                  ) : (
+                    <div></div>
+                  )
                 ))}
               </div>
 

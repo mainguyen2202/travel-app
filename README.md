@@ -260,3 +260,11 @@ https://refine.dev/blog/use-react-dangerouslysetinnerhtml/#when-to-use-dangerous
 https://www.geeksforgeeks.org/how-to-fix-react-useeffect-running-twice/
 
 https://stackoverflow.com/questions/70491774/usenavigate-may-be-used-only-in-the-context-of-a-router-component
+
+# MAP
+
+https://developers.google.com/maps/documentation/javascript/examples/directions-travel-modes
+
+WALKING | DRIVING | BICYCLING | TRANSIT
+
+https://developers.google.com/maps/documentation/javascript/advanced-markers/basic-customization

@@ -78,13 +78,14 @@ const MyMapComponent = (props) => {
       return
     }
     // eslint-disable-next-line no-undef
-    const directionsService = new google.maps.DirectionsService()
+    const directionsService = new google.maps.DirectionsService();
     const results = await directionsService.route({
       origin: originRef.current.value,
       destination: destiantionRef.current.value,
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
     })
+    console.log("fetchDirections", results);
     setDirectionsResponse(results)
     setDistance(results.routes[0].legs[0].distance.text)
     setDuration(results.routes[0].legs[0].duration.text)
