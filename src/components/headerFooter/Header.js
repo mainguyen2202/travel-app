@@ -67,7 +67,6 @@ const Header = (props) => {
 
 
 
-
 	// const handleKeyDown = (event) => {
 	// 	if (event.key === 'Enter') {
 	// 		event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter
