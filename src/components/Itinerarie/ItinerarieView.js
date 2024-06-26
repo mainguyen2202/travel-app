@@ -88,7 +88,6 @@ const ItinerarieView = (props) => {
     fetchInitData(itineraryId, dateStartItineraryArticles);// sử dụng hàm lấy danh sách mới nhất
 
     getDetailByItineraryId(itineraryId);
-
   }, [itineraryId, isLoaded, map]);
 
 

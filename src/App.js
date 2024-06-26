@@ -21,15 +21,8 @@ import ForgotPassword from './components/Profile/ForgotPassword';
 import Profile from './components/Profile/Profile';
 // import ChangePassword from './components/Profile/ChangePassword';
 import ResetPassword from './components/Profile/ResetPassword';
-import { ACCESS_TOKEN } from "./constants/constants";
-import { getCurrentUser } from "./services/authServices";
-import MyMapComponent from "./Map/chuan/MyMap";
-
 
 function App() {
-
-
-
 	useEffect(() => {
 		console.log("app");
 		console.log("key", process.env.REACT_APP_GOOGLE_MAPS_KEY);
@@ -76,10 +69,6 @@ function App() {
 						{/* <Route path="changePassword/:userId" element={<ChangePassword />} /> */}
 						<Route path="forgotPassword" element={<ForgotPassword />} />
 						<Route path="resetPassword" element={<ResetPassword />} />
-
-						<Route path="mymap" element={<MyMapComponent />} />
-
-
 					</Routes>
 				{/* </BrowserRouter> */}
 				{/* app content */}
