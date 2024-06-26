@@ -509,16 +509,59 @@ a:not([href]):not([tabindex]) {
 } */
 
 
-#floating-panel {
+/* #floating-panel {
   position: absolute;
-  top: 10px;
-  left: 25%;
+  top: 60px;
+  left: 3%;
   z-index: 5;
   background-color: #fff;
   padding: 5px;
   border: 1px solid #999;
-  text-align: center;
+  text-align: left!important;
   font-family: "Roboto", "sans-serif";
   line-height: 30px;
   padding-left: 10px;
-}
+
+
+  background-color: white;
+    font-weight: 500;
+    font-family: Roboto, sans-serif;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    top: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 5px;
+    left: 50%;
+    max-width: 375px;
+    position: absolute;
+    transform: translateX(-50%);
+    width: calc(100% - 10px);
+    z-index: 1;
+
+} */
+
+/* #floating-panel {
+  position: absolute;
+  top: 60px;
+  left: 17%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: left !important;
+  font-family: "Roboto", "sans-serif";
+  line-height: 30px;
+  padding-left: 10px;
+  background-color: white;
+  font-weight: 500;
+  font-family: Roboto, sans-serif;
+  padding: 15px 25px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  max-width: 30%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: calc(100% - 10px);
+  z-index: 1;
+} */

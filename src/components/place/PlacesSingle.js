@@ -4,12 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from 'react-router-dom';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaStar } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
-import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN } from "../../constants/constants";
 import { getCurrentUser } from '../../services/authServices';
 import { articlesDetail, articlesListPlaceIdSubtopicId } from '../../services/articlesServices';
 import { clickView } from '../../services/historyArticlesServices';
@@ -45,7 +45,7 @@ const PlacesSingle = (props) => {
     }
 
     useEffect(() => {
-        if (articleId != 0) {
+        if (articleId !== 0) {
             handleClickView(articleId);
         } else {
             navigate('/places');
@@ -81,16 +81,16 @@ const PlacesSingle = (props) => {
                 const data = response.data;
                 console.log(data);
 
-                if (data.status == 1) {
+                if (data.status === 1) {
                     // toast.success(data.message);
                 } else {
                     // console.log(data.message);
                     // toast.error(data.message);
                 }
 
-            } else if (response.status == 400) {
+            } else if (response.status === 400) {
                 // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
+            } else if (response.status === 401) {
                 // Xử lý khi có lỗi 401 (Unauthorized)
             } else {
                 // Xử lý khi có lỗi khác
@@ -161,7 +161,7 @@ const PlacesSingle = (props) => {
                     const data = response.data;
                     console.log(data);
 
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
 
                         await getListLike4ArticlesByUserId();// lấy lại danh sách mới
@@ -169,9 +169,9 @@ const PlacesSingle = (props) => {
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Handle 400 Bad Request error
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Handle 401 Unauthorized error
                 } else {
                     // Handle other errors
@@ -262,14 +262,14 @@ const PlacesSingle = (props) => {
                     console.log(data);
 
 
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Xử lý khi có lỗi 400 (Bad Request)
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Xử lý khi có lỗi 401 (Unauthorized)
                 } else {
                     // Xử lý khi có lỗi khác
@@ -604,7 +604,7 @@ const PlacesSingle = (props) => {
                                                                                 key={index}
                                                                                 size={24}
                                                                                 onClick={() => handleClick(index + 1)}// lấy sao
-                                                                                // onMouseOver={() => handleMouseOver(index + 1)} // di chuyển chuột
+                                                                                onMouseOver={() => handleMouseOver(index + 1)} // di chuyển chuột
                                                                                 onMouseLeave={handleMouseLeave}
                                                                                 color={(hoverValue || currentValue) > index ? colors.orange : colors.grey}
                                                                                 style={{

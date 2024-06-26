@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from 'react-router-dom';
+import React, { useState } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SERVER_URL } from "../../constants/constants";
 import { apiForgotPassword } from "../../services/userServices";
 
 const ResetPassword = (props) => {

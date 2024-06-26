@@ -1,9 +1,7 @@
 import { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { SERVER_URL } from "../../constants/constants";
 import { register } from "../../services/authServices";
 
 
@@ -47,11 +45,11 @@ const Registration = (props) => {
                 password);
             console.log(response);
             if (response.ok) {// có dữ liệu trả về
-                if (response.status == 400) {
+                if (response.status === 400) {
                     //
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     //
-                } else if (response.status == 200) {
+                } else if (response.status === 200) {
                     //
                     const data = await response.json();
                     if (data !== null) {
@@ -68,7 +66,7 @@ const Registration = (props) => {
     };
 
     const isPasswordMatch = () => {
-        return password == confirmPassword;
+        return password === confirmPassword;
     };
 
     const isInputValid = () => {

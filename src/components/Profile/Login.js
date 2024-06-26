@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/constants";
 import { login } from "../../services/authServices";
@@ -25,11 +25,11 @@ const Login = () => {
         try {
             const response = await login(username, password);
             if (response.ok) {// có dữ liệu trả về
-                if (response.status == 400) {
+                if (response.status === 400) {
                     //
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     //
-                } else if (response.status == 200) {
+                } else if (response.status === 200) {
                     //
                     const resq = await response.json();// dữ liệu json
                     if (resq.access_token !== '' && resq.access_token !== undefined) {
@@ -56,11 +56,11 @@ const Login = () => {
 
     const validate = () => {
         let result = true;
-        if (username == '' || username == null) {
+        if (username === '' || username === null) {
             result = false;
             toast.warning('Please Enter Username');
         }
-        if (password == '' || password == null) {
+        if (password === '' || password === null) {
             result = false;
             toast.warning('Please Enter Password');
         }

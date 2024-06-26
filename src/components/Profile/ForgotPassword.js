@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
-import { SERVER_URL } from "../../constants/constants";
 import { apiResetPassWord } from "../../services/userServices";
 
 const ForgotPassword = (props) => {

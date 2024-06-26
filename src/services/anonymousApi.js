@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ACCESS_TOKEN, REFRESH_TOKEN, SERVER_URL } from '../constants/constants';
+import { SERVER_URL } from '../constants/constants';
 
 // middleware
 

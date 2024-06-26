@@ -19,7 +19,7 @@ export async function itineraryArticlesDetail(itineraryArticlesId) {
 }
 
 export async function itineraryArticlesListBySearch(inItinerarieId, inputDateStart, latitude, longitude) {
-    return await api.get(`/private/itineraryArticles/listBySearch?itineraries_id=${inItinerarieId}&date_start=${inputDateStart}&latitude=${latitude}&longitude=${longitude}`);
+    return await api.get(`/private/itineraryArticles/listBySearchShortest?itineraries_id=${inItinerarieId}&date_start=${inputDateStart}&latitude=${latitude}&longitude=${longitude}`);
 }
 
 export async function itineraryArticlesEdit(itineraryArticlesId, dateStartByItineraryArticles) {

@@ -1,12 +1,7 @@
-import { Dropdown, DropdownButton, Form } from "react-bootstrap";
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Swal from 'sweetalert2';
 
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 import { contactsCreate } from "../../services/contactsServices";
 
 const Contact = (props) => {
@@ -35,7 +30,7 @@ const Contact = (props) => {
       if (response.status === 200) {
         const data = await response.data;
         console.log(data);
-        if (data.status == 1) {
+        if (data.status === 1) {
           toast.success(data.message);
           return;
         }
@@ -43,9 +38,9 @@ const Contact = (props) => {
         else {
           toast.error(data.message);
         }
-      } else if (response.status == 400) {
+      } else if (response.status === 400) {
         // Xử lý khi có lỗi 400 (Bad Request)
-      } else if (response.status == 401) {
+      } else if (response.status === 401) {
         // Xử lý khi có lỗi 401 (Unauthorized)
       } else {
         // Xử lý khi có lỗi khác

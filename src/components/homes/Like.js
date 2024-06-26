@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Margin } from "@mui/icons-material";
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReactPaginate from 'react-paginate';
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -64,7 +63,7 @@ const Like = (props) => {
                     const data = response.data;
                     console.log(data);
 
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
 
                         await getListLike4ArticlesByUserId();// lấy lại danh sách mới
@@ -72,9 +71,9 @@ const Like = (props) => {
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Handle 400 Bad Request error
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Handle 401 Unauthorized error
                 } else {
                     // Handle other errors
@@ -140,14 +139,14 @@ const Like = (props) => {
                 const { data } = response;
                 console.log(data);
 
-                if (data.status == 1) {
+                if (data.status === 1) {
                     toast.success(data.message);
                 } else {
                     toast.error(data.message);
                 }
-            } else if (response.status == 400) {
+            } else if (response.status === 400) {
                 // Xử lý khi có lỗi 400 (Bad Request)
-            } else if (response.status == 401) {
+            } else if (response.status === 401) {
                 // Xử lý khi có lỗi 401 (Unauthorized)
             } else {
                 // Xử lý khi có lỗi khác

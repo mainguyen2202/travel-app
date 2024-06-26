@@ -222,7 +222,7 @@ const Places = () => {
             const topicsData = response.data;
             console.log("topicsData", topicsData);
 
-            const filteredTopics = topicsData.filter(item => item.subTopicsId == subTopicsId);
+            const filteredTopics = topicsData.filter(item => item.subTopicsId === subTopicsId);
             setTopics(filteredTopics);
 
             console.log(filteredTopics);
@@ -230,7 +230,7 @@ const Places = () => {
                 let tmpTopicId = filteredTopics[0].id;
                 setTopicsId(tmpTopicId);
 
-                const filteredSubTopics = topicsData.filter(item => item.subTopicsId == tmpTopicId);
+                const filteredSubTopics = topicsData.filter(item => item.subTopicsId === tmpTopicId);
                 if (filteredSubTopics.length > 0) {
                     setShowNatureSelect(true);
                     setSubTopics(filteredSubTopics);
@@ -258,7 +258,7 @@ const Places = () => {
             const data = await response.data;
             console.log(data);
             if (data.length > 0) {
-                const filteredSubTopics = data.filter(item => item.subTopicsId == inTopicId);
+                const filteredSubTopics = data.filter(item => item.subTopicsId === inTopicId);
                 if (filteredSubTopics.length > 0) {
                     setShowNatureSelect(true);
                     setSubTopics(filteredSubTopics);
@@ -436,35 +436,24 @@ const Places = () => {
     // check box
 
 
-    const [isLikeChecked, setIsLikeChecked] = useState(false);
-    const [isFeatureChecked, setIsFeatureChecked] = useState(false);
-    const [isNewestChecked, setIsNewestChecked] = useState(false);
-    const handleLikeCheckboxChange = () => {
-        setIsLikeChecked(!isLikeChecked);
-        if (!isLikeChecked) {
-            fetchInitDataLike();
-        } else {
-            // Xử lý khi checkbox được uncheck
-        }
-    };
+    const [selectedOption, setSelectedOption] = useState(null);
 
-    const handleFeatureCheckboxChange = () => {
-        setIsFeatureChecked(!isFeatureChecked);
-        if (!isFeatureChecked) {
-            fetchInitDataHistoryArticles();
-        } else {
-            // Xử lý khi checkbox được uncheck
-        }
-    };
-
-    const handleNewestCheckboxChange = () => {
-        setIsNewestChecked(!isNewestChecked);
-        if (!isNewestChecked) {
-            fetchInitDataDescDate();
-        } else {
-            // Xử lý khi checkbox được uncheck
-        }
-    };
+const handleOptionChange = (option) => {
+  setSelectedOption(option);
+  switch (option) {
+    case 'like':
+      fetchInitDataLike();
+      break;
+    case 'feature':
+      fetchInitDataHistoryArticles();
+      break;
+    case 'newest':
+      fetchInitDataDescDate();
+      break;
+    default:
+      break;
+  }
+};
     // check
 
     // danh sách địa điểm yêu thích nhất
@@ -519,7 +508,7 @@ const Places = () => {
                     const data = response.data;
                     console.log(data);
 
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
 
                         await getListLike4ArticlesByUserId();// lấy lại danh sách mới
@@ -527,9 +516,9 @@ const Places = () => {
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Handle 400 Bad Request error
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Handle 401 Unauthorized error
                 } else {
                     // Handle other errors
@@ -591,7 +580,7 @@ const Places = () => {
 
     const handleActiveMarker = (idMarker) => {
         console.log("id", idMarker, idActiveMarker);
-        if (idMarker == idActiveMarker) {
+        if (idMarker === idActiveMarker) {
             return;
         }
         setIdActiveMarker(idMarker);
@@ -716,43 +705,46 @@ const Places = () => {
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
                                 <div className="option-container">
-                                    <div className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="like-checkbox"
-                                            className="option-checkbox"
-                                            checked={isLikeChecked}
-                                            onChange={handleLikeCheckboxChange}
-                                        />
-                                        <label htmlFor="like-checkbox" className="option-label">
-                                            Yêu thích
-                                        </label>
-                                    </div>
-                                    <div className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="feature-checkbox"
-                                            className="option-checkbox"
-                                            checked={isFeatureChecked}
-                                            onChange={handleFeatureCheckboxChange}
-                                        />
-                                        <label htmlFor="feature-checkbox" className="option-label">
-                                            Nổi Bật
-                                        </label>
-                                    </div>
-                                    <div className="option-item">
-                                        <input
-                                            type="checkbox"
-                                            id="newest-checkbox"
-                                            className="option-checkbox"
-                                            checked={isNewestChecked}
-                                            onChange={handleNewestCheckboxChange}
-                                        />
-                                        <label htmlFor="newest-checkbox" className="option-label">
-                                            Mới nhất
-                                        </label>
-                                    </div>
-                                </div>
+    <div className="option-item">
+      <input
+        type="radio"
+        id="like-radio"
+        name="option-radio"
+        className="option-radio"
+        checked={selectedOption === 'like'}
+        onChange={() => handleOptionChange('like')}
+      />
+      <label htmlFor="like-radio" className="option-label">
+        Yêu thích
+      </label>
+    </div>
+    <div className="option-item">
+      <input
+        type="radio"
+        id="feature-radio"
+        name="option-radio"
+        className="option-radio"
+        checked={selectedOption === 'feature'}
+        onChange={() => handleOptionChange('feature')}
+      />
+      <label htmlFor="feature-radio" className="option-label">
+        Nổi Bật
+      </label>
+    </div>
+    <div className="option-item">
+      <input
+        type="radio"
+        id="newest-radio"
+        name="option-radio"
+        className="option-radio"
+        checked={selectedOption === 'newest'}
+        onChange={() => handleOptionChange('newest')}
+      />
+      <label htmlFor="newest-radio" className="option-label">
+        Mới nhất
+      </label>
+    </div>
+  </div>
 
                             </div>
                         </div>
@@ -803,7 +795,7 @@ const Places = () => {
                                                                     // }}
                                                                     >
                                                                         {
-                                                                            idActiveMarker == item.id ? (
+                                                                            idActiveMarker === item.id ? (
                                                                                 <InfoWindowF
                                                                                     onCloseClick={() => setIdActiveMarker(null)}
                                                                                 >

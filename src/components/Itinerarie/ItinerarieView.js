@@ -19,6 +19,7 @@ import {
   MarkerClusterer,
   useJsApiLoader,
   useLoadScript,
+
 } from "@react-google-maps/api";
 
 import { itinerariesDetail } from "../../services/itinerarieServices";
@@ -34,8 +35,11 @@ import {
   Input,
   SkeletonText,
   Text,
+  Select,
+  Grid
 } from '@chakra-ui/react'
 import PersonPinCircleIcon from '@mui/icons-material/PersonPinCircle';
+import { Card, ListGroup, Row, Col } from 'react-bootstrap';
 
 const ItinerarieView = (props) => {
   const [map, setMap] = useState(null);
@@ -404,6 +408,7 @@ const ItinerarieView = (props) => {
   // END PAGE
 
   // START: googlemap
+  const [selectedMode, setSelectedMode] = useState('DRIVING');
   const [markers, setMarkers] = useState([]);// mảng dữ liệu
   const [directionsInfo, setDirectionsInfo] = useState(null);
   const [myDirections, setMyDirections] = useState(null);
@@ -577,6 +582,11 @@ const ItinerarieView = (props) => {
 
   // START: direction map
   // /*
+
+
+  const handleModeChange = (event) => {
+    setSelectedMode(event.target.value);
+  };
   const google = window.google;
   const litresPerKM = 1 / 10; //1 lít chạy được 10km
   const gasLitreCost = 25000; // 25k / 1 lít xăng
@@ -584,8 +594,8 @@ const ItinerarieView = (props) => {
   const fetchDirections = (destination) => {
     if (!userLocation) return;
 
-    const selectedMode = document.getElementById("mode").value;// 
-    const directionsService = new google.maps.DirectionsService();
+
+    const directionsService = new google.maps.DirectionsService();// Gọi API của directionsService để tìm đường đi
 
     // const origin = { lat: 40.756795, lng: -73.954298 };
     // const destination = { lat: 41.756795, lng: -78.954298 };
@@ -720,166 +730,188 @@ const ItinerarieView = (props) => {
 
 
 
-              <div className="reservation-form mainguyen">
+              <div className="reservation-form mainguyen" style={{marginBottom:'20px'}}>
 
-                <div className="row" style={{ height: '550px' }}>
+                <div className="row" style={{ height: '500px' }}>
                   {/* Google Map Box */}
-                  <div id="floating-panel">
-                    <b>Mode of Travel: </b>
-                    <select id="mode">
-                      <option value="DRIVING">Driving</option>
-                      <option value="WALKING">Walking</option>
-                      <option value="BICYCLING">Bicycling</option>
-                      <option value="TRANSIT">Transit</option>
-                    </select>
-                  </div>
+
                   <div id="map">
                     <Fragment>
                       <div className="container">
-                        <div style={{ height: "90vh", width: "100%" }}>
-                          {isLoaded && (
-                            <GoogleMap
-                              center={userLocation}
-                              zoom={12}
-                              onClick={() => setIdActiveMarker(null)}
-                              mapContainerStyle={{ width: "100%", height: "50vh" }}
-                              onLoad={(map) => setMap(map)}
-                            // zoomControl={true}
-                            // streetViewControl={false}
-                            // mapTypeControl={false}
-                            // fullscreenControl={true}
-                            >
+                        {/* <div style={{ height: "90vh", width: "100%" }}> */}
+                        {isLoaded && (
+                          <GoogleMap
+                            center={userLocation}
+                            zoom={12}
+                            onClick={() => setIdActiveMarker(null)}
+                            mapContainerStyle={{ width: "100%", height: "50vh" }}
+                            onLoad={(map) => setMap(map)}
+                          // zoomControl={true}
+                          // streetViewControl={false}
+                          // mapTypeControl={false}
+                          // fullscreenControl={true}
+                          >
 
 
-                              {markers.map((item) => (
-                                (item.id == -1) ? (
-                                  <MarkerF
-                                    key={item.id}
-                                    position={item.position}
-                                    onClick={() => handleActiveMarker(item.id, item.position)}
-                                    icon={{
-                                      // url: "https://i.imgur.com/FpHIBa7.png",
-                                      url: "https://i.pngimg.me/thumb/f/720/comdlpng6964730.jpg",
-                                      scaledSize: new window.google.maps.Size(36, 36)
-                                    }}
-                                  >
-                                    {idActiveMarker === item.id && (
-                                      <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
-                                        <div>
-                                          <p>{item.name}</p>
-                                        </div>
-                                      </InfoWindowF>
-                                    )}
-                                  </MarkerF>
-                                ) : (
-                                  <MarkerF
-                                    key={item.id}
-                                    position={item.position}
-                                    onClick={() => handleActiveMarker(item.id, item.position)}
-                                  >
-                                    {idActiveMarker === item.id && (
+                            {markers.map((item) => (
+                              (item.id == -1) ? (
+                                <MarkerF
+                                  key={item.id}
+                                  position={item.position}
+                                  onClick={() => handleActiveMarker(item.id, item.position)}
+                                  icon={{
+                                    url: "https://i.imgur.com/FpHIBa7.png",
+                                    // url: "https://i.pngimg.me/thumb/f/720/comdlpng6964730.jpg",
+                                    scaledSize: new window.google.maps.Size(36, 36)
+                                  }}
+                                >
+                                  {idActiveMarker === item.id && (
+                                    <InfoWindowF onCloseClick={() => setIdActiveMarker(null)}>
+                                      <div>
+                                        <p>{item.name}</p>
+                                      </div>
+                                    </InfoWindowF>
+                                  )}
+                                </MarkerF>
+                              ) : (
+                                <MarkerF
+                                  key={item.id}
+                                  position={item.position}
+                                  onClick={() => handleActiveMarker(item.id, item.position)}
+                                >
+                                  {idActiveMarker === item.id && (
 
-                                      <InfoWindowF
-                                        onCloseClick={() => setIdActiveMarker(null)}
-                                      >
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-                                          <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
-                                            {item.name}
-                                          </Link>
-                                          <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                                            <img
-                                              src={item.image || 'default-product-image.jpg'}
-                                              alt={item.name}
-                                              style={{ width: '80px', height: '80px', marginRight: '12px' }}
-                                            />
-                                            <div>
-                                              <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
-                                              <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
-                                            </div>
+                                    <InfoWindowF
+                                      onCloseClick={() => setIdActiveMarker(null)}
+                                    >
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                        <Link to={`/detail?article_id=${item.id}`} style={{ fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>
+                                          {item.name}
+                                        </Link>
+                                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                                          <img
+                                            src={item.image || 'default-product-image.jpg'}
+                                            alt={item.name}
+                                            style={{ width: '80px', height: '80px', marginRight: '12px' }}
+                                          />
+                                          <div>
+                                            <p style={{ margin: '4px 0' }}>Giá: {item.price}</p>
+                                            <p style={{ margin: '4px 0' }}>Lượt xem: {item.count}</p>
                                           </div>
                                         </div>
-                                      </InfoWindowF>
-                                    )}
-                                  </MarkerF>
-                                )
-                              ))
-                              }
+                                      </div>
+                                    </InfoWindowF>
+                                  )}
+                                </MarkerF>
+                              )
+                            ))
+                            }
 
-                              <Circle center={userLocation} radius={4500} options={closeOptions} />
-                              <Circle center={userLocation} radius={6000} options={middleOptions} />
-                              <Circle center={userLocation} radius={7500} options={farOptions} />
+                            <Circle center={userLocation} radius={4500} options={closeOptions} />
+                            <Circle center={userLocation} radius={6000} options={middleOptions} />
+                            <Circle center={userLocation} radius={7500} options={farOptions} />
 
 
-                              <Polyline
-                                path={markers.map((item) => ({
-                                  lat: item.position.lat,
-                                  lng: item.position.lng,
-                                }))}
-                                options={{
-                                  strokeColor: "#ff2649",
-                                  strokeOpacity: 0.8,
-                                  strokeWeight: 2,
-                                  icons: [
-                                    {
-                                      icon: {
-                                        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                                        scale: 3,
-                                        strokeColor: "#ff2649",
-                                        strokeWeight: 2,
-                                      },
-                                      offset: "0",
-                                      repeat: "20px",
-                                      animation: google.maps.Animation.BOUNCE,
+                            <Polyline
+                              path={markers.map((item) => ({
+                                lat: item.position.lat,
+                                lng: item.position.lng,
+                              }))}
+                              options={{
+                                strokeColor: "#ff2649",
+                                strokeOpacity: 0.8,
+                                strokeWeight: 2,
+                                icons: [
+                                  {
+                                    icon: {
+                                      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                                      scale: 3,
+                                      strokeColor: "#ff2649",
+                                      strokeWeight: 2,
                                     },
-                                  ],
-                                }}
-                              />
+                                    offset: "0",
+                                    repeat: "20px",
+                                    animation: google.maps.Animation.BOUNCE,
+                                  },
+                                ],
+                              }}
+                            />
 
-                              {/* {polyline && <Polyline options={polyline.getOptions()} />} */}
+                            {/* {polyline && <Polyline options={polyline.getOptions()} />} */}
 
-                              <DirectionsRenderer directions={myDirections} />
-                            </GoogleMap>
-                          )}
-                        </div>
+                            <DirectionsRenderer directions={myDirections} />
+                          </GoogleMap>
+                        )}
+                        {/* </div> */}
                       </div>
                     </Fragment>
-                  </div>
-                  <Flex
-                    position='relative'
-                    flexDirection='column'
-                    alignItems='center'
-                    h='100%'
-                    w='100%'
-                  >
-                    <Box position='absolute' left={0} top={0} h='100%' w='100%'>
-                    </Box>
 
-                    <Box
-                      p={4}
-                      borderRadius='lg'
-                      m={4}
-                      bgColor='white'
-                      shadow='base'
-                      minW='container.md'
-                      zIndex='1'
-                    >
-                      {totalDistance !== 0 && (
-                        <HStack spacing={4} mt={4} justifyContent='space-left'>
-                          <Text>Tổng độ dài dự tính: {totalDistance} </Text>
-                        </HStack>
-                      )}
-                      {directionsInfo !== null && (
-                        <HStack spacing={4} mt={4} justifyContent='space-between'>
-                          <Text>Địa điểm đi: {directionsInfo.start_address} </Text>
-                          <Text>Địa điểm đến: {directionsInfo.end_address} </Text>
-                          <Text>Quảng đường: {directionsInfo.distance_txt} </Text>
-                          <Text>Thời gian: {directionsInfo.duration_txt} </Text>
-                          <Text>Chi phí: {directionsInfo.cost} {directionsInfo.unit} </Text>
-                        </HStack>
-                      )}
-                    </Box>
-                  </Flex>
+                  </div>
+
+
                 </div>
+              </div>
+              <div className="row" style={{marginBottom:'20px'}}>
+                <Card style={{ width: '50%', background: 'white' }}>
+                  <Card.Body>
+
+
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <Row>
+                          <Col xs={6}>Phương tiện di chuyển:</Col>
+                          <Col xs={6}>
+                            <select
+                              id="mode"
+                              value={selectedMode}
+                              onChange={handleModeChange}
+                              className="form-control w-auto"
+                              style={{fontSize:'16px'}}
+                            >
+                              <option value="DRIVING">Xe hơi</option>
+                              <option value="WALKING">Đi bộ</option>
+                              <option value="BICYCLING">Đi xe đạp</option>
+                              <option value="TRANSIT">Bus</option>
+                            </select>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+
+                    </ListGroup>
+
+                    <ListGroup variant="flush">
+                      {totalDistance !== 0 && (
+                        <div >
+                          <ListGroup.Item>Tổng độ dài dự tính: {totalDistance} km</ListGroup.Item>
+                        </div>
+                      )}
+
+                      {directionsInfo !== null && (
+                        <div>
+                          
+                          <ListGroup.Item>Địa điểm đi:{directionsInfo.start_address}</ListGroup.Item>
+                          <ListGroup.Item>Địa điểm đến:{directionsInfo.end_address}</ListGroup.Item>
+                          <ListGroup.Item>Quảng đường:{directionsInfo.distance_txt}</ListGroup.Item>
+                          <ListGroup.Item>Thời gian:{directionsInfo.duration_txt}</ListGroup.Item>
+                          <ListGroup.Item>Chi phí:{ }
+
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(directionsInfo.cost)}
+                          </ListGroup.Item>
+
+                        </div>
+                      )}
+                    </ListGroup>
+
+
+
+
+                  </Card.Body>
+                </Card>
+
+
               </div>
 
               <div className="row">

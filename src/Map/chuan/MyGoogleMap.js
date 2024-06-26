@@ -40,7 +40,7 @@ const MyGoogleMap = (props) => {
 
   const handleActiveMarker = (idMarker) => {
     console.log("id", idMarker, idActiveMarker);
-    if (idMarker == idActiveMarker) {
+    if (idMarker === idActiveMarker) {
       return;
     }
     setIdActiveMarker(idMarker);
@@ -114,7 +114,7 @@ const MyGoogleMap = (props) => {
                 // }}
                 >
                   {
-                    idActiveMarker == item.id ? (
+                    idActiveMarker === item.id ? (
                       <InfoWindowF 
                         onCloseClick={() => setIdActiveMarker(null)}
                       >

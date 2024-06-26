@@ -1,10 +1,10 @@
-import { Margin } from "@mui/icons-material";
+
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN } from "../../constants/constants";
 import { showAllPlace } from "../../services/placeServices";
 import { showTopicsBySubTopicId } from "../../services/topicServices";
 import { getCurrentUser } from "../../services/authServices";
@@ -32,15 +32,18 @@ const Home = (props) => {
     }
 
     useEffect(() => {
+        fetchData();
+      }, []); 
+      
+    const fetchData = async () => {
+        await fetchInitDataPlace();
+        await fetchInitDataTopic();
+        await fetchInitDataLike();
+        await fetchInitDataItineraries();
+        await getListLike4ArticlesByUserId();
+      };
+      
 
-        fetchInitDataPlace();// sử dụng hàm lấy danh sách mới nhất
-        fetchInitDataTopic();
-        fetchInitDataLike();
-        fetchInitDataItineraries();
-        getListLike4ArticlesByUserId();
-
-
-    }, []);
 
     // tạo hàm xử lí lấy danh sách
     const fetchInitDataPlace = async () => {
@@ -162,7 +165,7 @@ const Home = (props) => {
                     const data = response.data;
                     console.log(data);
 
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
 
                         await getListLike4ArticlesByUserId();// lấy lại danh sách mới
@@ -170,9 +173,9 @@ const Home = (props) => {
                     } else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Handle 400 Bad Request error
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Handle 401 Unauthorized error
                 } else {
                     // Handle other errors

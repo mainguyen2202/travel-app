@@ -13,6 +13,10 @@ export async function apiResetPassWord(token, newPassword) {
     return await anonymousApi.post(`/auth/resetPassword`, data);
 }
 
+export async function apiLogout( ){
+    return await anonymousApi.post(`/auth/logout`);
+}
+
 export async function checkUserName(username ){
    
     return await api.get(`/private/users/detailBySearchUserName?username=${username}`);

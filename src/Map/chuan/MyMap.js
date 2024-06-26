@@ -74,7 +74,7 @@ const MyMapComponent = (props) => {
   }
 
   async function calculateRoute() {
-    if (originRef.current.value == '' || destiantionRef.current.value == '') {
+    if (originRef.current.value === '' || destiantionRef.current.value === '') {
       return
     }
     // eslint-disable-next-line no-undef

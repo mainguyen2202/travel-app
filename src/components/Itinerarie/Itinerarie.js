@@ -1,13 +1,12 @@
-import { Dropdown, DropdownButton, Form } from "react-bootstrap";
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { toast, ToastContainer, Zoom } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN } from "../../constants/constants";
 import { getCurrentUser } from "../../services/authServices";
 import { itinerariesDetail, itinerariesRemove, itineraryCreate, itineraryEdit, listBySearchItineraries } from "../../services/itinerarieServices";
 import { listShareItinerariesUserId, shareItinerariesUserId } from "../../services/shareItinerariesServices";
@@ -79,7 +78,7 @@ const Itinerarie = (props) => {
                     const data = await response.data;
                     toast.success(data.message);
                     // console.log(data);
-                    if (data.status == 1) {
+                    if (data.status === 1) {
                         toast.success(data.message);
 
                         // Cập nhật danh sách itineraries bằng cách thêm itinerary mới
@@ -96,9 +95,9 @@ const Itinerarie = (props) => {
                     else {
                         toast.error(data.message);
                     }
-                } else if (response.status == 400) {
+                } else if (response.status === 400) {
                     // Xử lý khi có lỗi 400 (Bad Request)
-                } else if (response.status == 401) {
+                } else if (response.status === 401) {
                     // Xử lý khi có lỗi 401 (Unauthorized)
                 } else {
                     // Xử lý khi có lỗi khác
@@ -146,7 +145,7 @@ const Itinerarie = (props) => {
                 const data = await response.data;
                 console.log(data);
 
-                if (data.status == 1) {
+                if (data.status === 1) {
                     toast.success(data.message);
 
                     // fetchInitData();// sử dụng hàm lấy danh sách mới nhất
@@ -210,7 +209,7 @@ const Itinerarie = (props) => {
                 const data = await response.data;
                 console.log(data);
 
-                if (data.status == 1) {
+                if (data.status === 1) {
                     toast.success(data.message);
 
                     // Cập nhật danh sách itineraries
@@ -261,7 +260,7 @@ const Itinerarie = (props) => {
                     const dataShere = response.data;
                     console.log(dataShere);
 
-                    if (dataShere.status == 1) {
+                    if (dataShere.status === 1) {
                         toast.success(dataShere.message);
                     } else {
                         toast.error(dataShere.message);
@@ -276,7 +275,7 @@ const Itinerarie = (props) => {
 
     const validate = () => {
         let result = true;
-        if (username == '' || username == null) {
+        if (username === '' || username === null) {
             result = false;
             toast.warning('Please Enter Username');
         }

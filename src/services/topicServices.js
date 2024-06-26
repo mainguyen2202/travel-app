@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { SERVER_URL } from "../constants/constants";
 import anonymousApi from "./anonymousApi";
 
 export async function showAllTopic() {

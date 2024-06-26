@@ -75,7 +75,7 @@ const PlacesAutocomplete = ({ setSelected }) => {
       />
       <ComboboxPopover>
         <ComboboxList>
-          {status == "OK" &&
+          {status === "OK" &&
             data.map(({ place_id, description }) => (
               <ComboboxOption key={place_id} value={description} />
             ))}

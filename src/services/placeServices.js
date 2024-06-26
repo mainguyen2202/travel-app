@@ -1,7 +1,6 @@
 
 import { ACCESS_TOKEN, SERVER_URL } from "../constants/constants";
 import anonymousApi from "./anonymousApi";
-import axios from 'axios';
 let accessToken = localStorage.getItem(ACCESS_TOKEN);
 
 export function showAllV1() {

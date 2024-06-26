@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ACCESS_TOKEN, SERVER_URL } from "../../constants/constants";
+import { ACCESS_TOKEN } from "../../constants/constants";
 import { getCurrentUser } from "../../services/authServices";
 import { showUser, userEdit, userEditPassWord } from "../../services/userServices";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 // import bcrypt from 'bcrypt';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const Profile = (props) => {
@@ -36,124 +34,118 @@ const Profile = (props) => {
             console.log("userId", userInfo.USER_ID);
         }
     }
+
     useEffect(() => {
         fetchdataDetailId();
 
     }, [userId]);
 
-
-
     const fetchdataDetailId = async () => {
-
-        const response = await showUser(userId);
-        if (response.status === 200) {
-            const data = response.data;
-            console.log(data);
-
-            setdataDetail(data);
-
-            setName(data.name); // Assign the value to name state variable
-            setCreateAt(data.createAt); // Assign the value to name state variable
-            setStatus(data.status); // Assign the value to name state variable
-            setImage(data.image); // Assign the value to name state variable
-            setRoleDetail(data.role);
-            setUserName(data.username);
-            setEmail(data.email);
-            // setPassWord(data.password);
-
-
+        try {
+            const response = await showUser(userId);
+            if (response.status === 200) {
+                const { name, createAt, status, image, role, username, email } = response.data;
+                setdataDetail(response.data);
+                setName(name);
+                setCreateAt(createAt);
+                setStatus(status);
+                setImage(image);
+                setRoleDetail(role);
+                setUserName(username);
+                setEmail(email);
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
         }
-
     };
 
     const handleEdit = async (e) => {
         e.preventDefault();
+
         try {
             const response = await userEdit(name, userName, email, userId);
+
             if (response.status === 200) {
-                const data = response.data;
-                console.log(data);
+                const { status, message } = response.data;
 
-                if (data.status === 1) {
-                    toast.success(data.message);
-
+                if (status === 1) {
+                    toast.success(message);
                     return;
                 } else {
-                    toast.error(data.message);
+                    toast.error(message);
                 }
             } else {
-                console.log('Update failed');
+                toast.error('Update failed');
             }
         } catch (error) {
-            console.log('Error:', error);
+            console.error('Error:', error);
+            toast.error('An error occurred while updating the user.');
         }
     };
-
 
     const ProceedThayDoiMatKhau = async (e) => {
         e.preventDefault();
-        if (validate()) {
-            try {
-                const response = await userEditPassWord(newPassword, userId);
-                if (response.status === 200) {
-                    const data = response.data;
-                    console.log(data);
-                    if (data.status === 1) {
-                        toast.success(data.message);
-                    } else {
-                        toast.error(data.message);
-                    }
+
+        if (!validate()) {
+            return;
+        }
+
+        try {
+            const response = await userEditPassWord(newPassword, userId);
+
+            if (response.status === 200) {
+                const { status, message } = response.data;
+
+                if (status === 1) {
+                    toast.success(message);
                 } else {
-                    console.log('Update failed');
+                    toast.error(message);
                 }
-            } catch (error) {
-                console.log('Error:', error);
+            } else {
+                toast.error('Update failed');
             }
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error('An error occurred while updating the password.');
         }
     };
-
 
 
 
     const validate = () => {
         let result = true;
 
-        try {
-            // Kiểm tra mật khẩu cũ
-            //   if (!bcrypt.compareSync(oldPassword, dataDetail.password)) {
-            //     result = false;
-            //     toast.warning('Old password is not valid');
-            //   }
+        // Kiểm tra mật khẩu cũ
+        // if (!bcrypt.compareSync(oldPassword, dataDetail.password)) {
+        //   toast.warning('Old password is not valid');
+        //   return false;
+        // }
 
-            if (newPassword === '' || newPassword === null) {
-                result = false;
-                toast.warning('Please enter a new password');
-            }
+        if (!newPassword) {
+            toast.warning('Please enter a new password');
+            return false;
+        }
 
-            if (confirmPassword === '' || confirmPassword === null) {
-                result = false;
-                toast.warning('Please confirm the new password');
-            }
+        if (!confirmPassword) {
+            toast.warning('Please confirm the new password');
+            return false;
+        }
 
-            if (newPassword !== confirmPassword) {
-                result = false;
-                toast.warning('New password and confirm password do not match');
-            }
-        } catch (error) {
-            console.log('Error during password validation:', error);
-            result = false;
+        if (newPassword !== confirmPassword) {
+            toast.warning('New password and confirm password do not match');
+            return false;
         }
 
         return result;
     };
 
-    
+
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
-     
+
     };
     const togglePasswordVisibilityNew = () => {
         setShowNewPassword(!showNewPassword);
@@ -254,14 +246,14 @@ const Profile = (props) => {
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                                                     </div>
-                                                                    <input   type={showPassword ? 'text' : 'password'} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} class="form-control" id="old-password" name="old-password" placeholder="Mật khẩu cũ .." />
+                                                                    <input type={showPassword ? 'text' : 'password'} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} class="form-control" id="old-password" name="old-password" placeholder="Mật khẩu cũ .." />
                                                                     <div class="input-group-append show-pass">
                                                                         <span class="input-group-text" onClick={() => togglePasswordVisibility('old-password')}>
                                                                             <i id="old-password-icon" class="fa fa-eye-slash"></i>
 
                                                                             {showPassword ? <FaEyeSlash /> : <FaEye />}</span>
 
-                                                                        
+
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -272,10 +264,10 @@ const Profile = (props) => {
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
                                                                     </div>
-                                                                    <input   type={showNewPassword ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} class="form-control" id="new-password" name="new-password" placeholder="Mật khẩu mới.." />
+                                                                    <input type={showNewPassword ? 'text' : 'password'} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} class="form-control" id="new-password" name="new-password" placeholder="Mật khẩu mới.." />
                                                                     <div class="input-group-append show-pass">
-                                                                        <span class="input-group-text" onClick={() => togglePasswordVisibilityNew('new-password')}> 
-                                                                             {showNewPassword ? <FaEyeSlash /> : <FaEye />}</span>
+                                                                        <span class="input-group-text" onClick={() => togglePasswordVisibilityNew('new-password')}>
+                                                                            {showNewPassword ? <FaEyeSlash /> : <FaEye />}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -288,8 +280,8 @@ const Profile = (props) => {
                                                                     </div>
                                                                     <input type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} class="form-control" id="confirm-password" name="confirm-password" placeholder="Nhập lại mật khẩu mới" />
                                                                     <div class="input-group-append show-pass">
-                                                                        <span class="input-group-text" onClick={() => togglePasswordVisibilityConf('confirm-password')}> 
-                                                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}</span>
+                                                                        <span class="input-group-text" onClick={() => togglePasswordVisibilityConf('confirm-password')}>
+                                                                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
