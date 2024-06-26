@@ -43,13 +43,15 @@ import { Card, ListGroup, Row, Col } from 'react-bootstrap';
 
 const ItinerarieView = (props) => {
   const [map, setMap] = useState(null);
-  const [polyline, setPolyline] = useState(null);
+  const [ltsPolyline, setLtsPolyline] = useState(null);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_KEY,
     libraries: ['places'],
   });
 
+  // /*
+  // Xử lí chuyển động
   const animateCircle = (line) => {
     let count = 0;
 
@@ -63,6 +65,7 @@ const ItinerarieView = (props) => {
 
     return () => clearInterval(interval);
   };
+  // */
 
   const [searchParams, setSearchParams] = useSearchParams();
   const itineraryId = searchParams.get('itinerarie_id');
@@ -213,23 +216,16 @@ const ItinerarieView = (props) => {
             });
 
             if (isLoaded && map) {
+              // /*
               console.log("-------------START--------------");
-              const lineSymbol = {
-                path: window.google.maps.SymbolPath.CIRCLE,
-                scale: 8,
-                strokeColor: '#393'
-              };
-
               let ltsPolylines = [];
               ltsMarkers.map(item => {
-                if (item.id !== -1) {
-                  ltsPolylines.push(
-                    {
-                      lat: item.position.lat,
-                      lng: item.position.lng
-                    }
-                  );
-                }
+                ltsPolylines.push(
+                  {
+                    lat: item.position.lat,
+                    lng: item.position.lng
+                  }
+                );
               }
               );
 
@@ -237,18 +233,29 @@ const ItinerarieView = (props) => {
                 path: ltsPolylines,
                 icons: [
                   {
-                    icon: lineSymbol,
-                    offset: '100%'
+                    strokeColor: "#ff2649", // This is the color of the symbol
+                    strokeOpacity: 0.8,
+                    strokeWeight: 2,
+                    icon: {
+                      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                      scale: 5,
+                      strokeColor: '#393'
+                    },
+                    offset: '100%',
                   }
                 ],
+                strokeColor: "#ff2649", // Change the color of the polyline to yellow
+                strokeWeight: 2, // Set the width of the polyline
                 map: map
               };
+              // Create the polyline with the custom icon
+              const newPolyline = new window.google.maps.Polyline(polylineOptions);// dùng thư viện vẽ đường đi
+              setLtsPolyline(newPolyline);
 
-              const newPolyline = new window.google.maps.Polyline(polylineOptions);
-              setPolyline(newPolyline);
+              animateCircle(newPolyline);// vẽ đường đi có kèm chuyển động
 
-              // animateCircle(newPolyline);
               console.log("-------------END--------------");
+              // */
             }
             // END
           }
@@ -258,8 +265,6 @@ const ItinerarieView = (props) => {
       } else {
         toast.error(data.message);
       }
-
-
     }
 
   };
@@ -729,15 +734,14 @@ const ItinerarieView = (props) => {
 
 
 
-              <div className="reservation-form mainguyen" style={{marginBottom:'20px'}}>
+              <div className="reservation-form mainguyen" style={{ marginBottom: '20px' }}>
 
-                <div className="row" style={{ height: '500px' }}>
+                <div className="row" style={{ height: '480px' }}>
                   {/* Google Map Box */}
 
                   <div id="map">
                     <Fragment>
                       <div className="container">
-                        {/* <div style={{ height: "90vh", width: "100%" }}> */}
                         {isLoaded && (
                           <GoogleMap
                             center={userLocation}
@@ -828,17 +832,24 @@ const ItinerarieView = (props) => {
                                       strokeColor: "#ff2649",
                                       strokeWeight: 2,
                                     },
-                                    offset: "0",
-                                    repeat: "20px",
+                                    offset: "100%",
+                                    repeat: "40px",
                                     animation: google.maps.Animation.BOUNCE,
                                   },
                                 ],
                               }}
                             />
 
-                            {/* {polyline && <Polyline options={polyline.getOptions()} />} */}
+                            {ltsPolyline && <Polyline options={ltsPolyline} />}
 
-                            <DirectionsRenderer directions={myDirections} />
+                            <DirectionsRenderer
+                              directions={myDirections}
+                              options={{
+                                polylineOptions: {
+                                  strokeColor: "#006699", // Set the polyline color to a dark sea blue
+                                  strokeWeight: 4, // Set the polyline width
+                                },
+                              }} />
                           </GoogleMap>
                         )}
                         {/* </div> */}
@@ -850,7 +861,7 @@ const ItinerarieView = (props) => {
 
                 </div>
               </div>
-              <div className="row" style={{marginBottom:'20px'}}>
+              <div className="row" style={{ marginBottom: '20px' }}>
                 <Card style={{ width: '50%', background: 'white' }}>
                   <Card.Body>
 
@@ -865,7 +876,7 @@ const ItinerarieView = (props) => {
                               value={selectedMode}
                               onChange={handleModeChange}
                               className="form-control w-auto"
-                              style={{fontSize:'16px'}}
+                              style={{ fontSize: '16px' }}
                             >
                               <option value="DRIVING">Xe hơi</option>
                               <option value="WALKING">Đi bộ</option>
@@ -887,12 +898,11 @@ const ItinerarieView = (props) => {
 
                       {directionsInfo !== null && (
                         <div>
-                          
-                          <ListGroup.Item>Địa điểm đi:{directionsInfo.start_address}</ListGroup.Item>
-                          <ListGroup.Item>Địa điểm đến:{directionsInfo.end_address}</ListGroup.Item>
-                          <ListGroup.Item>Quảng đường:{directionsInfo.distance_txt}</ListGroup.Item>
-                          <ListGroup.Item>Thời gian:{directionsInfo.duration_txt}</ListGroup.Item>
-                          <ListGroup.Item>Chi phí:{ }
+                          <ListGroup.Item>Địa điểm đi: {directionsInfo.start_address}</ListGroup.Item>
+                          <ListGroup.Item>Địa điểm đến: {directionsInfo.end_address}</ListGroup.Item>
+                          <ListGroup.Item>Quảng đường: {directionsInfo.distance_txt}</ListGroup.Item>
+                          <ListGroup.Item>Thời gian: {directionsInfo.duration_txt}</ListGroup.Item>
+                          <ListGroup.Item>Chi phí: { }
 
                             {new Intl.NumberFormat('vi-VN', {
                               style: 'currency',
