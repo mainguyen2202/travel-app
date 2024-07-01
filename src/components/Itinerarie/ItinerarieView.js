@@ -84,7 +84,6 @@ const ItinerarieView = (props) => {
   const [dateStartItineraryArticles, setDateStartItineraryArticles] = useState("");
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalPriceParticipantCount, setTotalPriceParticipantCount] = useState(0);
-  const [data, setData] = useState([]);
 
   useEffect(() => {
     console.log("input", itineraryId);
@@ -115,7 +114,6 @@ const ItinerarieView = (props) => {
     }
   };
 
-
   // tạo hàm xử lí lấy danh sách
   const fetchInitData = async (inItinerarieId, inputDateStart, GPS = null) => {
     console.log("list", inItinerarieId, inputDateStart);
@@ -138,137 +136,141 @@ const ItinerarieView = (props) => {
           const itineraryArticlesData = data.Item;
           const totalDistance = data.totalDistance;
 
-          console.log(itineraryArticlesData);
-          console.log("Tổng độ dài Đường đi", totalDistance);
           if (itineraryArticlesData.length > 0) {
-            console.log(itineraryArticlesData);
+            // xử lí hiển thị danh sách
             setItineraryArticles(itineraryArticlesData);
-            setData(itineraryArticlesData);
             setTotalDistance(totalDistance);
-            // START: map
+            calculateTotalPrice(itineraryArticlesData);
 
-            let ltsMarkers = [];
-            if (userLocation) {
-              // Khi nhấn tìm kiếm thì cần xóa hết dữ liệu ở marker và khởi tạo lại điểm vị trí của tôi
-              ltsMarkers.push({
-                id: -1,
-                name: "Vị trí của tôi",
-                position: {
-                  lat: parseFloat(userLocation.lat),
-                  lng: parseFloat(userLocation.lng)
-                }
-              });
-            } else {
-              ltsMarkers = [];
-              console.log("[markers]", markers);
-              markers.map(item => {
-                if (item.id == -1) {
-                  ltsMarkers.push(item);// Khi lần đầu thì sẽ có 1 giá trị (vị trí của tôi)
-                }
-              });
-            }
-
-            itineraryArticlesData.map(item => {
-              if (item.id !== -1) {
-                ltsMarkers.push(
-                  {
-                    id: item.id,
-                    name: item.articles.name,
-                    position: {
-                      lat: parseFloat(item.articles.latitude),
-                      lng: parseFloat(item.articles.longitude)
-                    },
-                    title: item.articles.title,
-                    price: item.articles.price,
-                    image: item.articles.image,
-                    createAt: item.articles.createAt,
-                    content: item.articles.content,
-                    status: item.articles.status,
-                    count: item.articles.historyArticles?.length > 0 ? item.articles.historyArticles[0].count : 0
-                  }
-                );
-              }
-            }
-            );
-            setMarkers(ltsMarkers);
-            console.log("GPSmarkers", ltsMarkers, markers);
-            // END: map
-
-            // Tính tổng giá (price) của các phần tử trong mảng itineraryArticlesData.articles.price
-            // Sử dụng phương thức map để tạo mảng mới chỉ chứa giá (price)
-            const prices = itineraryArticlesData.map(item => item.articles.price);
-
-            console.log(prices); // In ra mảng giá
-
-            // Tính tổng giá của các phần tử trong mảng prices
-            const totalPrice = prices.reduce((accumulator, price) => accumulator + price, 0);
-
-            console.log("Tổng giá trên 1 người:", totalPrice); // In ra tổng giá
-            setTotalPrice(totalPrice);
-
-            itineraryArticlesData.forEach(item => {
-              if (item.id !== -1) {
-                const participantCount = item.itineraries.participantCount;
-                console.log("participantCount: " + participantCount);
-                const itemTotalPrice = totalPrice * participantCount;
-                setTotalPriceParticipantCount(itemTotalPrice);
-              }
-            });
-
-            if (isLoaded && map) {
-              // /*
-              console.log("-------------START--------------");
-              let ltsPolylines = [];
-              ltsMarkers.map(item => {
-                ltsPolylines.push(
-                  {
-                    lat: item.position.lat,
-                    lng: item.position.lng
-                  }
-                );
-              }
-              );
-
-              const polylineOptions = {
-                path: ltsPolylines,
-                icons: [
-                  {
-                    strokeColor: "#ff2649", // This is the color of the symbol
-                    strokeOpacity: 0.8,
-                    strokeWeight: 2,
-                    icon: {
-                      path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                      scale: 5,
-                      strokeColor: '#393'
-                    },
-                    offset: '100%',
-                  }
-                ],
-                strokeColor: "#ff2649", // Change the color of the polyline to yellow
-                strokeWeight: 2, // Set the width of the polyline
-                map: map
-              };
-              // Create the polyline with the custom icon
-              const newPolyline = new window.google.maps.Polyline(polylineOptions);// dùng thư viện vẽ đường đi
-              setLtsPolyline(newPolyline);
-
-              animateCircle(newPolyline);// vẽ đường đi có kèm chuyển động
-
-              console.log("-------------END--------------");
-              // */
-            }
-            // END
+            // xử lí hiển thị google map
+            updateGoogleMapMarkers(itineraryArticlesData);
           }
         } else {
           console.error('Error:', response);
         }
-      } else {
-        toast.error(data.message);
       }
     }
-
   };
 
+
+  const updateGoogleMapMarkers = (itineraryArticlesData) => {
+    console.log("[GPSlocaction]", userLocation);
+
+    let ltsMarkers = [];
+
+    // Thêm vị trí của người dùng vào danh sách ltsMarkers
+    if (userLocation) {   // Khi nhấn tìm kiếm thì cần xóa hết dữ liệu ở marker và khởi tạo lại điểm vị trí của tôi
+      ltsMarkers.push({
+        id: -1,
+        name: "Vị trí của tôi",
+        position: {
+          lat: parseFloat(userLocation.lat),
+          lng: parseFloat(userLocation.lng)
+        }
+      });
+    } else {
+      ltsMarkers = [];
+      console.log("[markers]", markers);
+      markers.map(item => {
+        if (item.id === -1) {
+          ltsMarkers.push(item); // Khi lần đầu thì sẽ có 1 giá trị (vị trí của tôi)
+        }
+      });
+    }
+
+    // Thêm các marker từ dữ liệu itineraryArticlesData vào ltsMarkers
+    itineraryArticlesData.forEach(item => {
+      if (item.id !== -1) {
+        ltsMarkers.push({
+          id: item.id,
+          name: item.articles.name,
+          position: {
+            lat: parseFloat(item.articles.latitude),
+            lng: parseFloat(item.articles.longitude)
+          },
+          title: item.articles.title,
+          price: item.articles.price,
+          image: item.articles.image,
+          createAt: item.articles.createAt,
+          content: item.articles.content,
+          status: item.articles.status,
+          count: item.articles.historyArticles?.length > 0 ? item.articles.historyArticles[0].count : 0
+        });
+      }
+    });
+
+    // Cập nhật danh sách markers
+    setMarkers(ltsMarkers);
+    console.log("GPSmarkers", ltsMarkers, markers);
+
+    // vẽ đường đi từ GPS > END
+    drawPolyline(ltsMarkers);
+  };
+
+  const calculateTotalPrice = (itineraryArticlesData) => {
+    // Tính tổng giá (price) của các phần tử trong mảng itineraryArticlesData.articles.price
+    // Sử dụng phương thức map để tạo mảng mới chỉ chứa giá (price)
+    const prices = itineraryArticlesData.map(item => item.articles.price);
+    console.log(prices); // In ra mảng giá
+    // Tính tổng giá của các phần tử trong mảng prices
+    const totalPrice = prices.reduce((accumulator, price) => accumulator + price, 0);
+    console.log("Tổng giá trên 1 người:", totalPrice); // In ra tổng giá
+    setTotalPrice(totalPrice);
+
+    itineraryArticlesData.forEach(item => {
+      if (item.id !== -1) {
+        const participantCount = item.itineraries.participantCount;
+        console.log("participantCount: " + participantCount);
+        const itemTotalPrice = totalPrice * participantCount;
+        setTotalPriceParticipantCount(itemTotalPrice);
+      }
+    });
+  };
+
+  const drawPolyline = (ltsMarkers) => {
+    if (isLoaded && map) {
+      // /*
+      console.log("-------------START--------------");
+      let ltsPolylines = [];
+      ltsMarkers.map(item => {
+        ltsPolylines.push(
+          {
+            lat: item.position.lat,
+            lng: item.position.lng
+          }
+        );
+      }
+      );
+
+      const polylineOptions = {
+        path: ltsPolylines,
+        icons: [
+          {
+            strokeColor: "#ff2649", // This is the color of the symbol
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            icon: {
+              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              scale: 5,
+              strokeColor: '#393'
+            },
+            offset: '100%',
+          }
+        ],
+        strokeColor: "#ff2649", // Change the color of the polyline to yellow
+        strokeWeight: 2, // Set the width of the polyline
+        map: map
+      };
+      // Create the polyline with the custom icon
+      const newPolyline = new window.google.maps.Polyline(polylineOptions);// dùng thư viện vẽ đường đi
+      setLtsPolyline(newPolyline);
+
+      animateCircle(newPolyline);// vẽ đường đi có kèm chuyển động
+
+      console.log("-------------END--------------");
+      // */
+    }
+  };
 
 
   const findByDate = async (e, indateStart) => {
@@ -283,7 +285,6 @@ const ItinerarieView = (props) => {
     console.log("click itinerarieId", itineraryId);
     setDateStartItineraryArticles(""); // Đặt giá trị rỗng cho trường input ngày
     fetchInitData(itineraryId, "");
-
   }
 
   const [showAllDates, setShowAllDates] = useState(false);
@@ -381,8 +382,6 @@ const ItinerarieView = (props) => {
   };
 
   // Print
-
-
 
 
 
@@ -621,9 +620,24 @@ const ItinerarieView = (props) => {
 
           let leg = result.routes[0].legs[0];
           // Tính chi phí di chuyển
-          const cost = Math.floor(
-            (leg.distance.value / 100) * litreCostKM
-          );
+          let cost;
+
+          switch (selectedMode) {
+            case 'DRIVING':
+              cost = Math.floor((leg.distance.value / 1000) * litreCostKM);
+              break;
+            case 'WALKING':
+              cost = 0;
+              break;
+            case 'BICYCLING':
+              cost = 0;
+              break;
+            case 'TRANSIT':
+              cost = 10000;
+              break;
+            default:
+              cost = 0;
+          }
           let resultDirectionsInfo = {
             distance: result.routes[0].legs[0].distance.value,// khoáng cách tính theo xe hơi
             duration: result.routes[0].legs[0].duration.value,// thời gian tính theo xe hơi
@@ -632,8 +646,15 @@ const ItinerarieView = (props) => {
             start_address: result.routes[0].legs[0].start_address,
             end_address: result.routes[0].legs[0].end_address,
             cost: cost,
+            // cost: selectedMode === 'WALKING' || selectedMode === 'BICYCLING' ? 0 : (selectedMode === 'TRANSIT' ? 10000 : cost),
             unit: 'VNĐ',
           };
+
+
+
+
+
+
           setDirectionsInfo(resultDirectionsInfo);
         } else {
           console.error(`error fetching directions ${result}`);
@@ -711,11 +732,6 @@ const ItinerarieView = (props) => {
                         for="showAllDates"> Xem tất cả các ngày </label>
                     </div>
                   </div>
-
-
-
-
-
 
 
                   <div class="form-group">
@@ -1018,9 +1034,6 @@ const ItinerarieView = (props) => {
                                     </div>
                                   </div>
                                 </div>
-
-
-
                                 <a
                                   className="Remove"
                                   title="Remove"

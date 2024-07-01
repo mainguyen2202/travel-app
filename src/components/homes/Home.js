@@ -377,7 +377,6 @@ const Home = (props) => {
                 // className="col-md-12 hotel-single ftco-animate mb-5 mt-5" 
                 className="container my-5 "
                 >
-                  <div className="row">
       {token ? (
         <div className="row">
           {like.slice(0, shownLikes).map((likes, i) => (
@@ -470,7 +469,6 @@ const Home = (props) => {
           </Link>
         </div>
       )}
-    </div>
                 </div>
 
 

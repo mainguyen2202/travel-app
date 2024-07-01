@@ -584,7 +584,7 @@ const Itinerarie = (props) => {
                                                                                     <hr />
                                                                                     <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
                                                                                     <p>{'Số lượng: ' + itinerary.participantCount + ' người'}</p>
-                                                                                    <p className="truncate-3-lines">{itinerary.content + '.'}</p>
+                                                                                    <p className="truncate-5-lines">{itinerary.content + '.'}</p>
                                                                                 </div>
                                                                             </div>
                                                                             <hr />
@@ -689,7 +689,7 @@ const Itinerarie = (props) => {
                                                                             <p>{itinerary.dateStart + ' -> ' + itinerary.dateEnd}</p>
                                                                             <p>{'Số lượng: ' + itinerary.participantCount + 'người'}</p>
                                                                             <p>Người chia sẻ: <b>{itinerary.usersName}</b></p>
-                                                                            <p className="truncate-3-lines">{itinerary.content + '.'}</p>
+                                                                            <p className="truncate-5-lines">{itinerary.content + '.'}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>

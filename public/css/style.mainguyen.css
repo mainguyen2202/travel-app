@@ -237,6 +237,18 @@ a:not([href]):not([tabindex]) {
   color: #F9BE37; /* Màu của dấu 3 chấm */
 
 }
+.truncate-5-lines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3!important;
+  -webkit-box-orient: vertical;
+  overflow: hidden; /*Ẩn bất kỳ nội dung bị tràn ra ngoài phạm vi được định.*/
+  text-overflow: ellipsis; /*Thêm dấu "..." vào cuối văn bản nếu bị cắt ngắn.*/
+  line-height: 1.2;
+  height: 3.6em!important; /* 3 lines * 1.2em line-height */
+  color: #000000; /* Màu của dấu 3 chấm */
+
+}
+
 
 /* nav */
 .nav-link-custom::after {
