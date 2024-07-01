@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { register } from "../../services/authServices";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/constants";
 
 
 const Registration = (props) => {
@@ -52,10 +53,17 @@ const Registration = (props) => {
                 } else if (response.status === 200) {
                     //
                     const data = await response.json();
-                    if (data !== null) {
-                        navigate('/login');
-                        toast.success(data.message);
-                    } else {
+                    if (data.access_token !== '' && data.access_token !== undefined) {
+                        // Store the tokens in localStorage or secure cookie for later use
+                        localStorage.setItem(ACCESS_TOKEN, data.access_token);
+                        localStorage.setItem(REFRESH_TOKEN, data.refresh_token);
+
+                        // toast.success(resq.message);
+                        navigate('/');
+                        window.location.reload();
+                        
+                    } 
+                   else {
                         toast.error(data.message); // Hiển thị thông báo lỗi từ API trong giao diện
                     }
                 }

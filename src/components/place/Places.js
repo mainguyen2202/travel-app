@@ -265,7 +265,8 @@ const Places = () => {
 
                     let tmpTopicId = filteredSubTopics[0].id;
                     setSubTopicsId(tmpTopicId);// giá trị mặc định của SubTopicId
-                    await getArticlesBySearch(placesId, tmpTopicId);
+                    // await getArticlesBySearch(placesId, tmpTopicId);
+                    await  getArticlesBySearch(0, tmpTopicId, placesId);
 
                 } else {
                     setShowNatureSelect(false);
@@ -281,7 +282,8 @@ const Places = () => {
         setSubTopicsId(tmpSubTopicId);// giá trị mặc định của SubTopicId
         console.log("when click subtopic placeid=", placesId, "subtopicId=", tmpSubTopicId);
 
-        getArticlesBySearch(placesId, tmpSubTopicId); // gọi api
+        // getArticlesBySearch(placesId, tmpSubTopicId); // gọi api
+        getArticlesBySearch(0, tmpSubTopicId,placesId);
     };
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ

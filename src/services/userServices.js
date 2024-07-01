@@ -40,7 +40,7 @@ export async function userEditPassWord(newPassword,userId) {
     const data = {
         password: newPassword
     };
-    return await api.post(`/users/editPassword/${userId}`, data);
+    return await api.post(`/private/users/editPassword/${userId}`, data);
 }
 
 

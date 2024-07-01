@@ -200,7 +200,7 @@ const Like = (props) => {
 
                             <div className="container">
 
-                                <div className="row">
+                              
                                     {token ? (
 
                                         <div className="row">
@@ -290,7 +290,7 @@ const Like = (props) => {
 
 
 
-                                </div>
+                              
 
                             </div>
 
