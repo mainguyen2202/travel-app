@@ -123,7 +123,7 @@ const Places = () => {
                     console.log("timkiem", data);
                     if (data.length > 0) {
                         setArticles(data);// làm việc 
-                     
+
                     }
                 } else {
                     console.error('Error:', response);
@@ -266,7 +266,7 @@ const Places = () => {
                     let tmpTopicId = filteredSubTopics[0].id;
                     setSubTopicsId(tmpTopicId);// giá trị mặc định của SubTopicId
                     // await getArticlesBySearch(placesId, tmpTopicId);
-                    await  getArticlesBySearch(0, tmpTopicId, placesId);
+                    await getArticlesBySearch(0, tmpTopicId, placesId);
 
                 } else {
                     setShowNatureSelect(false);
@@ -283,11 +283,11 @@ const Places = () => {
         console.log("when click subtopic placeid=", placesId, "subtopicId=", tmpSubTopicId);
 
         // getArticlesBySearch(placesId, tmpSubTopicId); // gọi api
-        getArticlesBySearch(0, tmpSubTopicId,placesId);
+        getArticlesBySearch(0, tmpSubTopicId, placesId);
     };
 
     // phương thức bất động bồ , await gọi để sử dụng đồng bộ
-    async function getArticlesBySearch(inPlaceId, inSubtopicId, inPlaceIdsMulti='') {
+    async function getArticlesBySearch(inPlaceId, inSubtopicId, inPlaceIdsMulti = '') {
         console.log("getAPI placeId=", inPlaceId, "subtopicId=", inSubtopicId);
         const response = await articlesListPlaceIdSubtopicId(inPlaceId, inSubtopicId, inPlaceIdsMulti);
 
@@ -440,22 +440,22 @@ const Places = () => {
 
     const [selectedOption, setSelectedOption] = useState(null);
 
-const handleOptionChange = (option) => {
-  setSelectedOption(option);
-  switch (option) {
-    case 'like':
-      fetchInitDataLike();
-      break;
-    case 'feature':
-      fetchInitDataHistoryArticles();
-      break;
-    case 'newest':
-      fetchInitDataDescDate();
-      break;
-    default:
-      break;
-  }
-};
+    const handleOptionChange = (option) => {
+        setSelectedOption(option);
+        switch (option) {
+            case 'like':
+                fetchInitDataLike();
+                break;
+            case 'feature':
+                fetchInitDataHistoryArticles();
+                break;
+            case 'newest':
+                fetchInitDataDescDate();
+                break;
+            default:
+                break;
+        }
+    };
     // check
 
     // danh sách địa điểm yêu thích nhất
@@ -707,46 +707,46 @@ const handleOptionChange = (option) => {
 
                                 <h3 className="heading mb-4">Lựa chọn</h3>
                                 <div className="option-container">
-    <div className="option-item">
-      <input
-        type="radio"
-        id="like-radio"
-        name="option-radio"
-        className="option-radio"
-        checked={selectedOption === 'like'}
-        onChange={() => handleOptionChange('like')}
-      />
-      <label htmlFor="like-radio" className="option-label">
-        Yêu thích
-      </label>
-    </div>
-    <div className="option-item">
-      <input
-        type="radio"
-        id="feature-radio"
-        name="option-radio"
-        className="option-radio"
-        checked={selectedOption === 'feature'}
-        onChange={() => handleOptionChange('feature')}
-      />
-      <label htmlFor="feature-radio" className="option-label">
-        Nổi Bật
-      </label>
-    </div>
-    <div className="option-item">
-      <input
-        type="radio"
-        id="newest-radio"
-        name="option-radio"
-        className="option-radio"
-        checked={selectedOption === 'newest'}
-        onChange={() => handleOptionChange('newest')}
-      />
-      <label htmlFor="newest-radio" className="option-label">
-        Mới nhất
-      </label>
-    </div>
-  </div>
+                                    <div className="option-item">
+                                        <input
+                                            type="radio"
+                                            id="like-radio"
+                                            name="option-radio"
+                                            className="option-radio"
+                                            checked={selectedOption === 'like'}
+                                            onChange={() => handleOptionChange('like')}
+                                        />
+                                        <label htmlFor="like-radio" className="option-label">
+                                            Yêu thích
+                                        </label>
+                                    </div>
+                                    <div className="option-item">
+                                        <input
+                                            type="radio"
+                                            id="feature-radio"
+                                            name="option-radio"
+                                            className="option-radio"
+                                            checked={selectedOption === 'feature'}
+                                            onChange={() => handleOptionChange('feature')}
+                                        />
+                                        <label htmlFor="feature-radio" className="option-label">
+                                            Nổi Bật
+                                        </label>
+                                    </div>
+                                    <div className="option-item">
+                                        <input
+                                            type="radio"
+                                            id="newest-radio"
+                                            name="option-radio"
+                                            className="option-radio"
+                                            checked={selectedOption === 'newest'}
+                                            onChange={() => handleOptionChange('newest')}
+                                        />
+                                        <label htmlFor="newest-radio" className="option-label">
+                                            Mới nhất
+                                        </label>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
