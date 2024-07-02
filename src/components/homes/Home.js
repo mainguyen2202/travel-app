@@ -341,7 +341,7 @@ const Home = (props) => {
                 <div className="container">
                     <div className="row justify-content-center mb-5 pb-3">
                         <div className="col-md-7 heading-section text-center ftco-animate">
-                            <h2 className="mb-4">Khám phá theo sở thích</h2>
+                            <h2 className="mb-4">Trải nghiệm du lịch</h2>
                             <p>Đem đến cho bạn cơ hội khám phá đất nước theo sở thích riêng, từ du lịch văn hóa, du lịch mạo hiểm, du lịch ẩm thực, du lịch thiên nhiên đến du lịch lịch sử, tạo nên những trải nghiệm độc đáo và không thể quên.</p>
                         </div>
                     </div>

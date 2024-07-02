@@ -229,6 +229,11 @@ const ItinerarieView = (props) => {
 
   const drawPolyline = (ltsMarkers) => {
     if (isLoaded && map) {
+      // Xóa polyline cũ nếu tồn tại
+      if (ltsPolyline) {
+        ltsPolyline.setMap(null);
+        setLtsPolyline(null);
+      }
       // /*
       console.log("-------------START--------------");
       let ltsPolylines = [];
@@ -241,20 +246,21 @@ const ItinerarieView = (props) => {
         );
       }
       );
+      const customIcon = {
+        path: "M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z",
+        fillColor: "#ff2649",
+        fillOpacity: 1,
+        strokeColor: "#393",
+        strokeWeight: 4, // Tăng giá trị strokeWeight
+        scale: 1.5
+      };
 
       const polylineOptions = {
         path: ltsPolylines,
         icons: [
           {
-            strokeColor: "#ff2649", // This is the color of the symbol
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            icon: {
-              path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-              scale: 5,
-              strokeColor: '#393'
-            },
-            offset: '100%',
+            icon: customIcon,
+            offset: '100%'
           }
         ],
         strokeColor: "#ff2649", // Change the color of the polyline to yellow
@@ -277,7 +283,7 @@ const ItinerarieView = (props) => {
     e.preventDefault();
     console.log("click dateStart", indateStart);
     setDateStartItineraryArticles(indateStart);
-
+    setShowAllDates(false); // Set showAllDates to false
     fetchInitData(itineraryId, indateStart);
   }
   const findByAllDate = async () => {
