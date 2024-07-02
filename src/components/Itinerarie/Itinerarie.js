@@ -76,10 +76,11 @@ const Itinerarie = (props) => {
                 const response = await itineraryCreate(name, participantCount, content, dateStart, dateEnd, userId);
                 if (response.status === 200) {
                     const data = await response.data;
-                    toast.success(data.message);
+                    // toast.success(data.message);
                     // console.log(data);
                     if (data.status === 1) {
                         toast.success(data.message);
+                        
 
                         // Cập nhật danh sách itineraries bằng cách thêm itinerary mới
                         // setItinerariesOfUser([...itinerariesOfUser, data.data]);
@@ -129,52 +130,41 @@ const Itinerarie = (props) => {
 
     const handleRemove = async (e, itineraryId) => {
         e.preventDefault();
-
+      
         try {
-            const result = await Swal.fire({
-                title: 'Bạn có chắc không?',
-                text: "Bạn sẽ không thể hoàn nguyên điều này!",
-                icon: 'cảnh báo',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Đồng ý'
-            });
+          const result = await Swal.fire({
+            title: 'Bạn có chắc không?',
+            text: "Bạn sẽ không thể hoàn nguyên điều này!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy'
+          });
+      
+          if (result.isConfirmed) {
             const response = await itinerariesRemove(itineraryId);
+      
             if (response.status === 200) {
-                const data = await response.data;
-                console.log(data);
-
+                const data = await response.json();
+                
                 if (data.status === 1) {
                     toast.success(data.message);
-
-                    // fetchInitData();// sử dụng hàm lấy danh sách mới nhất
-
-                    /*
-                    let newArrayItinerariesOfUser = [];
-                    for(let i = 0; i < itinerariesOfUser.length(); i++){
-                        let item = itinerariesOfUser.getItem(i);
-                        if (item.id !== itineraryId ){
-                            newArrayItinerariesOfUser.push(item);//
-                        }
-                    }
-                    setItinerariesOfUser(newArrayItinerariesOfUser);
-                    */
-
-                    const newArray = itinerariesOfUser.filter((item, i) => item.id !== itineraryId);// lọc danh sách không chứa id đã xóa
-                    setItinerariesOfUser(newArray);
-
-
-                } else {
-                    toast.error(data.message);
-                }
+                    window.location.reload(); // Tải lại trang
+                const newArray = itinerariesOfUser.filter((item) => item.id !== itineraryId);
+                setItinerariesOfUser(newArray);
+              } else {
+                toast.error(data.message);
+              }
             } else {
-                console.log('Deletion failed');
+              console.log('Deletion failed');
             }
+          }
         } catch (error) {
-            console.log('Error:', error);
+          console.log('Error:', error);
         }
-    };
+      };
 
 
     const getDetailByItineraryId = async (e, itineraryId) => {

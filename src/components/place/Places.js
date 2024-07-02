@@ -266,7 +266,7 @@ const Places = () => {
                     let tmpTopicId = filteredSubTopics[0].id;
                     setSubTopicsId(tmpTopicId);// giá trị mặc định của SubTopicId
                     // await getArticlesBySearch(placesId, tmpTopicId);
-                    await getArticlesBySearch(0, tmpTopicId, placesId);
+                    await getArticlesBySearch(0, tmpTopicId, 1);
 
                 } else {
                     setShowNatureSelect(false);
